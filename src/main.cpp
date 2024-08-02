@@ -10,14 +10,13 @@ struct GameObject
 {
     Vector2 position;
     int type;
-    float depth;
 
-    GameObject(Vector2 pos, int t, float d) : position(pos), type(t), depth(d) {}
+    GameObject(Vector2 pos, int t) : position(pos), type(t) {}
 };
 
 int screenWidth = 1600;
 int screenHeight = 900;
-const int gridSize = 16;
+const int gridSize = 32;
 
 int minX;
 int minY;
@@ -26,14 +25,6 @@ int maxY;
 
 std::vector<GameObject> gameObjects;
 std::vector<GameObject> visibleObjects;
-
-void UpdateGameObjectDepths(std::vector<GameObject> &objects)
-{
-    for (auto &obj : objects)
-    {
-        obj.depth = obj.position.y;
-    }
-}
 
 void GetVisibleObjects(Camera2D camera)
 {
@@ -119,15 +110,15 @@ int main()
     for (int i = 0; i < 100000; i++)
     {
         Vector2 pos = {GetRandomValue(0, 5000), GetRandomValue(0, 5000)};
-        float d = 0;
         int type = GetRandomValue(0, 1);
-        gameObjects.emplace_back(pos, type, d);
+        gameObjects.emplace_back(pos, type);
     }
-    gameObjects.emplace_back(Vector2{100, 200}, 1, 0);
+    
+    gameObjects.emplace_back(Vector2{100, 200}, 1);
 
     Camera2D camera = {0};
-    camera.target = (Vector2){player.x, player.y};
-    camera.offset = (Vector2){screenWidth / 2.0f, screenHeight / 2.0f};
+    camera.target = Vector2{player.x, player.y};
+    camera.offset = Vector2{screenWidth / 2.0f, screenHeight / 2.0f};
     camera.rotation = 0.0f;
     camera.zoom = 1.0f;
 
@@ -140,10 +131,9 @@ int main()
         screenHeight = GetScreenHeight();
 
         // Update game logic
-        UpdateGameObjectDepths(gameObjects);
         GetVisibleObjects(camera);
         std::sort(visibleObjects.begin(), visibleObjects.end(), [](const GameObject &a, const GameObject &b)
-                  { return a.depth < b.depth; });
+                  { return a.position.y < b.position.y; });
 
         if (IsKeyDown(KEY_A))
         {
@@ -162,17 +152,17 @@ int main()
             player.y += 10;
         }
 
-        camera.target = (Vector2){player.x + player.width / 2, player.y + player.height / 2};
+        camera.target = Vector2{player.x + player.width / 2, player.y + player.height / 2};
 
         // Update camera offset to keep the player in the center of the screen
-        camera.offset = (Vector2){screenWidth / 2.0f, screenHeight / 2.0f};
+        camera.offset = Vector2{screenWidth / 2.0f, screenHeight / 2.0f};
 
         // Update virtual mouse (clamped mouse value behind game screen)
         Vector2 mouse = GetMousePosition();
         Vector2 virtualMouse = {0};
         virtualMouse.x = (mouse.x - (GetScreenWidth() - (gameScreenWidth * scale)) * 0.5f) / scale;
         virtualMouse.y = (mouse.y - (GetScreenHeight() - (gameScreenHeight * scale)) * 0.5f) / scale;
-        virtualMouse = Vector2Clamp(virtualMouse, (Vector2){0, 0}, (Vector2){(float)gameScreenWidth, (float)gameScreenHeight});
+        virtualMouse = Vector2Clamp(virtualMouse, Vector2{0, 0}, Vector2{(float)gameScreenWidth, (float)gameScreenHeight});
 
         // Draw
         BeginDrawing();
@@ -198,12 +188,12 @@ int main()
         DrawText(TextFormat("Screen Size: [%i , %i]", (int)screenWidth, (int)screenHeight), 0, 115, 20, GREEN);
 
         DrawTexturePro(target.texture,
-                       (Rectangle){0.0f, 0.0f, (float)target.texture.width, (float)-target.texture.height},
-                       (Rectangle){(GetScreenWidth() - ((float)gameScreenWidth * scale)) * 0.5f,
+                       Rectangle{0.0f, 0.0f, (float)target.texture.width, (float)-target.texture.height},
+                       Rectangle{(GetScreenWidth() - ((float)gameScreenWidth * scale)) * 0.5f,
                                    (GetScreenHeight() - ((float)gameScreenHeight * scale)) * 0.5f,
                                    (float)gameScreenWidth * scale,
                                    (float)gameScreenHeight * scale},
-                       (Vector2){0, 0}, 0.0f, WHITE);
+                       Vector2{0, 0}, 0.0f, WHITE);
 
         EndDrawing();
     }

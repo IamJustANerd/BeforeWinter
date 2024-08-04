@@ -1,7 +1,9 @@
 {
     "files.associations": {
         "raylib.h": "c",
-        "windows.h": "c"
+        "windows.h": "c",
+        "iostream": "cpp",
+        "vector": "cpp"
     },
     "C_Cpp.errorSquiggles": "enabled"
 }

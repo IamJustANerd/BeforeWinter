@@ -1,31 +1,69 @@
+// {---------------------------------------------- Libraries ----------------------------------------------}
 #include <vector>
 #include <algorithm>
+#include <cmath>
+#include <iostream>
+
+// {---------------------------------------------- Raylib ----------------------------------------------}
+
 #include "../include/raylib.h"
 #include "../include/raymath.h"
 
-#define MAX(a, b) ((a) > (b) ? (a) : (b))
-#define MIN(a, b) ((a) < (b) ? (a) : (b))
+// {---------------------------------------------- Headers ----------------------------------------------}
 
-struct GameObject
-{
-    Vector2 position;
-    int type;
+// Player
+#include "../include/Player.h"
+// Entity
+#include "../include/Entity.h"
+// Nature
+#include "../include/Nature.h"
 
-    GameObject(Vector2 pos, int t) : position(pos), type(t) {}
-};
+// {---------------------------------------------- Global Variables ----------------------------------------------}
 
-int screenWidth = 1600;
-int screenHeight = 900;
+// Screen
+// int screenWidth = 1340;
+// int screenHeight = 810;
+int screenWidth = 0;
+int screenHeight = 0;
+
+// Game Screen (for scaling)
+int gameScreenWidth = 960;
+int gameScreenHeight = 540;
+
+// Grid size
 const int gridSize = 32;
 
+// Minimum and maximum value for visible grid (set as global for debugging purpose)
 int minX;
 int minY;
 int maxX;
 int maxY;
 
-std::vector<GameObject> gameObjects;
-std::vector<GameObject> visibleObjects;
+// Store entites as game objects
+std::vector<Entity*> gameObjects;
+// Store visible objects for grid partitioning
+std::vector<Entity*> visibleObjects;
 
+// Images
+Image NatureImg[100];
+
+// Textures
+Texture2D NatureTex[100];
+
+// {---------------------------------------------- Functions ----------------------------------------------}
+
+// Custom compare bool
+struct CompareObjectPosition
+{
+    bool operator()(const Entity *a, const Entity *b) const
+    {
+        if (a->GetPosition().y + a->GetHeight() != b->GetPosition().y + b->GetHeight())
+            return a->GetPosition().y + a->GetHeight() < b->GetPosition().y + b->GetHeight(); // Compare by y first
+        return a->GetPosition().x < b->GetPosition().x;                                       // If y is the same, compare by x
+    }
+};
+
+// To get visible objects based on camera for better performance
 void GetVisibleObjects(Camera2D camera)
 {
     visibleObjects.clear();
@@ -37,125 +75,182 @@ void GetVisibleObjects(Camera2D camera)
 
     for (const auto &obj : gameObjects)
     {
-        int objGridX = (int)obj.position.x / gridSize;
-        int objGridY = (int)obj.position.y / gridSize;
+        int objGridX = (int)obj->GetPosition().x / gridSize;
+        int objGridY = (int)obj->GetPosition().y / gridSize;
         if (objGridX >= minX && objGridX <= maxX && objGridY >= minY && objGridY <= maxY)
         {
             visibleObjects.push_back(obj);
         }
+
+        // Push without grid partitioning (for debugging purpose)
+        // visibleObjects.push_back(obj);
     }
 }
 
+// Draw grid for debugging purpose
 void DrawGrid(int gridSize, Camera2D camera)
 {
-    Vector2 cameraPos = camera.target;
-    int firstVerticalLine = (int)(cameraPos.x - screenWidth / 2) / gridSize * gridSize;
-    int firstHorizontalLine = (int)(cameraPos.y - screenHeight / 2) / gridSize * gridSize;
-
-    for (int x = firstVerticalLine; x < cameraPos.x + screenWidth / 2; x += gridSize)
+    for (int x = -10000; x <= 10000; x += gridSize)
     {
-        DrawLine(x - cameraPos.x + screenWidth / 2, 0, x - cameraPos.x + screenWidth / 2, screenHeight, DARKGRAY);
+        DrawLine(x, -10000, x, 10000, DARKGRAY);
     }
 
-    for (int y = firstHorizontalLine; y < cameraPos.y + screenHeight / 2; y += gridSize)
+    for (int y = -10000; y <= 10000; y += gridSize)
     {
-        DrawLine(0, y - cameraPos.y + screenHeight / 2, screenWidth, y - cameraPos.y + screenHeight / 2, DARKGRAY);
+        DrawLine(-10000, y, 10000, y, DARKGRAY);
     }
 }
 
-Image earthImg;
-Image moonImg;
-Texture2D earthTex;
-Texture2D moonTex;
+void UpdateCamera(Camera2D &camera, Vector2 playerPos, int playerWidth, int playerHeight, float scale)
+{
+    // Update camera position to follow the player
+    camera.target = Vector2{playerPos.x + playerWidth / 2, playerPos.y + playerHeight / 2};
 
+    // Update camera offset to keep the player in the center of the screen
+    camera.offset = Vector2{(float)screenWidth / scale / 2, (float)screenHeight / scale / 2};
+
+    // Camera zoom controls
+    camera.zoom += ((float)GetMouseWheelMove() * 0.05f);
+
+    if (camera.zoom > 2.0f)
+        camera.zoom = 2.0f;
+    else if (camera.zoom < 0.1f)
+        camera.zoom = 0.1f;
+
+    // Reset zoom value
+    if (IsKeyPressed(KEY_R))
+    {
+        camera.zoom = 1.0f;
+    }
+}
+
+// Load all images
 void LoadAllImage()
 {
-    earthImg = LoadImage("../graphics/earth.png");
-    moonImg = LoadImage("../graphics/moon.png");
+    NatureImg[0] = LoadImage("../graphics/earth.png");
+    NatureImg[1] = LoadImage("../graphics/moon.png");
 }
 
+// Resize all images
 void ResizeAllImage()
 {
-    ImageResizeNN(&earthImg, 16, 16);
-    ImageResizeNN(&moonImg, 16, 16);
+    for(int i = 0; i < 2; i++)
+    {
+        ImageResizeNN(&NatureImg[i], 64, 64);
+    }
 }
 
+// Load all textures from images
+void LoadAllTexture()
+{
+    for(int i = 0; i < 2; i++)
+    {
+        NatureTex[i] = LoadTextureFromImage(NatureImg[i]);
+    }
+}
+
+// Unload all images
+void UnloadAllImage()
+{
+    for(int i = 0; i < 2; i++)
+    {
+        UnloadImage(NatureImg[i]);
+    }
+}
+
+// Unload all textures
+void UnloadAllTexture()
+{
+    for(int i = 0; i < 2; i++)
+    {
+        UnloadTexture(NatureTex[i]);
+    }
+}
+
+// Setup assets (images, textures, etc)
+void SetupAssets()
+{
+    LoadAllImage();
+    ResizeAllImage();
+    LoadAllTexture();
+    UnloadAllImage();
+}
+
+// {---------------------------------------------- Main Code ----------------------------------------------}
 int main()
 {
-    SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_VSYNC_HINT);
-    InitWindow(screenWidth, screenHeight, "Raylib Game");
+    // Initialize window
+    InitWindow(screenWidth, screenHeight, "Before Winter");
+
+    // Set window minimum size
     SetWindowMinSize(320, 180);
 
-    int gameScreenWidth = 960;
-    int gameScreenHeight = 540;
+    // Toggle full screen
+    ToggleFullscreen();
 
+    // Update screen width and height to the current window size
     screenWidth = GetScreenWidth();
     screenHeight = GetScreenHeight();
 
-    Rectangle player = {screenWidth / 2, screenHeight / 2, 40, 40};
+    // Declare player
+    Player player(Vector2{(float)screenWidth / 2, (float)screenHeight / 2});
 
-    // Load images
-    LoadAllImage();
-    ResizeAllImage();
+    // Setup Assets
+    SetupAssets();
 
-    // Load textures
-    Texture2D textures[2];
-    textures[0] = LoadTextureFromImage(earthImg);
-    textures[1] = LoadTextureFromImage(moonImg);
-
+    /*
+        To make the content of the game scales based on the window size, we will use render-to-texture technique.
+        This is achievable by making a target texture and draw on it instead of directly on the screen. Eventually,
+        this target texture will be drawn to the screen (after scaled by game screen width and height).
+    */
     RenderTexture2D target = LoadRenderTexture(gameScreenWidth, gameScreenHeight);
-    SetTextureFilter(target.texture, TEXTURE_FILTER_BILINEAR); // Texture scale filter to use
-
-    // Initialize game objects
-    for (int i = 0; i < 100000; i++)
-    {
-        Vector2 pos = {GetRandomValue(0, 5000), GetRandomValue(0, 5000)};
-        int type = GetRandomValue(0, 1);
-        gameObjects.emplace_back(pos, type);
-    }
     
-    gameObjects.emplace_back(Vector2{100, 200}, 1);
+    // Texture scale filter to use
+    SetTextureFilter(target.texture, TEXTURE_FILTER_BILINEAR); 
 
+    // Initialize random game objects for testing grid partitioning
+    int ty = 0;
+    for (int i = 0; i <= 5000; i += GetRandomValue(0, 128))
+    {
+        for (int j = 0; j <= 5000; j += GetRandomValue(0, 128))
+        {
+            gameObjects.emplace_back(new Nature(Vector2{(float)i, (float)j}, ty, NatureTex));
+            ty += 1;
+            ty %= 2;
+        }
+        ty += 1;
+        ty %= 2;
+    }
+
+    // Setting up camera to follow the player
     Camera2D camera = {0};
-    camera.target = Vector2{player.x, player.y};
-    camera.offset = Vector2{screenWidth / 2.0f, screenHeight / 2.0f};
     camera.rotation = 0.0f;
     camera.zoom = 1.0f;
 
+    // Setting game FPS
     SetTargetFPS(60);
 
+    // Scale the content based on the window size
+    float scale = std::min((float)screenWidth / gameScreenWidth, (float)screenHeight / gameScreenHeight);
+
+    // Window loop
     while (!WindowShouldClose())
     {
-        float scale = MIN((float)GetScreenWidth() / gameScreenWidth, (float)GetScreenHeight() / gameScreenHeight);
-        screenWidth = GetScreenWidth();
-        screenHeight = GetScreenHeight();
-
-        // Update game logic
+        /*
+            Since there might be too many objects in the game, grid-partitioning is used in order to handle draw order,
+            hitbox collision checks, etc. This method is selected for reducing the game complexity, which result with a
+            better performance since the number of the computation goes down.
+        */
+        // Get all visible objects within the sight of the camera
         GetVisibleObjects(camera);
-        std::sort(visibleObjects.begin(), visibleObjects.end(), [](const GameObject &a, const GameObject &b)
-                  { return a.position.y < b.position.y; });
+        // Sort all of them based on their position
+        std::sort(visibleObjects.begin(), visibleObjects.end(), CompareObjectPosition());
 
-        if (IsKeyDown(KEY_A))
-        {
-            player.x -= 10;
-        }
-        if (IsKeyDown(KEY_D))
-        {
-            player.x += 10;
-        }
-        if (IsKeyDown(KEY_W))
-        {
-            player.y -= 10;
-        }
-        if (IsKeyDown(KEY_S))
-        {
-            player.y += 10;
-        }
+        // Player movement
+        player.Movements();
 
-        camera.target = Vector2{player.x + player.width / 2, player.y + player.height / 2};
-
-        // Update camera offset to keep the player in the center of the screen
-        camera.offset = Vector2{screenWidth / 2.0f, screenHeight / 2.0f};
+        // Update Camera
+        UpdateCamera(camera, player.GetPosition(), player.GetWidth(), player.GetHeight(), scale);
 
         // Update virtual mouse (clamped mouse value behind game screen)
         Vector2 mouse = GetMousePosition();
@@ -164,29 +259,62 @@ int main()
         virtualMouse.y = (mouse.y - (GetScreenHeight() - (gameScreenHeight * scale)) * 0.5f) / scale;
         virtualMouse = Vector2Clamp(virtualMouse, Vector2{0, 0}, Vector2{(float)gameScreenWidth, (float)gameScreenHeight});
 
-        // Draw
-        BeginDrawing();
+        // Draw on texture
+        BeginTextureMode(target);
 
         ClearBackground(BLACK);
 
-        DrawGrid(gridSize, camera);
-
-        for (const auto &obj : visibleObjects)
-        {
-            DrawTexture(textures[obj.type], obj.position.x - camera.target.x + screenWidth / 2, obj.position.y - camera.target.y + screenHeight / 2, WHITE);
-        }
-        
+        // 2D mode
         BeginMode2D(camera);
 
-        DrawRectangleRec(player, RED);
+        // Grid for debugging
+        DrawGrid(gridSize, camera);
 
+        // Draw objects
+        for (const auto &obj : visibleObjects)
+        {
+            obj->Draw();
+        }
+
+        // Draw player and rectangle (for debugging)
+        Rectangle testBlue = {player.GetPosition().x - gridSize, player.GetPosition().y - gridSize, gridSize * 3, gridSize * 3};
+        // if (CheckCollisionPointRec(mouse, testBlue))
+        // {
+        //     DrawRectangleRec(testBlue, Color{230, 41, 55, 127});
+        // }
+        // else
+        // {
+        //     DrawRectangleRec(testBlue, Color{0, 121, 241, 127});
+        // }
+
+        DrawRectangleRec(testBlue, Color{0, 121, 241, 127});
+        player.Draw();
+
+        // End 2D mode
         EndMode2D();
 
-        DrawText(TextFormat("Min X Y: [%i , %i]", (int)minX, (int)minY), 0, 25, 20, GREEN);
-        DrawText(TextFormat("Max X Y: [%i , %i]", (int)maxX, (int)maxY), 0, 55, 20, GREEN);
-        DrawText(TextFormat("Camera X Y: [%i , %i]", (int)camera.target.x, (int)camera.target.y), 0, 85, 20, GREEN);
-        DrawText(TextFormat("Screen Size: [%i , %i]", (int)screenWidth, (int)screenHeight), 0, 115, 20, GREEN);
+        // DrawRectangle(virtualMouse.x, virtualMouse.y, 20, 20, GREEN);
 
+        // Debugging Information
+        DrawText(TextFormat("Min X Y: [%i , %i]", (int)minX, (int)minY), 0, 5, 15, GREEN);
+        DrawText(TextFormat("Max X Y: [%i , %i]", (int)maxX, (int)maxY), 0, 35, 15, GREEN);
+        DrawText(TextFormat("Camera X Y: [%i , %i]", (int)camera.target.x, (int)camera.target.y), 0, 65, 15, GREEN);
+        DrawText(TextFormat("Screen Size: [%i , %i]", (int)screenWidth, (int)screenHeight), 0, 95, 15, GREEN);
+        DrawText(TextFormat("Player Position: [%f , %f]", (float)player.GetPosition().x, (float)player.GetPosition().y), 0, 125, 15, GREEN);
+        DrawText(TextFormat("Scale: [%f]", (float)scale), 0, 155, 15, GREEN);
+        if(visibleObjects.size() > 0) {
+            DrawText(TextFormat("Top Left: [%f , %f]", visibleObjects[0]->GetPosition().x, visibleObjects[0]->GetPosition().y), 0, 185, 15, GREEN);
+            DrawText(TextFormat("Bottom Right: [%f , %f]", visibleObjects[visibleObjects.size() - 1]->GetPosition().x, visibleObjects[visibleObjects.size() - 1]->GetPosition().y), 0, 215, 15, GREEN);
+        }
+        DrawText(TextFormat("[%f , %f , %f , %f]", (float)player.GetPosition().x - screenWidth / 2, (float)player.GetPosition().y - screenHeight / 2, (float)screenWidth, (float)screenHeight), 0, 245, 15, GREEN);
+        
+        // Finish draw on texture
+        EndTextureMode();
+        
+        // Start drawing on the window screen
+        BeginDrawing();
+
+        // Draw the scaled texture
         DrawTexturePro(target.texture,
                        Rectangle{0.0f, 0.0f, (float)target.texture.width, (float)-target.texture.height},
                        Rectangle{(GetScreenWidth() - ((float)gameScreenWidth * scale)) * 0.5f,
@@ -195,15 +323,14 @@ int main()
                                    (float)gameScreenHeight * scale},
                        Vector2{0, 0}, 0.0f, WHITE);
 
+        // End drawing
         EndDrawing();
     }
 
-    // Unload textures
-    for (auto &tex : textures)
-    {
-        UnloadTexture(tex);
-    }
+    // Unload Texture
+    UnloadAllTexture();
 
+    // Close window
     CloseWindow();
 
     return 0;

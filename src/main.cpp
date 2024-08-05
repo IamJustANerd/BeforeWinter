@@ -1,34 +1,42 @@
+/*
+    Dev note:
+    1. Fixed drawing order by initializing entites width and height by their textures
+    2. Need to fix mouse and objects collision (tips: mouse position is between 0 to screen size, while game objects are not)
+*/
 // {---------------------------------------------- Libraries ----------------------------------------------}
 #include <vector>
 #include <algorithm>
 #include <cmath>
 #include <iostream>
 
-// {---------------------------------------------- Raylib ----------------------------------------------}
+// {---------------------------------------------- Headers ----------------------------------------------}
 
+// Raylib
 #include "../include/raylib.h"
 #include "../include/raymath.h"
 
-// {---------------------------------------------- Headers ----------------------------------------------}
+// Screen
+#include "../include/Screen.h"
+
+// Camera
+#include "../include/Camera.h"
+
+// Mouse
+#include "../include/Mouse.h"
+
+// Assets
+#include "../include/Assets.h"
 
 // Player
 #include "../include/Player.h"
+
 // Entity
 #include "../include/Entity.h"
+
 // Nature
 #include "../include/Nature.h"
 
 // {---------------------------------------------- Global Variables ----------------------------------------------}
-
-// Screen
-// int screenWidth = 1340;
-// int screenHeight = 810;
-int screenWidth = 0;
-int screenHeight = 0;
-
-// Game Screen (for scaling)
-int gameScreenWidth = 960;
-int gameScreenHeight = 540;
 
 // Grid size
 const int gridSize = 32;
@@ -43,12 +51,6 @@ int maxY;
 std::vector<Entity*> gameObjects;
 // Store visible objects for grid partitioning
 std::vector<Entity*> visibleObjects;
-
-// Images
-Image NatureImg[100];
-
-// Textures
-Texture2D NatureTex[100];
 
 // {---------------------------------------------- Functions ----------------------------------------------}
 
@@ -101,81 +103,6 @@ void DrawGrid(int gridSize, Camera2D camera)
     }
 }
 
-void UpdateCamera(Camera2D &camera, Vector2 playerPos, int playerWidth, int playerHeight, float scale)
-{
-    // Update camera position to follow the player
-    camera.target = Vector2{playerPos.x + playerWidth / 2, playerPos.y + playerHeight / 2};
-
-    // Update camera offset to keep the player in the center of the screen
-    camera.offset = Vector2{(float)screenWidth / scale / 2, (float)screenHeight / scale / 2};
-
-    // Camera zoom controls
-    camera.zoom += ((float)GetMouseWheelMove() * 0.05f);
-
-    if (camera.zoom > 2.0f)
-        camera.zoom = 2.0f;
-    else if (camera.zoom < 0.1f)
-        camera.zoom = 0.1f;
-
-    // Reset zoom value
-    if (IsKeyPressed(KEY_R))
-    {
-        camera.zoom = 1.0f;
-    }
-}
-
-// Load all images
-void LoadAllImage()
-{
-    NatureImg[0] = LoadImage("../graphics/earth.png");
-    NatureImg[1] = LoadImage("../graphics/moon.png");
-}
-
-// Resize all images
-void ResizeAllImage()
-{
-    for(int i = 0; i < 2; i++)
-    {
-        ImageResizeNN(&NatureImg[i], 64, 64);
-    }
-}
-
-// Load all textures from images
-void LoadAllTexture()
-{
-    for(int i = 0; i < 2; i++)
-    {
-        NatureTex[i] = LoadTextureFromImage(NatureImg[i]);
-    }
-}
-
-// Unload all images
-void UnloadAllImage()
-{
-    for(int i = 0; i < 2; i++)
-    {
-        UnloadImage(NatureImg[i]);
-    }
-}
-
-// Unload all textures
-void UnloadAllTexture()
-{
-    for(int i = 0; i < 2; i++)
-    {
-        UnloadTexture(NatureTex[i]);
-    }
-}
-
-// Setup assets (images, textures, etc)
-void SetupAssets()
-{
-    LoadAllImage();
-    ResizeAllImage();
-    LoadAllTexture();
-    UnloadAllImage();
-}
-
 // {---------------------------------------------- Main Code ----------------------------------------------}
 int main()
 {
@@ -186,14 +113,11 @@ int main()
     SetWindowMinSize(320, 180);
 
     // Toggle full screen
-    ToggleFullscreen();
+    // ToggleFullscreen();
 
     // Update screen width and height to the current window size
     screenWidth = GetScreenWidth();
     screenHeight = GetScreenHeight();
-
-    // Declare player
-    Player player(Vector2{(float)screenWidth / 2, (float)screenHeight / 2});
 
     // Setup Assets
     SetupAssets();
@@ -206,7 +130,10 @@ int main()
     RenderTexture2D target = LoadRenderTexture(gameScreenWidth, gameScreenHeight);
     
     // Texture scale filter to use
-    SetTextureFilter(target.texture, TEXTURE_FILTER_BILINEAR); 
+    SetTextureFilter(target.texture, TEXTURE_FILTER_BILINEAR);
+
+    // Declare player
+    Player *player = new Player(Vector2{(float)screenWidth / 2, (float)screenHeight / 2});
 
     // Initialize random game objects for testing grid partitioning
     int ty = 0;
@@ -222,13 +149,15 @@ int main()
         ty %= 2;
     }
 
+    gameObjects.emplace_back(player);
+
     // Setting up camera to follow the player
     Camera2D camera = {0};
     camera.rotation = 0.0f;
     camera.zoom = 1.0f;
 
     // Setting game FPS
-    SetTargetFPS(60);
+    SetTargetFPS(120);
 
     // Scale the content based on the window size
     float scale = std::min((float)screenWidth / gameScreenWidth, (float)screenHeight / gameScreenHeight);
@@ -236,28 +165,24 @@ int main()
     // Window loop
     while (!WindowShouldClose())
     {
-        /*
-            Since there might be too many objects in the game, grid-partitioning is used in order to handle draw order,
-            hitbox collision checks, etc. This method is selected for reducing the game complexity, which result with a
-            better performance since the number of the computation goes down.
-        */
         // Get all visible objects within the sight of the camera
         GetVisibleObjects(camera);
+
+        // Set mouse collision as false
+        mouseCollision = false;
+
         // Sort all of them based on their position
         std::sort(visibleObjects.begin(), visibleObjects.end(), CompareObjectPosition());
 
         // Player movement
-        player.Movements();
+        player->Movements();
 
         // Update Camera
-        UpdateCamera(camera, player.GetPosition(), player.GetWidth(), player.GetHeight(), scale);
+        UpdateCamera(camera, player->GetPosition(), player->GetWidth(), player->GetHeight(), scale);
 
-        // Update virtual mouse (clamped mouse value behind game screen)
-        Vector2 mouse = GetMousePosition();
-        Vector2 virtualMouse = {0};
-        virtualMouse.x = (mouse.x - (GetScreenWidth() - (gameScreenWidth * scale)) * 0.5f) / scale;
-        virtualMouse.y = (mouse.y - (GetScreenHeight() - (gameScreenHeight * scale)) * 0.5f) / scale;
-        virtualMouse = Vector2Clamp(virtualMouse, Vector2{0, 0}, Vector2{(float)gameScreenWidth, (float)gameScreenHeight});
+        // Update mouse according to world position
+        Rectangle mouseRect = {0, 0, mouseSize / camera.zoom, mouseSize / camera.zoom};
+        UpdateMouse(mouseRect, camera, scale, gameScreenWidth, gameScreenHeight);
 
         // Draw on texture
         BeginTextureMode(target);
@@ -277,40 +202,46 @@ int main()
         }
 
         // Draw player and rectangle (for debugging)
-        Rectangle testBlue = {player.GetPosition().x - gridSize, player.GetPosition().y - gridSize, gridSize * 3, gridSize * 3};
-        // if (CheckCollisionPointRec(mouse, testBlue))
-        // {
-        //     DrawRectangleRec(testBlue, Color{230, 41, 55, 127});
-        // }
-        // else
-        // {
-        //     DrawRectangleRec(testBlue, Color{0, 121, 241, 127});
-        // }
+        Rectangle testBlue = {player->GetPosition().x - gridSize, player->GetPosition().y - gridSize, gridSize * 3, gridSize * 3};
+        if (CheckCollisionRecs(testBlue, mouseRect))
+        {
+            DrawRectangleRec(testBlue, Color{230, 41, 55, 127});
+            mouseCollision = true;
+        }
+        else
+        {
+            DrawRectangleRec(testBlue, Color{0, 121, 241, 127});
+        }
 
-        DrawRectangleRec(testBlue, Color{0, 121, 241, 127});
-        player.Draw();
+        // for (const auto &obj : visibleObjects)
+        // {
+        //     if(CheckCollisionRecs(mouseRect,
+        //                           Rectangle{obj->GetPosition().x, obj->GetPosition().y, (float)obj->GetWidth(), (float)obj->GetHeight()}))
+        //     {
+        //         mouseCollision = true;
+        //     }
+        // }
 
         // End 2D mode
         EndMode2D();
 
-        // DrawRectangle(virtualMouse.x, virtualMouse.y, 20, 20, GREEN);
+        // Draw the mouse according to screen position
+        DrawMouse(mouseCollision, scale);
 
         // Debugging Information
         DrawText(TextFormat("Min X Y: [%i , %i]", (int)minX, (int)minY), 0, 5, 15, GREEN);
         DrawText(TextFormat("Max X Y: [%i , %i]", (int)maxX, (int)maxY), 0, 35, 15, GREEN);
         DrawText(TextFormat("Camera X Y: [%i , %i]", (int)camera.target.x, (int)camera.target.y), 0, 65, 15, GREEN);
         DrawText(TextFormat("Screen Size: [%i , %i]", (int)screenWidth, (int)screenHeight), 0, 95, 15, GREEN);
-        DrawText(TextFormat("Player Position: [%f , %f]", (float)player.GetPosition().x, (float)player.GetPosition().y), 0, 125, 15, GREEN);
-        DrawText(TextFormat("Scale: [%f]", (float)scale), 0, 155, 15, GREEN);
-        if(visibleObjects.size() > 0) {
-            DrawText(TextFormat("Top Left: [%f , %f]", visibleObjects[0]->GetPosition().x, visibleObjects[0]->GetPosition().y), 0, 185, 15, GREEN);
-            DrawText(TextFormat("Bottom Right: [%f , %f]", visibleObjects[visibleObjects.size() - 1]->GetPosition().x, visibleObjects[visibleObjects.size() - 1]->GetPosition().y), 0, 215, 15, GREEN);
-        }
-        DrawText(TextFormat("[%f , %f , %f , %f]", (float)player.GetPosition().x - screenWidth / 2, (float)player.GetPosition().y - screenHeight / 2, (float)screenWidth, (float)screenHeight), 0, 245, 15, GREEN);
-        
-        // Finish draw on texture
+        DrawText(TextFormat("Player Position: [%f , %f]", (float)player->GetPosition().x, (float)player->GetPosition().y), 0, 125, 15, GREEN);
+        DrawText(TextFormat("Player Grid: [%i , %i]", (int)player->GetPosition().x / gridSize, (int)player->GetPosition().y / gridSize), 0, 155, 15, GREEN);
+        DrawText(TextFormat("Scale: [%f]", (float)scale), 0, 185, 15, GREEN);
+        DrawText(TextFormat("Mouse Screen Position: [%f , %f]", (float)GetMousePosition().x, (float)GetMousePosition().y), 0, 215, 15, GREEN);
+        DrawText(TextFormat("Mouse World Position: [%f , %f]", (float)mouseRect.x, (float)mouseRect.y), 0, 245, 15, GREEN);
+
+        // Finish drawing on texture
         EndTextureMode();
-        
+
         // Start drawing on the window screen
         BeginDrawing();
 
@@ -318,9 +249,9 @@ int main()
         DrawTexturePro(target.texture,
                        Rectangle{0.0f, 0.0f, (float)target.texture.width, (float)-target.texture.height},
                        Rectangle{(GetScreenWidth() - ((float)gameScreenWidth * scale)) * 0.5f,
-                                   (GetScreenHeight() - ((float)gameScreenHeight * scale)) * 0.5f,
-                                   (float)gameScreenWidth * scale,
-                                   (float)gameScreenHeight * scale},
+                                 (GetScreenHeight() - ((float)gameScreenHeight * scale)) * 0.5f,
+                                 (float)gameScreenWidth * scale,
+                                 (float)gameScreenHeight * scale},
                        Vector2{0, 0}, 0.0f, WHITE);
 
         // End drawing

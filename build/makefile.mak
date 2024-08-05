@@ -1,3 +1,4 @@
+# type "make run" in terminal
 CC = g++
 CFLAGS = -O1 -Wall -std=c++17 -Wno-missing-braces -I../include/
 LDFLAGS = -L../lib/

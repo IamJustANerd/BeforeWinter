@@ -3,11 +3,12 @@
 
 #include "raylib.h"
 #include "Dynamic.h"
+#include "Inventory.h"
 
 class Player : public Dynamic
 {
 private:
-    float stamina = 100.0f;
+    Inventory inventory;
 
 public:
     // Constructor
@@ -16,8 +17,17 @@ public:
     // Player movements
     void Movements() override;
 
+    // Update player
+    void Update() override;
+
     // Draw
     void Draw() const override;
+
+    // Player inventory current status
+    bool IsInventoryCalled();
+
+    // Draw player inventory
+    void DrawInventory() const;
 };
 
 #endif // PLAYER_H

@@ -2,12 +2,15 @@
 #define MOUSE_H
 
 #include "../include/raylib.h"
+#include "../include/Screen.h"
 
 // Mouse collision check
 extern bool mouseCollision;
+extern bool mouseGrab;
+extern Vector2 mousePosition;
 extern int mouseSize;
 
-void UpdateMouse(Rectangle &mouseRect, Camera2D camera, float scale, int gameScreenWidth, int gameScreenHeight);
+void UpdateMouse(Rectangle &mouseRect, Camera2D camera);
 void DrawMouse(bool mouseCollision, float scale);
 
 #endif 

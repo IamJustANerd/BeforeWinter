@@ -10,4 +10,7 @@ extern int screenHeight;
 extern int gameScreenWidth;
 extern int gameScreenHeight;
 
+// Scale
+extern float scale;
+
 #endif

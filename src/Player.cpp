@@ -1,5 +1,5 @@
 #include "../include/Player.h"
-#include <iostream>
+#include "../include/Inventory.h"
 
 Player::Player(Vector2 _position)
 {
@@ -40,4 +40,21 @@ void Player::Draw() const
     DrawRectangle(position.x, position.y, width, height, WHITE);
     // Draw hitbox
     DrawRectangleRec(hitBox, Color{0, 228, 48, 120});
+}
+
+void Player::Update()
+{
+    Movements();
+
+    inventory.Update();
+}
+
+bool Player::IsInventoryCalled()
+{
+    return inventory.IsCalled();
+}
+
+void Player::DrawInventory() const
+{
+    inventory.Draw();
 }

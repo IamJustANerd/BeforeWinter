@@ -113,7 +113,7 @@ int main()
     SetWindowMinSize(320, 180);
 
     // Toggle full screen
-    // ToggleFullscreen();
+    //ToggleFullscreen();
 
     // Update screen width and height to the current window size
     screenWidth = GetScreenWidth();
@@ -160,7 +160,7 @@ int main()
     SetTargetFPS(120);
 
     // Scale the content based on the window size
-    float scale = std::min((float)screenWidth / gameScreenWidth, (float)screenHeight / gameScreenHeight);
+    scale = std::min((float)screenWidth / gameScreenWidth, (float)screenHeight / gameScreenHeight);
 
     // Window loop
     while (!WindowShouldClose())
@@ -174,15 +174,15 @@ int main()
         // Sort all of them based on their position
         std::sort(visibleObjects.begin(), visibleObjects.end(), CompareObjectPosition());
 
-        // Player movement
-        player->Movements();
+        // Update Player
+        player->Update();
 
         // Update Camera
         UpdateCamera(camera, player->GetPosition(), player->GetWidth(), player->GetHeight(), scale);
 
         // Update mouse according to world position
         Rectangle mouseRect = {0, 0, mouseSize / camera.zoom, mouseSize / camera.zoom};
-        UpdateMouse(mouseRect, camera, scale, gameScreenWidth, gameScreenHeight);
+        UpdateMouse(mouseRect, camera);
 
         // Draw on texture
         BeginTextureMode(target);
@@ -202,8 +202,9 @@ int main()
         }
 
         // Draw player and rectangle (for debugging)
+
         Rectangle testBlue = {player->GetPosition().x - gridSize, player->GetPosition().y - gridSize, gridSize * 3, gridSize * 3};
-        if (CheckCollisionRecs(testBlue, mouseRect))
+        if (CheckCollisionRecs(testBlue, mouseRect) && !player->IsInventoryCalled())
         {
             DrawRectangleRec(testBlue, Color{230, 41, 55, 127});
             mouseCollision = true;
@@ -213,6 +214,7 @@ int main()
             DrawRectangleRec(testBlue, Color{0, 121, 241, 127});
         }
 
+        // Collision test with world objects
         // for (const auto &obj : visibleObjects)
         // {
         //     if(CheckCollisionRecs(mouseRect,
@@ -224,6 +226,12 @@ int main()
 
         // End 2D mode
         EndMode2D();
+
+        // Draw inventory
+        if(player->IsInventoryCalled())
+        {
+            player->DrawInventory();
+        }
 
         // Draw the mouse according to screen position
         DrawMouse(mouseCollision, scale);

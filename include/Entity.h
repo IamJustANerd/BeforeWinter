@@ -14,6 +14,7 @@ protected:
 
 public:
     virtual void Draw() const = 0;
+    virtual void Update();
     Vector2 GetPosition() const;
     int GetWidth() const;
     int GetHeight() const;

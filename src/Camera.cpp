@@ -13,10 +13,10 @@ void UpdateCamera(Camera2D &camera, Vector2 playerPos, int playerWidth, int play
     // Camera zoom controls
     camera.zoom += ((float)GetMouseWheelMove() * 0.05f);
 
-    if (camera.zoom > 2.0f)
-        camera.zoom = 2.0f;
-    else if (camera.zoom < 0.1f)
-        camera.zoom = 0.1f;
+    if (camera.zoom > 1.5f)
+        camera.zoom = 1.5f;
+    else if (camera.zoom < 0.5f)
+        camera.zoom = 0.5f;
 
     // Reset zoom value
     if (IsKeyPressed(KEY_R))

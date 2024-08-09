@@ -1,14 +1,17 @@
 #include "../include/Mouse.h"
 #include "../include/raymath.h"
+#include "../include/Screen.h"
 
 // Mouse collision check
 bool mouseCollision;
+bool mouseGrab;
+Vector2 mousePosition;
 int mouseSize = 20;
 
-void UpdateMouse(Rectangle &mouseRect, Camera2D camera, float scale, int gameScreenWidth, int gameScreenHeight)
+void UpdateMouse(Rectangle &mouseRect, Camera2D camera)
 {
     // Get mouse position in screen space
-    Vector2 mousePosition = GetMousePosition();
+    mousePosition = GetMousePosition();
 
     // Transform mouse position to world space with scaling
     mousePosition.x = (mousePosition.x - (GetScreenWidth() - gameScreenWidth * scale) * 0.5f) / scale;
@@ -31,10 +34,10 @@ void DrawMouse(bool mouseCollision, float scale)
     Vector2 mouseScreenPos = GetMousePosition();
     if (mouseCollision)
     {
-        DrawRectangle(mouseScreenPos.x / scale, mouseScreenPos.y / scale, 20, 20, RED);
+        DrawRectangle(mouseScreenPos.x / scale, mouseScreenPos.y / scale, mouseSize, mouseSize, RED);
     }
     else
     {
-        DrawRectangle(mouseScreenPos.x / scale, mouseScreenPos.y / scale, 20, 20, GREEN);
+        DrawRectangle(mouseScreenPos.x / scale, mouseScreenPos.y / scale, mouseSize, mouseSize, GREEN);
     }
 }

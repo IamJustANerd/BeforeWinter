@@ -46,6 +46,10 @@ Inventory::Inventory()
     inventoryItems[0][0].id = 7;
     inventoryItems[0][0].type = 10;
     inventoryItems[0][0].amount = 999;
+
+    inventoryItems[5][3].id = 7;
+    inventoryItems[5][3].type = 10;
+    inventoryItems[5][3].amount = 99999;
 }
 
 // Swap two items
@@ -171,11 +175,6 @@ void Inventory::Update()
     if (IsKeyPressed(KEY_I))
     {
         isCalled = !isCalled;
-    }
-
-    if (isCalled)
-    {
-        
     }
 }
 

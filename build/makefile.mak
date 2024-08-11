@@ -24,8 +24,10 @@ $(BUILD_DIR):
 
 .PHONY: clean run
 
+# Clean target to remove object files and the executable
 clean:
-	rm -rf $(BUILD_DIR) $(TARGET)
+	rm -rf $(BUILD_DIR)/*.o $(TARGET)
 
-run: $(TARGET)
+# Run target
+run: clean $(TARGET)
 	./$(TARGET)

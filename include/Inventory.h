@@ -31,6 +31,9 @@ public :
     // Update the state
     void Update();
 
+    // Add item when player collect one
+    void AddItem();
+
     // Return either the inventory is called or not
     bool IsCalled();
 };

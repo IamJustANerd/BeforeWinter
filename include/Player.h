@@ -9,6 +9,10 @@ class Player : public Dynamic
 {
 private:
     Inventory inventory;
+    float sprintSpeed = 8.0f;
+    bool isSprinting = false;
+    Rectangle collectRadius;
+    float collectRadiusLength = 32.0f;
 
 public:
     // Constructor
@@ -28,6 +32,12 @@ public:
 
     // Draw player inventory
     void DrawInventory() const;
+
+    // Return player collect radius rectangle
+    Rectangle GetCollectRadiusRectangle();
+
+    // Return player hitbox position
+    Vector2 GetHitBoxPosition();
 };
 
 #endif // PLAYER_H

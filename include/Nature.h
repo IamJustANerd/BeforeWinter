@@ -13,6 +13,8 @@ public:
     Nature(Vector2 _position, int _type, Texture2D *_textures);
     // Draw
     void Draw() const override;
+    // Update
+    void Update() override;
 };
 
 #endif // PLAYER_H

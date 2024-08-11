@@ -13,6 +13,11 @@ Nature::Nature(Vector2 _position, int _type, Texture2D* _textures)
 
 void Nature::Draw() const
 {
-    DrawRectangle(position.x, position.y, width, height, PURPLE);
+    // DrawRectangle(position.x, position.y, width, height, PURPLE);
     DrawTexture(textures[type], position.x, position.y, WHITE);
+}
+
+void Nature::Update()
+{
+    
 }

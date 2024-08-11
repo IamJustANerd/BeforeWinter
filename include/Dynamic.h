@@ -8,6 +8,7 @@ class Dynamic : public Entity
 {
 protected:
     float speed = 0;
+    float rotation = 0;
 
 public:
     // Movements

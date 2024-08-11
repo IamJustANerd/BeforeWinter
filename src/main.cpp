@@ -36,16 +36,22 @@
 // Nature
 #include "../include/Nature.h"
 
+// Collectible
+#include "../include/Collectible.h"
+
 // {---------------------------------------------- Global Variables ----------------------------------------------}
 
 // Grid size
-const int gridSize = 32;
+const int gridSize = 128;
 
 // Minimum and maximum value for visible grid (set as global for debugging purpose)
 int minX;
 int minY;
 int maxX;
 int maxY;
+
+// For debugging
+bool showInformation = false;
 
 // Store entites as game objects
 std::vector<Entity*> gameObjects;
@@ -136,20 +142,25 @@ int main()
     Player *player = new Player(Vector2{(float)screenWidth / 2, (float)screenHeight / 2});
 
     // Initialize random game objects for testing grid partitioning
-    int ty = 0;
+    // for (int i = 0; i <= 5000; i += GetRandomValue(0, 128))
+    // {
+    //     for (int j = 0; j <= 5000; j += GetRandomValue(0, 128))
+    //     {
+    //         gameObjects.emplace_back(new Nature(Vector2{(float)i, (float)j}, GetRandomValue(0, 4), NatureTex));
+    //     }
+    // }
+
+    gameObjects.emplace_back(player);
+
+    // Testing collectibles
     for (int i = 0; i <= 5000; i += GetRandomValue(0, 128))
     {
         for (int j = 0; j <= 5000; j += GetRandomValue(0, 128))
         {
-            gameObjects.emplace_back(new Nature(Vector2{(float)i, (float)j}, ty, NatureTex));
-            ty += 1;
-            ty %= 2;
+            gameObjects.emplace_back(new Nature(Vector2{(float)i, (float)j}, GetRandomValue(0, 4), NatureTex));
+            gameObjects.emplace_back(new Collectible(Vector2{(float)i, (float)j}, GetRandomValue(0, 4)));
         }
-        ty += 1;
-        ty %= 2;
     }
-
-    gameObjects.emplace_back(player);
 
     // Setting up camera to follow the player
     Camera2D camera = {0};
@@ -177,12 +188,57 @@ int main()
         // Update Player
         player->Update();
 
+        // Temporary loop to check if collectibles are inside player collect radius
+        for (auto it = visibleObjects.begin(); it != visibleObjects.end();)
+        {
+            if (typeid(**it) == typeid(Collectible))
+            {
+                Collectible *collectible = static_cast<Collectible *>(*it);
+
+                collectible->UpdatePlayerPosition(player->GetHitBoxPosition());
+
+                // If within radius, then change the state
+                if (CheckCollisionRecs(collectible->GetHitBox(), player->GetCollectRadiusRectangle()))
+                {
+                    std::cout << "KENA" << '\n';
+                    collectible->withinRadius = true;
+                }
+                else
+                {
+                    collectible->withinRadius = false;
+                }
+
+                // If collide with player hit box, then remove it
+                if (CheckCollisionRecs(collectible->GetHitBox(), player->GetHitBox()))
+                {
+                    std::cout << "REMOVE" << '\n';
+                    it = visibleObjects.erase(it); // Erase returns the next valid iterator
+                }
+                else
+                {
+                    ++it; // Only increment if not removing
+                }
+
+                collectible->Update();
+            }
+            else
+            {
+                ++it;
+            }
+        }
+
         // Update Camera
         UpdateCamera(camera, player->GetPosition(), player->GetWidth(), player->GetHeight(), scale);
 
         // Update mouse according to world position
         Rectangle mouseRect = {0, 0, mouseSize / camera.zoom, mouseSize / camera.zoom};
         UpdateMouse(mouseRect, camera);
+
+        // Toggle show information
+        if(IsKeyPressed(KEY_TAB))
+        {
+            showInformation = !showInformation;
+        }
 
         // Draw on texture
         BeginTextureMode(target);
@@ -203,7 +259,8 @@ int main()
 
         // Draw player and rectangle (for debugging)
 
-        Rectangle testBlue = {player->GetPosition().x - gridSize, player->GetPosition().y - gridSize, gridSize * 3, gridSize * 3};
+        Rectangle testBlue = {player->GetPosition().x - gridSize, player->GetPosition().y - gridSize, gridSize * 2 + player->GetWidth(), gridSize * 2 + player->GetHeight()};
+        // Only hover when the inventory is not called
         if (CheckCollisionRecs(testBlue, mouseRect) && !player->IsInventoryCalled())
         {
             DrawRectangleRec(testBlue, Color{230, 41, 55, 127});
@@ -237,16 +294,18 @@ int main()
         DrawMouse(mouseCollision, scale);
 
         // Debugging Information
-        DrawText(TextFormat("Min X Y: [%i , %i]", (int)minX, (int)minY), 0, 5, 15, GREEN);
-        DrawText(TextFormat("Max X Y: [%i , %i]", (int)maxX, (int)maxY), 0, 35, 15, GREEN);
-        DrawText(TextFormat("Camera X Y: [%i , %i]", (int)camera.target.x, (int)camera.target.y), 0, 65, 15, GREEN);
-        DrawText(TextFormat("Screen Size: [%i , %i]", (int)screenWidth, (int)screenHeight), 0, 95, 15, GREEN);
-        DrawText(TextFormat("Player Position: [%f , %f]", (float)player->GetPosition().x, (float)player->GetPosition().y), 0, 125, 15, GREEN);
-        DrawText(TextFormat("Player Grid: [%i , %i]", (int)player->GetPosition().x / gridSize, (int)player->GetPosition().y / gridSize), 0, 155, 15, GREEN);
-        DrawText(TextFormat("Scale: [%f]", (float)scale), 0, 185, 15, GREEN);
-        DrawText(TextFormat("Mouse Screen Position: [%f , %f]", (float)GetMousePosition().x, (float)GetMousePosition().y), 0, 215, 15, GREEN);
-        DrawText(TextFormat("Mouse World Position: [%f , %f]", (float)mouseRect.x, (float)mouseRect.y), 0, 245, 15, GREEN);
-
+        if(showInformation)
+        {
+            DrawText(TextFormat("Min X Y: [%i , %i]", (int)minX, (int)minY), 0, 5, 15, GREEN);
+            DrawText(TextFormat("Max X Y: [%i , %i]", (int)maxX, (int)maxY), 0, 35, 15, GREEN);
+            DrawText(TextFormat("Camera X Y: [%i , %i]", (int)camera.target.x, (int)camera.target.y), 0, 65, 15, GREEN);
+            DrawText(TextFormat("Screen Size: [%i , %i]", (int)screenWidth, (int)screenHeight), 0, 95, 15, GREEN);
+            DrawText(TextFormat("Player Position: [%f , %f]", (float)player->GetPosition().x, (float)player->GetPosition().y), 0, 125, 15, GREEN);
+            DrawText(TextFormat("Player Grid: [%i , %i]", (int)player->GetPosition().x / gridSize, (int)player->GetPosition().y / gridSize), 0, 155, 15, GREEN);
+            DrawText(TextFormat("Scale: [%f]", (float)scale), 0, 185, 15, GREEN);
+            DrawText(TextFormat("Mouse Screen Position: [%f , %f]", (float)GetMousePosition().x, (float)GetMousePosition().y), 0, 215, 15, GREEN);
+            DrawText(TextFormat("Mouse World Position: [%f , %f]", (float)mouseRect.x, (float)mouseRect.y), 0, 245, 15, GREEN);
+        }
         // Finish drawing on texture
         EndTextureMode();
 

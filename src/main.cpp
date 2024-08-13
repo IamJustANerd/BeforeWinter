@@ -200,7 +200,6 @@ int main()
                 // If within radius, then change the state
                 if (CheckCollisionRecs(collectible->GetHitBox(), player->GetCollectRadiusRectangle()))
                 {
-                    std::cout << "KENA" << '\n';
                     collectible->withinRadius = true;
                 }
                 else
@@ -211,7 +210,6 @@ int main()
                 // If collide with player hit box, then remove it
                 if (CheckCollisionRecs(collectible->GetHitBox(), player->GetHitBox()))
                 {
-                    std::cout << "REMOVE" << '\n';
                     it = visibleObjects.erase(it); // Erase returns the next valid iterator
                 }
                 else

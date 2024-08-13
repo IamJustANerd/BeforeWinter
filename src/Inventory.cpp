@@ -105,6 +105,15 @@ void Inventory::Draw() const
             if (inventoryItems[pos.x][pos.y].id != -1)
             {
                 slotColor = Color{0, 228, 48, 127};
+                
+                // Item ID
+                DrawText(TextFormat("%i", inventoryItems[pos.x][pos.y].id),
+                                    j + horizontalOffset + slotWidth - DigitLength(inventoryItems[pos.x][pos.y].id) * 7,
+                                    i + verticalOffset + slotHeight - 10,
+                                    7,
+                                    WHITE);
+
+                // Item amount
                 DrawText(TextFormat("%i", inventoryItems[pos.x][pos.y].amount),
                                     j + horizontalOffset + slotWidth - DigitLength(inventoryItems[pos.x][pos.y].amount) * 7,
                                     i + verticalOffset + slotHeight - 10,

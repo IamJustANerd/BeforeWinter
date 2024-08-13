@@ -28,22 +28,35 @@ void Player::Movements()
         speed -= sprintSpeed;
         isSprinting = false;
     }
-    
+
+    // Note: Avoid adding the value directly to prevent jumping movement
     if (IsKeyDown(KEY_A))
     {
-        position.x -= speed;
+        for(int i = 0; i < speed; i++)
+        {
+            position.x -= 1;
+        }
     }
     if (IsKeyDown(KEY_D))
     {
-        position.x += speed;
+        for (int i = 0; i < speed; i++)
+        {
+            position.x += 1;
+        }
     }
     if (IsKeyDown(KEY_W))
     {
-        position.y -= speed;
+        for (int i = 0; i < speed; i++)
+        {
+            position.y -= 1;
+        }
     }
     if (IsKeyDown(KEY_S))
     {
-        position.y += speed;
+        for (int i = 0; i < speed; i++)
+        {
+            position.y += 1;
+        }
     }
 
     // Update hitBox position

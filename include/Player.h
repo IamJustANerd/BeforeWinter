@@ -33,11 +33,20 @@ public:
     // Draw player inventory
     void DrawInventory() const;
 
+    // Add item to inventory
+    void AddItemToInventory(int _id, int _amount);
+
     // Return player collect radius rectangle
     Rectangle GetCollectRadiusRectangle();
 
     // Return player hitbox position
     Vector2 GetHitBoxPosition();
+
+    // Return either player's inventory is full or not
+    bool IsInventoryFull();
+
+    // Return either item can fit into inventory or not
+    bool CanItemFitIntoInventory(int _id, int _amount);
 };
 
 #endif // PLAYER_H

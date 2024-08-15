@@ -16,7 +16,7 @@ class Collectible : public Dynamic
     public:
     bool withinRadius = false;
     // Constructur
-    Collectible(Vector2 _position, int _type);
+    Collectible(Vector2 _position, int _id);
     
     // Update
     void Update() override;

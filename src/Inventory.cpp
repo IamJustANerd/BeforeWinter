@@ -44,11 +44,11 @@ Inventory::Inventory()
     inventoryItems[5][9].amount = 1;
 
     inventoryItems[0][0].id = 7;
-    inventoryItems[0][0].type = 10;
+    inventoryItems[0][0].type = 1;
     inventoryItems[0][0].amount = 999;
 
-    inventoryItems[5][3].id = 7;
-    inventoryItems[5][3].type = 10;
+    inventoryItems[5][3].id = 355;
+    inventoryItems[5][3].type = 1;
     inventoryItems[5][3].amount = 99999;
 }
 
@@ -107,9 +107,9 @@ void Inventory::Draw() const
                 slotColor = Color{0, 228, 48, 127};
                 
                 // Item ID
-                DrawText(TextFormat("%i", inventoryItems[pos.x][pos.y].id),
-                                    j + horizontalOffset + slotWidth - DigitLength(inventoryItems[pos.x][pos.y].id) * 7,
-                                    i + verticalOffset + slotHeight - 10,
+                DrawText(TextFormat("ID: %i", inventoryItems[pos.x][pos.y].id),
+                                    j + horizontalOffset + 5,
+                                    i + verticalOffset + 5,
                                     7,
                                     WHITE);
 
@@ -200,4 +200,82 @@ bool Inventory::CheckMouseHover(int slotX, int slotY, int slotW, int slotH) cons
 bool Inventory::IsCalled()
 {
     return isCalled;
+}
+
+itemPosition Inventory::FindSlot(int _id, int _amount)
+{
+    // Find available slot to keep or stack item (stack will always be prioritized when collecting items)
+    itemPosition pos;
+    pos.x = -1, pos.y = -1;
+    bool available = false;
+
+    // First, try to stack item
+    for(int i = 0; i < slotVertical && !available; i++)
+    {
+        for(int j = 0; j < slotHorizontal && !available; j++)
+        {
+            if(inventoryItems[i][j].id == _id)
+            {
+                pos.x = i, pos.y = j;
+                available = true;
+            }
+        }
+    }
+
+    // If stacking is not possible, find an empty slot
+    for(int i = 0; i < slotVertical && !available; i++)
+    {
+        for(int j = 0; j < slotHorizontal && !available; j++)
+        {
+            if(inventoryItems[i][j].id == -1)
+            {
+                pos.x = i, pos.y = j;
+                available = true;
+            }
+        }
+    }
+
+    return pos;
+}
+
+void Inventory::AddItem(int _id, int _amount)
+{
+    // Find available slot
+    itemPosition pos = FindSlot(_id, _amount);
+
+    // If full
+    if(pos.x == -1 && pos.y == -1)
+    {
+        return;
+    }
+
+    // Stacking item
+    if(inventoryItems[pos.x][pos.y].id == _id)
+    {
+        inventoryItems[pos.x][pos.y].amount += 1;
+    }
+    // Adding item
+    else if (inventoryItems[pos.x][pos.y].id == -1)
+    {
+        inventoryItems[pos.x][pos.y].id = _id;
+        inventoryItems[pos.x][pos.y].amount = 1;
+    }
+}
+
+bool Inventory::IsFull()
+{
+    bool isFull = true;
+    
+    for(int i = 0; i < slotVertical; i++)
+    {
+        for(int j = 0; j < slotHorizontal; j++)
+        {
+            if(inventoryItems[i][j].id == -1)
+            {
+                isFull = false;
+            }
+        }
+    }
+
+    return isFull;
 }

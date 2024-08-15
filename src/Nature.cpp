@@ -1,10 +1,10 @@
 #include "../include/Nature.h"
 #include <iostream>
 
-Nature::Nature(Vector2 _position, int _type, Texture2D* _textures)
+Nature::Nature(Vector2 _position, int _id, Texture2D* _textures)
 {
     position = _position;
-    type = _type;
+    id = _id;
     textures = _textures;
 
     width = textures->width;
@@ -14,7 +14,7 @@ Nature::Nature(Vector2 _position, int _type, Texture2D* _textures)
 void Nature::Draw() const
 {
     // DrawRectangle(position.x, position.y, width, height, PURPLE);
-    DrawTexture(textures[type], position.x, position.y, WHITE);
+    DrawTexture(textures[id], position.x, position.y, WHITE);
 }
 
 void Nature::Update()

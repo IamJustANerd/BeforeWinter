@@ -3,10 +3,10 @@
 #include <cmath>
 #include <iostream>
 
-Collectible::Collectible(Vector2 _position, int _type)
+Collectible::Collectible(Vector2 _position, int _id)
 {
     position = _position;
-    type = _type;
+    id = _id;
     width = 16, height = 16;
     hitBox = Rectangle{position.x, position.y, (float)width, (float)height};
     // speed = 10;

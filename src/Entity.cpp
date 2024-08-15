@@ -16,9 +16,9 @@ int Entity::GetHeight() const
     return height;
 }
 
-int Entity::GetType() const
+int Entity::GetID() const
 {
-    return type;
+    return id;
 }
 
 Rectangle Entity::GetHitBox() const

@@ -7,7 +7,7 @@ Player::Player(Vector2 _position)
 {
     position = _position;
     width = 32, height = 32;
-    type = 0;
+    id = 0;
     hitBox = Rectangle{ position.x, position.y + (float)height * 0.75f, (float)width, (float)height / 4 };
     speed = 2.5f;
     collectRadius = Rectangle{position.x - collectRadiusLength,
@@ -99,6 +99,11 @@ void Player::DrawInventory() const
     inventory.Draw();
 }
 
+void Player::AddItemToInventory(int _id, int _amount)
+{
+    inventory.AddItem(_id, _amount);
+}
+
 Rectangle Player::GetCollectRadiusRectangle()
 {
     return collectRadius;
@@ -107,4 +112,23 @@ Rectangle Player::GetCollectRadiusRectangle()
 Vector2 Player::GetHitBoxPosition()
 {
     return Vector2{hitBox.x, hitBox.y};
+}
+
+bool Player::IsInventoryFull()
+{
+    return inventory.IsFull();
+}
+
+bool Player::CanItemFitIntoInventory(int _id, int _amount)
+{
+    itemPosition pos = inventory.FindSlot(_id, _amount);
+
+    if(pos.x != -1 && pos.y != -1)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }

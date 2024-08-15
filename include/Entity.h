@@ -9,6 +9,7 @@ protected:
     Vector2 position;
     int width, height;
     int type;
+    int id;
     Rectangle hitBox;
     Texture2D* textures;
 
@@ -18,7 +19,7 @@ public:
     Vector2 GetPosition() const;
     int GetWidth() const;
     int GetHeight() const;
-    int GetType() const;
+    int GetID() const;
     Rectangle GetHitBox() const;
 };
 

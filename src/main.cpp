@@ -51,7 +51,7 @@ int maxX;
 int maxY;
 
 // For debugging
-bool showInformation = false;
+bool showInformation = true;
 
 // Store entites as game objects
 std::vector<Entity*> gameObjects;
@@ -158,9 +158,12 @@ int main()
         for (int j = 0; j <= 5000; j += GetRandomValue(0, 128))
         {
             gameObjects.emplace_back(new Nature(Vector2{(float)i, (float)j}, GetRandomValue(0, 4), NatureTex));
-            gameObjects.emplace_back(new Collectible(Vector2{(float)i, (float)j}, GetRandomValue(0, 4)));
+            gameObjects.emplace_back(new Collectible(Vector2{(float)i, (float)j}, GetRandomValue(1, 9999)));
         }
     }
+    gameObjects.emplace_back(new Collectible(Vector2{200, 200}, 1));
+    gameObjects.emplace_back(new Collectible(Vector2{150, 200}, 2));
+    gameObjects.emplace_back(new Collectible(Vector2{-2000, 200}, 7));
 
     // Setting up camera to follow the player
     Camera2D camera = {0};
@@ -198,7 +201,8 @@ int main()
                 collectible->UpdatePlayerPosition(player->GetHitBoxPosition());
 
                 // If within radius, then change the state
-                if (CheckCollisionRecs(collectible->GetHitBox(), player->GetCollectRadiusRectangle()))
+                if (CheckCollisionRecs(collectible->GetHitBox(), player->GetCollectRadiusRectangle()) &&
+                    player->CanItemFitIntoInventory(collectible->GetID(), 1))
                 {
                     collectible->withinRadius = true;
                 }
@@ -208,9 +212,21 @@ int main()
                 }
 
                 // If collide with player hit box, then remove it
-                if (CheckCollisionRecs(collectible->GetHitBox(), player->GetHitBox()))
+                if (CheckCollisionRecs(collectible->GetHitBox(), player->GetHitBox()) &&
+                    player->CanItemFitIntoInventory(collectible->GetID(), 1))
                 {
-                    it = visibleObjects.erase(it); // Erase returns the next valid iterator
+                    //std::cout << "Dapat " << collectible->GetID() << '\n';
+
+                    player->AddItemToInventory(collectible->GetID(), 1);
+
+                    // Erase returns the next valid iterator
+                    it = visibleObjects.erase(it); 
+
+                    auto gameObjIt = std::find(gameObjects.begin(), gameObjects.end(), collectible);
+                    if (gameObjIt != gameObjects.end())
+                    {
+                        gameObjects.erase(gameObjIt);
+                    }
                 }
                 else
                 {
@@ -257,17 +273,18 @@ int main()
 
         // Draw player and rectangle (for debugging)
 
-        Rectangle testBlue = {player->GetPosition().x - gridSize, player->GetPosition().y - gridSize, gridSize * 2 + player->GetWidth(), gridSize * 2 + player->GetHeight()};
-        // Only hover when the inventory is not called
-        if (CheckCollisionRecs(testBlue, mouseRect) && !player->IsInventoryCalled())
-        {
-            DrawRectangleRec(testBlue, Color{230, 41, 55, 127});
-            mouseCollision = true;
-        }
-        else
-        {
-            DrawRectangleRec(testBlue, Color{0, 121, 241, 127});
-        }
+        // Mouse collision testing
+        // Rectangle testBlue = {player->GetPosition().x - gridSize, player->GetPosition().y - gridSize, gridSize * 2 + player->GetWidth(), gridSize * 2 + player->GetHeight()};
+        // // Only hover when the inventory is not called
+        // if (CheckCollisionRecs(testBlue, mouseRect) && !player->IsInventoryCalled())
+        // {
+        //     DrawRectangleRec(testBlue, Color{230, 41, 55, 127});
+        //     mouseCollision = true;
+        // }
+        // else
+        // {
+        //     DrawRectangleRec(testBlue, Color{0, 121, 241, 127});
+        // }
 
         // Collision test with world objects
         // for (const auto &obj : visibleObjects)
@@ -303,6 +320,7 @@ int main()
             DrawText(TextFormat("Scale: [%f]", (float)scale), 0, 185, 15, GREEN);
             DrawText(TextFormat("Mouse Screen Position: [%f , %f]", (float)GetMousePosition().x, (float)GetMousePosition().y), 0, 215, 15, GREEN);
             DrawText(TextFormat("Mouse World Position: [%f , %f]", (float)mouseRect.x, (float)mouseRect.y), 0, 245, 15, GREEN);
+            DrawText(TextFormat("FPS: [%i]", GetFPS()), 0, 275, 15, GREEN);
         }
         // Finish drawing on texture
         EndTextureMode();

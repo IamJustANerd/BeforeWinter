@@ -39,6 +39,9 @@
 // Collectible
 #include "../include/Collectible.h"
 
+// Grid
+#include "../include/Grid.h"
+
 // {---------------------------------------------- Global Variables ----------------------------------------------}
 
 // Grid size
@@ -76,10 +79,10 @@ void GetVisibleObjects(Camera2D camera)
 {
     visibleObjects.clear();
     Vector2 cameraPos = camera.target;
-    minX = (int)(cameraPos.x - screenWidth) / gridSize;
-    minY = (int)(cameraPos.y - screenHeight) / gridSize;
-    maxX = (int)(cameraPos.x + screenWidth) / gridSize;
-    maxY = (int)(cameraPos.y + screenHeight) / gridSize;
+    minX = (int)(cameraPos.x - screenWidth / scale) / gridSize;
+    minY = (int)(cameraPos.y - screenHeight / scale) / gridSize;
+    maxX = (int)(cameraPos.x + screenWidth / scale) / gridSize;
+    maxY = (int)(cameraPos.y + screenHeight / scale) / gridSize;
 
     for (const auto &obj : gameObjects)
     {
@@ -98,15 +101,32 @@ void GetVisibleObjects(Camera2D camera)
 // Draw grid for debugging purpose
 void DrawGrid(int gridSize, Camera2D camera)
 {
+    // World
     for (int x = -10000; x <= 10000; x += gridSize)
     {
-        DrawLine(x, -10000, x, 10000, DARKGRAY);
+        DrawLine(x + 16, -10000, x + 16, 10000, DARKGRAY);
     }
 
     for (int y = -10000; y <= 10000; y += gridSize)
     {
-        DrawLine(-10000, y, 10000, y, DARKGRAY);
+        DrawLine(-10000, y + 16, 10000, y + 16, DARKGRAY);
     }
+
+    // Visible view
+    for (int x = minX; x <= maxX + 1; x += 1)
+    {
+        DrawLine(x * gridSize, minY * gridSize, x * gridSize, maxY * gridSize + gridSize, RED);
+    }
+
+    for(int y = minY; y <= maxY + 1; y += 1)
+    {
+        DrawLine(minX * gridSize, y * gridSize, maxX * gridSize + gridSize, y * gridSize, RED);
+    }
+
+    // for (int y = -10000; y <= 10000; y += gridSize)
+    // {
+    //     DrawLine(-10000, y, 10000, y, RED);
+    // }
 }
 
 // {---------------------------------------------- Main Code ----------------------------------------------}
@@ -138,32 +158,29 @@ int main()
     // Texture scale filter to use
     SetTextureFilter(target.texture, TEXTURE_FILTER_BILINEAR);
 
+    // Grid
+    Grid grid;
+
     // Declare player
-    Player *player = new Player(Vector2{(float)screenWidth / 2, (float)screenHeight / 2});
+    Player *player = new Player(Vector2{(float)screenWidth / 2, (float)screenHeight / 2}, &grid);
 
-    // Initialize random game objects for testing grid partitioning
-    // for (int i = 0; i <= 5000; i += GetRandomValue(0, 128))
-    // {
-    //     for (int j = 0; j <= 5000; j += GetRandomValue(0, 128))
-    //     {
-    //         gameObjects.emplace_back(new Nature(Vector2{(float)i, (float)j}, GetRandomValue(0, 4), NatureTex));
-    //     }
-    // }
+    Collectible *tes = new Collectible(Vector2{(float)screenWidth / 2 + 50, (float)screenHeight / 2 + 50}, 1, &grid);
+    Collectible *tes1 = new Collectible(Vector2{(float)screenWidth / 2 + 200, (float)screenHeight / 2 + 200}, 1, &grid);
 
+    gameObjects.emplace_back(tes);
+    gameObjects.emplace_back(tes1);
     gameObjects.emplace_back(player);
 
     // Testing collectibles
-    for (int i = 0; i <= 5000; i += GetRandomValue(0, 128))
-    {
-        for (int j = 0; j <= 5000; j += GetRandomValue(0, 128))
-        {
-            gameObjects.emplace_back(new Nature(Vector2{(float)i, (float)j}, GetRandomValue(0, 4), NatureTex));
-            gameObjects.emplace_back(new Collectible(Vector2{(float)i, (float)j}, GetRandomValue(1, 9999)));
-        }
-    }
-    gameObjects.emplace_back(new Collectible(Vector2{200, 200}, 1));
-    gameObjects.emplace_back(new Collectible(Vector2{150, 200}, 2));
-    gameObjects.emplace_back(new Collectible(Vector2{-2000, 200}, 7));
+    // for (int i = 0; i <= 500; i += 1)
+    // {
+    //     for (int j = 0; j <= 500; j += 1)
+    //     {
+    //         // gameObjects.emplace_back(new Nature(Vector2{(float)i, (float)j}, GetRandomValue(0, 4), NatureTex));
+    //         gameObjects.emplace_back(new Collectible(Vector2{(float)GetRandomValue(0, 10000), (float)GetRandomValue(0, 10000)}, GetRandomValue(1, 9999)));
+    //     }
+    // }
+    // gameObjects.emplace_back(new Collectible(Vector2{5000, 5000}, GetRandomValue(1, 9999)));
 
     // Setting up camera to follow the player
     Camera2D camera = {0};
@@ -171,10 +188,13 @@ int main()
     camera.zoom = 1.0f;
 
     // Setting game FPS
-    SetTargetFPS(120);
+    SetTargetFPS(60);
 
     // Scale the content based on the window size
     scale = std::min((float)screenWidth / gameScreenWidth, (float)screenHeight / gameScreenHeight);
+
+    // Counting time for debugging
+    int cnt = 0;
 
     // Window loop
     while (!WindowShouldClose())
@@ -190,6 +210,31 @@ int main()
 
         // Update Player
         player->Update();
+
+        // Update all objects in the grid
+        grid.UpdateGrid();
+
+        cnt += 1;
+        if(cnt >= 120) {
+            cnt = 0;
+
+            int object = 0;
+            for (int i = 0; i < grid.NUM_CELLS; i++)
+            {
+                for (int j = 0; j < grid.NUM_CELLS; j++)
+                {
+                    Entity *testing = grid.cells[i][j];
+                    while (testing != NULL)
+                    {
+                        std::cout << "Object num: " << object << '\n';
+                        std::cout << "Object cell: " << i << ' ' << j << '\n';
+
+                        object += 1;
+                        testing = testing->next;
+                    }
+                }
+            }
+        }
 
         // Temporary loop to check if collectibles are inside player collect radius
         for (auto it = visibleObjects.begin(); it != visibleObjects.end();)
@@ -321,6 +366,7 @@ int main()
             DrawText(TextFormat("Mouse Screen Position: [%f , %f]", (float)GetMousePosition().x, (float)GetMousePosition().y), 0, 215, 15, GREEN);
             DrawText(TextFormat("Mouse World Position: [%f , %f]", (float)mouseRect.x, (float)mouseRect.y), 0, 245, 15, GREEN);
             DrawText(TextFormat("FPS: [%i]", GetFPS()), 0, 275, 15, GREEN);
+            DrawText(TextFormat("Number of Visible Objects: [%i]", visibleObjects.size()), 0, 305, 15, GREEN);
         }
         // Finish drawing on texture
         EndTextureMode();

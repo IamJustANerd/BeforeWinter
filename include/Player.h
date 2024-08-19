@@ -16,7 +16,7 @@ private:
 
 public:
     // Constructor
-    Player(Vector2 _position);
+    Player(Vector2 _position, Grid* _grid);
 
     // Player movements
     void Movements() override;

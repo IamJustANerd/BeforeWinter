@@ -1,28 +1,37 @@
 #include "../include/Collectible.h"
 #include "../include/raymath.h"
+#include "../include/Grid.h"
 #include <cmath>
 #include <iostream>
 
-Collectible::Collectible(Vector2 _position, int _id)
+Collectible::Collectible(Vector2 _position, int _id, Grid* _grid)
 {
     position = _position;
     id = _id;
     width = 16, height = 16;
     hitBox = Rectangle{position.x, position.y, (float)width, (float)height};
     // speed = 10;
+
+    // Insert collectible into the grid
+    grid = _grid;
+    grid->Add(this);
 }
 
 void Collectible::Movements()
 {
     // Calculate direction and rotation to make collectible move to player
-    direction = {playerPos.x - position.x, playerPos.y - position.y};
+    direction = {(playerPos.x - position.x), (playerPos.y - position.y)};
     rotation = atan2f(direction.y, direction.x) * RAD2DEG;
 
     // Movement
     direction.x = cosf(rotation * DEG2RAD) * speed;
     direction.y = sinf(rotation * DEG2RAD) * speed;
 
+    // Update collectible's position
     position = Vector2Add(position, direction);
+
+    // Update collectible position in the grid
+    grid->Move(this, direction);
 }
 
 void Collectible::Update()

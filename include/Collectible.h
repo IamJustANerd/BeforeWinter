@@ -8,7 +8,7 @@ class Collectible : public Dynamic
 {
     private:
     float acceleration = 0.01f;
-    float maxSpeed = 5.0f;
+    float maxSpeed = 1.0f;
     Vector2 direction;
     Vector2 playerPos;
     int time = 0;
@@ -16,8 +16,8 @@ class Collectible : public Dynamic
     public:
     bool withinRadius = false;
     // Constructur
-    Collectible(Vector2 _position, int _id);
-    
+    Collectible(Vector2 _position, int _id, Grid *_grid);
+
     // Update
     void Update() override;
 

@@ -1,9 +1,10 @@
 #include "../include/Player.h"
 #include "../include/Inventory.h"
+#include "../include/Grid.h"
 #include "../include/Collectible.h"
 #include <iostream>
 
-Player::Player(Vector2 _position)
+Player::Player(Vector2 _position, Grid* _grid)
 {
     position = _position;
     width = 32, height = 32;
@@ -14,10 +15,17 @@ Player::Player(Vector2 _position)
                               position.y - collectRadiusLength,
                               (float)width + 2 * collectRadiusLength,
                               (float)height + 2 * collectRadiusLength};
+
+    // Insert player into the grid
+    grid = _grid;
+    grid->Add(this);
 }
 
 void Player::Movements()
 {
+    // Variables for calculating cell changes
+    Vector2 change = {0, 0};
+
     if(IsKeyPressed(KEY_LEFT_SHIFT) && !isSprinting)
     {
         speed += sprintSpeed;
@@ -35,6 +43,7 @@ void Player::Movements()
         for(int i = 0; i < speed; i++)
         {
             position.x -= 1;
+            change.x -= 1;
         }
     }
     if (IsKeyDown(KEY_D))
@@ -42,6 +51,7 @@ void Player::Movements()
         for (int i = 0; i < speed; i++)
         {
             position.x += 1;
+            change.x += 1;
         }
     }
     if (IsKeyDown(KEY_W))
@@ -49,6 +59,7 @@ void Player::Movements()
         for (int i = 0; i < speed; i++)
         {
             position.y -= 1;
+            change.y -= 1;
         }
     }
     if (IsKeyDown(KEY_S))
@@ -56,6 +67,7 @@ void Player::Movements()
         for (int i = 0; i < speed; i++)
         {
             position.y += 1;
+            change.y += 1;
         }
     }
 
@@ -63,9 +75,12 @@ void Player::Movements()
     hitBox.x = position.x;
     hitBox.y = position.y + (float)height * 0.75f;
 
-    // // Update collect radius position
+    // Update collect radius position
     collectRadius.x = position.x - collectRadiusLength;
     collectRadius.y = position.y - collectRadiusLength;
+
+    // Update player's cell
+    grid->Move(this, change);
 }
 
 void Player::Draw() const

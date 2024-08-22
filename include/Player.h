@@ -9,7 +9,7 @@ class Player : public Dynamic
 {
 private:
     Inventory inventory;
-    float sprintSpeed = 8.0f;
+    float sprintSpeed = 80.0f;
     bool isSprinting = false;
     Rectangle collectRadius;
     float collectRadiusLength = 32.0f;

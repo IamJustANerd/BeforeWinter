@@ -4,7 +4,10 @@
 #include "../include/Collectible.h"
 #include "../include/raylib.h"
 #include <cstddef>
+#include <algorithm>
 #include <iostream>
+
+// NOTE: NEED TO FIX DOUBLED ITEM COLLECTION
 
 Grid::Grid()
 {
@@ -31,10 +34,18 @@ void Grid::Add(Entity* entity)
 
     if (entity->next != NULL)
     {
+        std::cout << "ADA ORANG?" << '\n';
         entity->next->prev = entity;
     }
 
-    std::cout << cellX << ' ' << cellY << '\n';
+    // std::cout << "Player move to cell: " << cellX << ' ' << cellY << '\n';
+    // int cnt = 1;
+    // while(entity != NULL)
+    // {
+    //     std::cout << cnt << '\n';
+    //     cnt += 1;
+    //     entity = entity->next;
+    // }
 }
 
 void Grid::UpdateGrid()
@@ -51,19 +62,23 @@ void Grid::UpdateGrid()
 void Grid::HandleCell(Entity* entity)
 {
     // Handle collisions on a cell
+
     // Check collisions of each entity with the others inside the cell
     while (entity != NULL)
-    {
+    {   
+        // Update the entity
+        entity->Update();
+
         // Handling player collision
         if (typeid(*entity) == typeid(Player))
         {
-            HandlePlayerCollisions(entity);            
+            HandlePlayer(entity); 
         }
 
         // Handling collectible collision
         if (typeid(*entity) == typeid(Collectible))
         {
-            HandleCollectibleCollisions(entity);
+            HandleCollectible(entity);
         }
 
         entity = entity->next;
@@ -105,60 +120,90 @@ void Grid::Move(Entity *entity, Vector2 addPos)
     Add(entity);
 }
 
-void Grid::HandlePlayerCollisions(Entity* entity)
+void Grid::HandlePlayer(Entity* entity)
 {
     // To do Player class specific things
     Player *player = static_cast<Player *>(entity);
-    // Loop for others entities within cell
-    Entity *other = entity->next;
-    while (other != NULL)
+
+    // Loop List:
+    // 1. Loop to detect collectibles within player collect radius
+    Rectangle collectRadius = player->GetCollectRadiusRectangle();
+    int minX = (int)collectRadius.x / CELL_SIZE;
+    int minY = (int)collectRadius.y / CELL_SIZE;
+    int maxX = std::min((int)(collectRadius.x + collectRadius.width) / CELL_SIZE, NUM_CELLS);
+    int maxY = std::min((int)(collectRadius.y + collectRadius.height) / CELL_SIZE, NUM_CELLS);
+
+    // std::cout << "Player check: " << minX << ' ' << minY << ' ' << maxX << ' ' << maxY << '\n';
+
+    int cnt = 0;
+    for(int x = minX; x <= maxX; x++)
     {
-        // Player and Collectible class collision
-        if (typeid(*other) == typeid(Collectible))
+        for(int y = minY; y <= maxY; y++)
         {
-            // To do Collectible class specific things
-            Collectible *collectible = static_cast<Collectible *>(other);
-
-            collectible->UpdatePlayerPosition(player->GetHitBoxPosition());
-
-            // If within radius, then change the state
-            if (CheckCollisionRecs(collectible->GetHitBox(), player->GetCollectRadiusRectangle()) &&
-                player->CanItemFitIntoInventory(collectible->GetID(), 1))
+            Entity *other = cells[x][y];
+            while (other != NULL)
             {
-                collectible->withinRadius = true;
-            }
-            else
-            {
-                collectible->withinRadius = false;
-            }
-
-            // If collide with player hit box, then remove it
-            if (CheckCollisionRecs(collectible->GetHitBox(), player->GetHitBox()) &&
-                player->CanItemFitIntoInventory(collectible->GetID(), 1))
-            {
-                // Add the item to player inventory
-                player->AddItemToInventory(collectible->GetID(), 1);
-
-                // Erase object from the linked list
-                if (other->prev != NULL)
+                // If it is the player, skip it
+                if(other == entity)
                 {
-                    other->prev->next = other->next;
+                    // std::cout << "SAMA " << cnt << '\n';
+                    cnt += 1;
+                    if(other->next == entity)
+                    {
+                        // std::cout << "OMAGA" << '\n';
+                    } 
+                    other = other->next;
+                    continue;
                 }
 
-                if (other->next != NULL)
+                // Player and Collectible class collision
+                if (typeid(*other) == typeid(Collectible))
                 {
-                    other->next->prev = other->prev;
+                    // std::cout << "ADA COLLECTIBLE" << '\n';
+                    // To do Collectible class specific things
+                    Collectible *collectible = static_cast<Collectible *>(other);
+
+                    collectible->UpdatePlayerPosition(player->GetHitBoxPosition());
+
+                    // If within radius, then change the state
+                    if (CheckCollisionRecs(collectible->GetHitBox(), player->GetCollectRadiusRectangle()) &&
+                        player->CanItemFitIntoInventory(collectible->GetID(), 1))
+                    {
+                        collectible->withinRadius = true;
+                    }
+                    else
+                    {
+                        collectible->withinRadius = false;
+                    }
+
+                    // If collide with player hit box, then remove it
+                    if (CheckCollisionRecs(collectible->GetHitBox(), player->GetHitBox()) &&
+                        player->CanItemFitIntoInventory(collectible->GetID(), 1))
+                    {
+                        // Add the item to player inventory
+                        player->AddItemToInventory(collectible->GetID(), 1);
+
+                        // Erase object from the linked list
+                        if (other->prev != NULL)
+                        {
+                            other->prev->next = other->next;
+                        }
+
+                        if (other->next != NULL)
+                        {
+                            other->next->prev = other->prev;
+                        }
+                    }
                 }
+
+                // Move to next other entity
+                other = other->next;
             }
-            collectible->Update();
         }
-
-        // Move to next other entity
-        other = other->next;
     }
 }
 
-void Grid::HandleCollectibleCollisions(Entity *entity)
+void Grid::HandleCollectible(Entity *entity)
 {
     // To do Collectible class specific things
     Collectible *collectible = static_cast<Collectible *>(entity);
@@ -167,7 +212,6 @@ void Grid::HandleCollectibleCollisions(Entity *entity)
 
     // Loop for others entities within cell
     Entity *other = entity->next;
-    collectible->Update();
     while (other != NULL)
     {
         // Collectible and Player class collision
@@ -225,5 +269,28 @@ void Grid::HandleCollectibleCollisions(Entity *entity)
 
         // Move to next other entity
         other = other->next;
+    }
+}
+
+void Grid::DrawVisibleObjects(Vector2 cameraPos)
+{
+    int minX = std::max((int)(cameraPos.x - screenWidth / scale) / CELL_SIZE, 0);
+    int minY = std::max((int)(cameraPos.y - screenHeight / scale) / CELL_SIZE, 0);
+    int maxX = std::min((int)(cameraPos.x + screenWidth / scale) / CELL_SIZE, NUM_CELLS - 1);
+    int maxY = std::min((int)(cameraPos.y + screenHeight / scale) / CELL_SIZE, NUM_CELLS - 1);
+
+    // std::cout << "Draw " << minX << ' ' << minY << ' ' << maxX << ' ' << maxY << '\n';
+
+    for(int x = minX; x <= maxX; x++)
+    {
+        for(int y = minY; y <= maxY; y++)
+        {
+            Entity* entity = cells[x][y];
+            while(entity != NULL)
+            {
+                entity->Draw();
+                entity = entity->next;
+            }
+        }
     }
 }

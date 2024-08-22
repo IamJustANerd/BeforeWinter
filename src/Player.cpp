@@ -25,8 +25,16 @@ void Player::Movements()
 {
     // Variables for calculating cell changes
     Vector2 change = {0, 0};
+    
+    // Border for player movement to prevent player from moving out of the grid
+    int minBorderX = grid->CELL_SIZE;
+    int maxBorderX = (grid->NUM_CELLS - 92) * grid->CELL_SIZE;
+    int minBorderY = grid->CELL_SIZE;
+    int maxBorderY = (grid->NUM_CELLS - 92) * grid->CELL_SIZE;
 
-    if(IsKeyPressed(KEY_LEFT_SHIFT) && !isSprinting)
+    // std::cout << maxBorderX << '\n';
+
+    if (IsKeyPressed(KEY_LEFT_SHIFT) && !isSprinting)
     {
         speed += sprintSpeed;
         isSprinting = true;
@@ -38,34 +46,51 @@ void Player::Movements()
     }
 
     // Note: Avoid adding the value directly to prevent jumping movement
+    // Bug infinite loop ketika menyentuh border: SOLVED
+    // Penjelasan: Terjadi karena nilai change tidak ikut diganti ketika sudah mencapai batas, menyebabkan
+    // suatu objek memiliki dua posisi grid yang berbeda. Hal ini dapat menyebabkan circular reference, thus
+    // infinite loop.
+    // Solusi: Mencegah nilai dari position ditambah jika menambahkan akan membuatnya keluar dari batas
     if (IsKeyDown(KEY_A))
     {
-        for(int i = 0; i < speed; i++)
+        // Add player position with speed while is still within the border
+        int i = 0;
+        while(i < speed && position.x > minBorderX)
         {
+            i += 1;
             position.x -= 1;
             change.x -= 1;
         }
     }
     if (IsKeyDown(KEY_D))
     {
-        for (int i = 0; i < speed; i++)
+        // Add player position with speed while is still within the border
+        int i = 0; 
+        while (i < speed && position.x < maxBorderX)
         {
+            i += 1;
             position.x += 1;
             change.x += 1;
         }
     }
     if (IsKeyDown(KEY_W))
     {
-        for (int i = 0; i < speed; i++)
+        // Add player position with speed while is still within the border
+        int i = 0;
+        while (i < speed && position.y > minBorderY)
         {
+            i += 1;
             position.y -= 1;
             change.y -= 1;
         }
     }
     if (IsKeyDown(KEY_S))
     {
-        for (int i = 0; i < speed; i++)
+        // Add player position with speed while is still within the border
+        int i = 0;
+        while (i < speed && position.y < maxBorderY)
         {
+            i += 1;
             position.y += 1;
             change.y += 1;
         }

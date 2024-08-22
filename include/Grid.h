@@ -23,11 +23,14 @@ public:
     // Move object's cell if it crosses a cell's boundary lines
     void Move(Entity* entity, Vector2 addPos);
 
-    // Handle player collision
-    void HandlePlayerCollisions(Entity* entity);
+    // Handle player
+    void HandlePlayer(Entity* entity);
 
-    // Handle collectible collision
-    void HandleCollectibleCollisions(Entity *entity);
+    // Handle collectible
+    void HandleCollectible(Entity *entity);
+
+    // Draw objects visible by player
+    void DrawVisibleObjects(Vector2 cameraPos);
 
     // private:
     Entity *cells[NUM_CELLS][NUM_CELLS];

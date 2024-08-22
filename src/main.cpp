@@ -162,7 +162,7 @@ int main()
     Grid grid;
 
     // Declare player
-    Player *player = new Player(Vector2{(float)screenWidth / 2, (float)screenHeight / 2}, &grid);
+    Player *player = new Player(Vector2{(float)screenWidth, (float)screenHeight}, &grid);
 
     Collectible *tes = new Collectible(Vector2{(float)screenWidth / 2 + 50, (float)screenHeight / 2 + 50}, 1, &grid);
     Collectible *tes1 = new Collectible(Vector2{(float)screenWidth / 2 + 200, (float)screenHeight / 2 + 200}, 1, &grid);
@@ -208,83 +208,101 @@ int main()
         // Sort all of them based on their position
         std::sort(visibleObjects.begin(), visibleObjects.end(), CompareObjectPosition());
 
-        // Update Player
-        player->Update();
-
-        // Update all objects in the grid
-        grid.UpdateGrid();
-
         cnt += 1;
-        if(cnt >= 120) {
+        if(cnt >= 120)
+        {
             cnt = 0;
-
-            int object = 0;
+            int amount = 0;
             for (int i = 0; i < grid.NUM_CELLS; i++)
             {
                 for (int j = 0; j < grid.NUM_CELLS; j++)
                 {
-                    Entity *testing = grid.cells[i][j];
-                    while (testing != NULL)
+                    Entity* testes = grid.cells[i][j];
+                    while (testes != NULL)
                     {
-                        std::cout << "Object num: " << object << '\n';
-                        std::cout << "Object cell: " << i << ' ' << j << '\n';
-
-                        object += 1;
-                        testing = testing->next;
+                        amount += 1;
+                        std::cout << "Ada " << amount << '\n';
+                        testes = testes->next;
                     }
                 }
             }
         }
+        
+
+        // Update all objects in the grid
+        grid.UpdateGrid();
+
+        // cnt += 1;
+        // if(cnt >= 120) {
+        //     cnt = 0;
+
+        //     int object = 0;
+        //     for (int i = 0; i < grid.NUM_CELLS; i++)
+        //     {
+        //         for (int j = 0; j < grid.NUM_CELLS; j++)
+        //         {
+        //             Entity *testing = grid.cells[i][j];
+        //             while (testing != NULL)
+        //             {
+        //                 std::cout << "Object num: " << object << '\n';
+        //                 std::cout << "Object cell: " << i << ' ' << j << '\n';
+
+        //                 object += 1;
+        //                 testing = testing->next;
+        //             }
+        //         }
+        //     }
+        // }
 
         // Temporary loop to check if collectibles are inside player collect radius
-        for (auto it = visibleObjects.begin(); it != visibleObjects.end();)
-        {
-            if (typeid(**it) == typeid(Collectible))
-            {
-                Collectible *collectible = static_cast<Collectible *>(*it);
+        // for (auto it = visibleObjects.begin(); it != visibleObjects.end();)
+        // {
+        //     if (typeid(**it) == typeid(Collectible))
+        //     {
+        //         Collectible *collectible = static_cast<Collectible *>(*it);
 
-                collectible->UpdatePlayerPosition(player->GetHitBoxPosition());
+        //         collectible->UpdatePlayerPosition(player->GetHitBoxPosition());
 
-                // If within radius, then change the state
-                if (CheckCollisionRecs(collectible->GetHitBox(), player->GetCollectRadiusRectangle()) &&
-                    player->CanItemFitIntoInventory(collectible->GetID(), 1))
-                {
-                    collectible->withinRadius = true;
-                }
-                else
-                {
-                    collectible->withinRadius = false;
-                }
+        //         // If within radius, then change the state
+        //         if (CheckCollisionRecs(collectible->GetHitBox(), player->GetCollectRadiusRectangle()) &&
+        //             player->CanItemFitIntoInventory(collectible->GetID(), 1))
+        //         {
+        //             collectible->withinRadius = true;
+        //         }
+        //         else
+        //         {
+        //             collectible->withinRadius = false;
+        //         }
 
-                // If collide with player hit box, then remove it
-                if (CheckCollisionRecs(collectible->GetHitBox(), player->GetHitBox()) &&
-                    player->CanItemFitIntoInventory(collectible->GetID(), 1))
-                {
-                    //std::cout << "Dapat " << collectible->GetID() << '\n';
+        //         // If collide with player hit box, then remove it
+        //         if (CheckCollisionRecs(collectible->GetHitBox(), player->GetHitBox()) &&
+        //             player->CanItemFitIntoInventory(collectible->GetID(), 1))
+        //         {
+        //             //std::cout << "Dapat " << collectible->GetID() << '\n';
 
-                    player->AddItemToInventory(collectible->GetID(), 1);
+        //             player->AddItemToInventory(collectible->GetID(), 1);
 
-                    // Erase returns the next valid iterator
-                    it = visibleObjects.erase(it); 
+        //             // Erase returns the next valid iterator
+        //             it = visibleObjects.erase(it); 
 
-                    auto gameObjIt = std::find(gameObjects.begin(), gameObjects.end(), collectible);
-                    if (gameObjIt != gameObjects.end())
-                    {
-                        gameObjects.erase(gameObjIt);
-                    }
-                }
-                else
-                {
-                    ++it; // Only increment if not removing
-                }
+        //             auto gameObjIt = std::find(gameObjects.begin(), gameObjects.end(), collectible);
+        //             if (gameObjIt != gameObjects.end())
+        //             {
+        //                 gameObjects.erase(gameObjIt);
+        //             }
+        //         }
+        //         else
+        //         {
+        //             ++it; // Only increment if not removing
+        //         }
 
-                collectible->Update();
-            }
-            else
-            {
-                ++it;
-            }
-        }
+        //         collectible->Update();
+        //     }
+        //     else
+        //     {
+        //         ++it;
+        //     }
+        // }
 
         // Update Camera
         UpdateCamera(camera, player->GetPosition(), player->GetWidth(), player->GetHeight(), scale);
@@ -310,11 +328,8 @@ int main()
         // Grid for debugging
         DrawGrid(gridSize, camera);
 
-        // Draw objects
-        for (const auto &obj : visibleObjects)
-        {
-            obj->Draw();
-        }
+        // Draw objects visible by player
+        grid.DrawVisibleObjects(camera.target);
 
         // Draw player and rectangle (for debugging)
 

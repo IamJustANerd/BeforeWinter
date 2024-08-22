@@ -208,27 +208,26 @@ int main()
         // Sort all of them based on their position
         std::sort(visibleObjects.begin(), visibleObjects.end(), CompareObjectPosition());
 
-        cnt += 1;
-        if(cnt >= 120)
-        {
-            cnt = 0;
-            int amount = 0;
-            for (int i = 0; i < grid.NUM_CELLS; i++)
-            {
-                for (int j = 0; j < grid.NUM_CELLS; j++)
-                {
-                    Entity* testes = grid.cells[i][j];
-                    while (testes != NULL)
-                    {
-                        amount += 1;
-                        std::cout << "Ada " << amount << '\n';
-                        testes = testes->next;
-                    }
-                }
-            }
-        }
+        // cnt += 1;
+        // if(cnt >= 120)
+        // {
+        //     cnt = 0;
+        //     int amount = 0;
+        //     for (int i = 0; i < grid.NUM_CELLS; i++)
+        //     {
+        //         for (int j = 0; j < grid.NUM_CELLS; j++)
+        //         {
+        //             Entity* testes = grid.cells[i][j];
+        //             while (testes != NULL)
+        //             {
+        //                 amount += 1;
+        //                 std::cout << "Ada " << amount << '\n';
+        //                 testes = testes->next;
+        //             }
+        //         }
+        //     }
+        // }
         
-
         // Update all objects in the grid
         grid.UpdateGrid();
 

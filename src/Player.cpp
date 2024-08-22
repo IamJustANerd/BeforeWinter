@@ -28,12 +28,13 @@ void Player::Movements()
     
     // Border for player movement to prevent player from moving out of the grid
     int minBorderX = grid->CELL_SIZE;
-    int maxBorderX = (grid->NUM_CELLS - 92) * grid->CELL_SIZE;
+    int maxBorderX = (grid->NUM_CELLS - 1) * grid->CELL_SIZE;
     int minBorderY = grid->CELL_SIZE;
-    int maxBorderY = (grid->NUM_CELLS - 92) * grid->CELL_SIZE;
+    int maxBorderY = (grid->NUM_CELLS - 1) * grid->CELL_SIZE;
 
     // std::cout << maxBorderX << '\n';
 
+    // Toggle sprint
     if (IsKeyPressed(KEY_LEFT_SHIFT) && !isSprinting)
     {
         speed += sprintSpeed;
@@ -53,46 +54,66 @@ void Player::Movements()
     // Solusi: Mencegah nilai dari position ditambah jika menambahkan akan membuatnya keluar dari batas
     if (IsKeyDown(KEY_A))
     {
-        // Add player position with speed while is still within the border
+        // Add player position while is still within the border
         int i = 0;
-        while(i < speed && position.x > minBorderX)
+        while(i < speed && hitBox.x > minBorderX)
         {
             i += 1;
+
+            // Update player position (in the grid as well)
             position.x -= 1;
             change.x -= 1;
+
+            // Update hitBox position
+            hitBox.x = position.x;
         }
     }
     if (IsKeyDown(KEY_D))
     {
-        // Add player position with speed while is still within the border
+        // Add player position while is still within the border
         int i = 0; 
-        while (i < speed && position.x < maxBorderX)
+        while (i < speed && (hitBox.x + hitBox.width) < maxBorderX)
         {
             i += 1;
+
+            // Update player position (in the grid as well)
             position.x += 1;
             change.x += 1;
+
+            // Update hitBox position
+            hitBox.x = position.x;
         }
     }
     if (IsKeyDown(KEY_W))
     {
-        // Add player position with speed while is still within the border
+        // Add player position while is still within the border
         int i = 0;
-        while (i < speed && position.y > minBorderY)
+        while (i < speed && hitBox.y > minBorderY)
         {
             i += 1;
+
+            // Update player position (in the grid as well)
             position.y -= 1;
             change.y -= 1;
+
+            // Update hitBox position
+            hitBox.y = position.y + (float)height * 0.75f;
         }
     }
     if (IsKeyDown(KEY_S))
     {
-        // Add player position with speed while is still within the border
+        // Add player position while is still within the border
         int i = 0;
-        while (i < speed && position.y < maxBorderY)
+        while (i < speed && (hitBox.y + hitBox.height) < maxBorderY)
         {
             i += 1;
+
+            // Update player position (in the grid as well)
             position.y += 1;
             change.y += 1;
+
+            // Update hitBox position
+            hitBox.y = position.y + (float)height * 0.75f;
         }
     }
 

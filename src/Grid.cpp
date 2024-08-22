@@ -34,7 +34,6 @@ void Grid::Add(Entity* entity)
 
     if (entity->next != NULL)
     {
-        std::cout << "ADA ORANG?" << '\n';
         entity->next->prev = entity;
     }
 

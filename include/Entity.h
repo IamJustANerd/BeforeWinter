@@ -20,6 +20,9 @@ protected:
     int id;
     Rectangle hitBox;
     Texture2D* textures;
+    bool isUncollidable;
+    bool hasBeenUpdated;
+    bool hasBeenDrawn;
 
     // Pointer to the grid
     Grid* grid;
@@ -33,6 +36,7 @@ public:
     int GetHeight() const;
     int GetID() const;
     Rectangle GetHitBox() const;
+    bool GetIsUncollidable() const;
 
     // Linked list for faster insertion and deletion
     Entity *prev;

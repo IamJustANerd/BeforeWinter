@@ -1,4 +1,5 @@
 #include "../include/Assets.h"
+#include <iostream>
 
 Image NatureImg[100];
 Texture2D NatureTex[100];
@@ -37,6 +38,7 @@ void LoadAllTexture()
     for (int i = 0; i < 5; i++)
     {
         NatureTex[i] = LoadTextureFromImage(NatureImg[i]);
+        std::cout << NatureTex[i].width << ' ' << NatureTex[i].height << '\n';
     }
 }
 

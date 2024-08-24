@@ -12,6 +12,9 @@ Collectible::Collectible(Vector2 _position, int _id, Grid* _grid)
     hitBox = Rectangle{position.x, position.y, (float)width, (float)height};
     // speed = 10;
 
+    // Collectible is not uncollidable
+    isUncollidable = false;
+
     // Insert collectible into the grid
     grid = _grid;
     grid->Add(this);
@@ -66,7 +69,11 @@ void Collectible::Update()
 
 void Collectible::Draw() const
 {
+    // Draw body
     DrawRectangleRec(hitBox, ORANGE);
+
+    // Draw hitbox
+    DrawRectangleRec(hitBox, Color{0, 228, 48, 120});
 }
 
 void Collectible::UpdatePlayerPosition(Vector2 _playerPos)

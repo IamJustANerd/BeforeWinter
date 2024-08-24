@@ -16,6 +16,9 @@ Player::Player(Vector2 _position, Grid* _grid)
                               (float)width + 2 * collectRadiusLength,
                               (float)height + 2 * collectRadiusLength};
 
+    // Player is uncollidable
+    isUncollidable = true;
+
     // Insert player into the grid
     grid = _grid;
     grid->Add(this);
@@ -31,8 +34,6 @@ void Player::Movements()
     int maxBorderX = (grid->NUM_CELLS - 1) * grid->CELL_SIZE;
     int minBorderY = grid->CELL_SIZE;
     int maxBorderY = (grid->NUM_CELLS - 1) * grid->CELL_SIZE;
-
-    // std::cout << maxBorderX << '\n';
 
     // Toggle sprint
     if (IsKeyPressed(KEY_LEFT_SHIFT) && !isSprinting)
@@ -52,11 +53,17 @@ void Player::Movements()
     // suatu objek memiliki dua posisi grid yang berbeda. Hal ini dapat menyebabkan circular reference, thus
     // infinite loop.
     // Solusi: Mencegah nilai dari position ditambah jika menambahkan akan membuatnya keluar dari batas
+
+    // Only add player position while:
+    // 1. Is still within the border
+    // 2. Wouldn't collide with other uncollidable entity
+
+    // Left movement
     if (IsKeyDown(KEY_A))
     {
-        // Add player position while is still within the border
         int i = 0;
-        while(i < speed && hitBox.x > minBorderX)
+        while((i < speed && hitBox.x > minBorderX) &&
+              !IsCollidingWithUncollidable("Left"))
         {
             i += 1;
 
@@ -68,11 +75,13 @@ void Player::Movements()
             hitBox.x = position.x;
         }
     }
+
+    // Right movement
     if (IsKeyDown(KEY_D))
     {
-        // Add player position while is still within the border
-        int i = 0; 
-        while (i < speed && (hitBox.x + hitBox.width) < maxBorderX)
+        int i = 0;
+        while ((i < speed && (hitBox.x + hitBox.width) < maxBorderX) &&
+               !IsCollidingWithUncollidable("Right"))
         {
             i += 1;
 
@@ -84,11 +93,13 @@ void Player::Movements()
             hitBox.x = position.x;
         }
     }
+
+    // Up movement
     if (IsKeyDown(KEY_W))
     {
-        // Add player position while is still within the border
         int i = 0;
-        while (i < speed && hitBox.y > minBorderY)
+        while ((i < speed && hitBox.y > minBorderY) &&
+               !IsCollidingWithUncollidable("Up"))
         {
             i += 1;
 
@@ -100,11 +111,14 @@ void Player::Movements()
             hitBox.y = position.y + (float)height * 0.75f;
         }
     }
+
+    // Down movement
     if (IsKeyDown(KEY_S))
     {
         // Add player position while is still within the border
         int i = 0;
-        while (i < speed && (hitBox.y + hitBox.height) < maxBorderY)
+        while ((i < speed && (hitBox.y + hitBox.height) < maxBorderY) &&
+               !IsCollidingWithUncollidable("Down"))
         {
             i += 1;
 
@@ -134,11 +148,11 @@ void Player::Draw() const
     // Draw body
     DrawRectangle(position.x, position.y, width, height, WHITE);
     
-    // Draw hitbox
-    DrawRectangleRec(hitBox, Color{0, 228, 48, 120});
-
     // Draw collect radius box
     DrawRectangleRec(collectRadius, Color{0, 121, 241, 120});
+
+    // Draw hitbox
+    DrawRectangleRec(hitBox, Color{0, 228, 48, 120});
 }
 
 void Player::Update()
@@ -192,4 +206,9 @@ bool Player::CanItemFitIntoInventory(int _id, int _amount)
     {
         return false;
     }
+}
+
+void IsColliding()
+{
+
 }

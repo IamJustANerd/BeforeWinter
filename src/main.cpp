@@ -63,16 +63,7 @@ std::vector<Entity*> visibleObjects;
 
 // {---------------------------------------------- Functions ----------------------------------------------}
 
-// Custom compare bool
-struct CompareObjectPosition
-{
-    bool operator()(const Entity *a, const Entity *b) const
-    {
-        if (a->GetPosition().y + a->GetHeight() != b->GetPosition().y + b->GetHeight())
-            return a->GetPosition().y + a->GetHeight() < b->GetPosition().y + b->GetHeight(); // Compare by y first
-        return a->GetPosition().x < b->GetPosition().x;                                       // If y is the same, compare by x
-    }
-};
+
 
 // To get visible objects based on camera for better performance
 void GetVisibleObjects(Camera2D camera)
@@ -102,14 +93,14 @@ void GetVisibleObjects(Camera2D camera)
 void DrawGrid(int gridSize, Camera2D camera)
 {
     // World
-    for (int x = -10000; x <= 10000; x += gridSize)
+    for (int x = -5000; x <= 15000; x += gridSize)
     {
-        DrawLine(x + 16, -10000, x + 16, 10000, DARKGRAY);
+        DrawLine(x + 8, -5000, x + 8, 15000, DARKGRAY);
     }
 
-    for (int y = -10000; y <= 10000; y += gridSize)
+    for (int y = -5000; y <= 15000; y += gridSize)
     {
-        DrawLine(-10000, y + 16, 10000, y + 16, DARKGRAY);
+        DrawLine(-5000, y + 8, 15000, y + 8, DARKGRAY);
     }
 
     // Visible view
@@ -162,25 +153,21 @@ int main()
     Grid grid;
 
     // Declare player
-    Player *player = new Player(Vector2{(float)screenWidth, (float)screenHeight}, &grid);
+    Player* player = new Player(Vector2{(float)screenWidth, (float)screenHeight}, &grid);
+    new Nature(Vector2{384, 384}, 1, NatureTex, &grid);
 
-    Collectible *tes = new Collectible(Vector2{(float)screenWidth / 2 + 50, (float)screenHeight / 2 + 50}, 1, &grid);
-    Collectible *tes1 = new Collectible(Vector2{(float)screenWidth / 2 + 200, (float)screenHeight / 2 + 200}, 1, &grid);
+    new Collectible(Vector2{(float)screenWidth / 2 + 50, (float)screenHeight / 2 + 50}, 1, &grid);
+    new Collectible(Vector2{(float)screenWidth / 2 + 200, (float)screenHeight / 2 + 200}, 1, &grid);
 
-    gameObjects.emplace_back(tes);
-    gameObjects.emplace_back(tes1);
-    gameObjects.emplace_back(player);
-
-    // Testing collectibles
-    // for (int i = 0; i <= 500; i += 1)
+    //Testing collectibles
+    // for (int i = 0; i <= 50; i += 1)
     // {
-    //     for (int j = 0; j <= 500; j += 1)
+    //     for (int j = 0; j <= 50; j += 1)
     //     {
-    //         // gameObjects.emplace_back(new Nature(Vector2{(float)i, (float)j}, GetRandomValue(0, 4), NatureTex));
-    //         gameObjects.emplace_back(new Collectible(Vector2{(float)GetRandomValue(0, 10000), (float)GetRandomValue(0, 10000)}, GetRandomValue(1, 9999)));
+    //         new Nature(Vector2{(float)GetRandomValue(0, 10000), (float)GetRandomValue(0, 10000)}, GetRandomValue(0, 4), NatureTex, &grid);
+    //         new Collectible(Vector2{(float)GetRandomValue(0, 10000), (float)GetRandomValue(0, 10000)}, GetRandomValue(1, 9999), &grid);
     //     }
     // }
-    // gameObjects.emplace_back(new Collectible(Vector2{5000, 5000}, GetRandomValue(1, 9999)));
 
     // Setting up camera to follow the player
     Camera2D camera = {0};
@@ -204,102 +191,47 @@ int main()
 
         // Set mouse collision as false
         mouseCollision = false;
-
-        // Sort all of them based on their position
-        std::sort(visibleObjects.begin(), visibleObjects.end(), CompareObjectPosition());
-
-        // cnt += 1;
-        // if(cnt >= 120)
-        // {
-        //     cnt = 0;
-        //     int amount = 0;
-        //     for (int i = 0; i < grid.NUM_CELLS; i++)
-        //     {
-        //         for (int j = 0; j < grid.NUM_CELLS; j++)
-        //         {
-        //             Entity* testes = grid.cells[i][j];
-        //             while (testes != NULL)
-        //             {
-        //                 amount += 1;
-        //                 std::cout << "Ada " << amount << '\n';
-        //                 testes = testes->next;
-        //             }
-        //         }
-        //     }
-        // }
         
         // Update all objects in the grid
         grid.UpdateGrid();
 
         // cnt += 1;
-        // if(cnt >= 120) {
-        //     cnt = 0;
-
-        //     int object = 0;
-        //     for (int i = 0; i < grid.NUM_CELLS; i++)
-        //     {
-        //         for (int j = 0; j < grid.NUM_CELLS; j++)
-        //         {
-        //             Entity *testing = grid.cells[i][j];
-        //             while (testing != NULL)
-        //             {
-        //                 std::cout << "Object num: " << object << '\n';
-        //                 std::cout << "Object cell: " << i << ' ' << j << '\n';
-
-        //                 object += 1;
-        //                 testing = testing->next;
-        //             }
-        //         }
-        //     }
-        // }
-
-        // Temporary loop to check if collectibles are inside player collect radius
-        // for (auto it = visibleObjects.begin(); it != visibleObjects.end();)
+        // if(cnt >= 120)
         // {
-        //     if (typeid(**it) == typeid(Collectible))
+        //     cnt = 0;
+        //     int ada = 1;
+        //     std::cout << "List: " << '\n';
+        //     const Entity *const(&cells)[Grid::NUM_CELLS][Grid::NUM_CELLS] = grid.GetReadOnlyCells();
+        //     for(int i = 0; i < grid.NUM_CELLS; i++)
         //     {
-        //         Collectible *collectible = static_cast<Collectible *>(*it);
-
-        //         collectible->UpdatePlayerPosition(player->GetHitBoxPosition());
-
-        //         // If within radius, then change the state
-        //         if (CheckCollisionRecs(collectible->GetHitBox(), player->GetCollectRadiusRectangle()) &&
-        //             player->CanItemFitIntoInventory(collectible->GetID(), 1))
+        //         for(int j = 0; j < grid.NUM_CELLS; j++)
         //         {
-        //             collectible->withinRadius = true;
-        //         }
-        //         else
-        //         {
-        //             collectible->withinRadius = false;
-        //         }
+        //             const Entity* entity = cells[i][j];
 
-        //         // If collide with player hit box, then remove it
-        //         if (CheckCollisionRecs(collectible->GetHitBox(), player->GetHitBox()) &&
-        //             player->CanItemFitIntoInventory(collectible->GetID(), 1))
-        //         {
-        //             //std::cout << "Dapat " << collectible->GetID() << '\n';
-
-        //             player->AddItemToInventory(collectible->GetID(), 1);
-
-        //             // Erase returns the next valid iterator
-        //             it = visibleObjects.erase(it); 
-
-        //             auto gameObjIt = std::find(gameObjects.begin(), gameObjects.end(), collectible);
-        //             if (gameObjIt != gameObjects.end())
+        //             while(entity != NULL)
         //             {
-        //                 gameObjects.erase(gameObjIt);
+        //                 std::cout << ada << ' ' << i << ' ' << j << '\n';
+        //                 ada++;
+        //                 if(typeid(*entity) == typeid(Player))
+        //                 {
+        //                     std::cout << "Ada player" << '\n';
+        //                 }
+        //                 else if(typeid(*entity) == typeid(Collectible))
+        //                 {
+        //                     std::cout << "Ada collectible" << '\n';
+        //                 }
+        //                 else if(typeid(*entity) == typeid(Nature))
+        //                 {
+        //                     std::cout << "Ada nature" << '\n';
+        //                 }
+        //                 else
+        //                 {
+        //                     std::cout << "NULL" << '\n';
+        //                 }
+
+        //                 entity = entity->next;
         //             }
         //         }
-        //         else
-        //         {
-        //             ++it; // Only increment if not removing
-        //         }
-
-        //         collectible->Update();
-        //     }
-        //     else
-        //     {
-        //         ++it;
         //     }
         // }
 
@@ -316,6 +248,7 @@ int main()
             showInformation = !showInformation;
         }
 
+        // <---------- START DRAWING ---------->
         // Draw on texture
         BeginTextureMode(target);
 
@@ -381,6 +314,7 @@ int main()
             DrawText(TextFormat("Mouse World Position: [%f , %f]", (float)mouseRect.x, (float)mouseRect.y), 0, 245, 15, GREEN);
             DrawText(TextFormat("FPS: [%i]", GetFPS()), 0, 275, 15, GREEN);
             DrawText(TextFormat("Number of Visible Objects: [%i]", visibleObjects.size()), 0, 305, 15, GREEN);
+            DrawText(TextFormat("This is grid: [%i, %i]", (int)mouseRect.x / grid.CELL_SIZE, (int)mouseRect.y / grid.CELL_SIZE), 0, 335, 15, GREEN);
         }
         // Finish drawing on texture
         EndTextureMode();

@@ -25,3 +25,8 @@ Rectangle Entity::GetHitBox() const
 {
     return hitBox;
 }
+
+bool Entity::GetIsUncollidable() const
+{
+    return isUncollidable;
+}

@@ -10,11 +10,11 @@ protected:
 
 public:
     // Constructor
-    Nature(Vector2 _position, int _type, Texture2D *_textures);
+    Nature(Vector2 _position, int _type, Texture2D *_textures, Grid* _grid);
     // Draw
     void Draw() const override;
     // Update
     void Update() override;
 };
 
-#endif // PLAYER_H
+#endif

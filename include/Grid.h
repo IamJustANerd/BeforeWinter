@@ -11,6 +11,9 @@ public:
     static const int NUM_CELLS = 100;
     static const int CELL_SIZE = 128;
 
+    // Return read only cells
+    const Entity *const (&GetReadOnlyCells() const)[NUM_CELLS][NUM_CELLS];
+
     // Add object to the grid
     void Add(Entity* entity);
 
@@ -32,7 +35,7 @@ public:
     // Draw objects visible by player
     void DrawVisibleObjects(Vector2 cameraPos);
 
-    // private:
+    private:
     Entity *cells[NUM_CELLS][NUM_CELLS];
 };
 

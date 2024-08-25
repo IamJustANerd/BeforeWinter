@@ -110,47 +110,15 @@ void Grid::Move(Entity *entity, Vector2 addPos)
     if (oldCellX == cellX && oldCellY == cellY)
         return;
 
-    if (typeid(*entity) == typeid(Player))
-    {
-        std::cout << "Player ";
-    }
-    else if (typeid(*entity) == typeid(Collectible))
-    {
-        std::cout << "Collectible ";
-    }
-    std::cout << "moves to " << cellX << ' ' << cellY << '\n';
-
     // If it does change, unlink it from the list of its old cell
     if (entity->prev != NULL)
     {
         entity->prev->next = entity->next;
-
-        std::cout << "Di prev " << cellX << ' ' << cellY << '\n';
-
-        if (typeid(*entity->prev) == typeid(Player))
-        {
-            std::cout << "Player" << '\n';
-        }
-        else if (typeid(*entity->prev) == typeid(Collectible))
-        {
-            std::cout << "Collectible" << '\n';
-        }
     }
 
     if (entity->next != NULL)
     {
         entity->next->prev = entity->prev;
-
-        std::cout << "Di next " << cellX << ' ' << cellY << '\n';
-
-        if (typeid(*entity->next) == typeid(Player))
-        {
-            std::cout << "Player" << '\n';
-        }
-        else if (typeid(*entity->next) == typeid(Collectible))
-        {
-            std::cout << "Collectible" << '\n';
-        }
     }
 
     // If it's the head of a list, remove it
@@ -220,32 +188,18 @@ void Grid::HandlePlayer(Entity* entity)
                     if (CheckCollisionRecs(collectible->GetHitBox(), player->GetHitBox()) &&
                         player->CanItemFitIntoInventory(collectible->GetID(), 1))
                     {
-                        std::cout << "HIT by Player" << '\n';
-                        std::cout << player->GetHitBox().x << ' ' << player->GetHitBox().y << ' ' << player->GetHitBox().width << ' ' << player->GetHitBox().height << '\n';
-                        std::cout << collectible->GetHitBox().x << ' ' << collectible->GetHitBox().y << ' ' << collectible->GetHitBox().width << ' ' << collectible->GetHitBox().height << '\n';
                         // Add the item to player inventory
                         player->AddItemToInventory(collectible->GetID(), 1);
 
                         // Erase object from the linked list
                         if (other->prev != NULL)
                         {
-                            std::cout << "Urus prev" << '\n';
                             other->prev->next = other->next;
                         }
 
                         if (other->next != NULL)
                         {
-                            std::cout << "Urus next" << '\n';
                             other->next->prev = other->prev;
-
-                            if (typeid(*other->next) == typeid(Player))
-                            {
-                                std::cout << "Player";
-                            }
-                            else if (typeid(*other->next) == typeid(Collectible))
-                            {
-                                std::cout << "Collectible";
-                            }
                         }
 
                         // If it's the head of a list, remove it
@@ -257,8 +211,6 @@ void Grid::HandlePlayer(Entity* entity)
                         // Reset entity pointers
                         other->prev = NULL;
                         other->next = NULL;
-
-                        std::cout << "REMOVED" << '\n';
                     }
                 }
 
@@ -269,9 +221,9 @@ void Grid::HandlePlayer(Entity* entity)
     }
 
     // 2. Collision check with other uncollidable entities
-
 }
 
+// Note: It is not required at the moment since HandlePlayer already include this. Might delete this in the future
 void Grid::HandleCollectible(Entity *entity)
 {
     // To do Collectible class specific things
@@ -308,10 +260,6 @@ void Grid::HandleCollectible(Entity *entity)
             if (CheckCollisionRecs(collectible->GetHitBox(), player->GetHitBox()) &&
                 player->CanItemFitIntoInventory(collectible->GetID(), 1))
             {
-                std::cout << "HIT" << '\n';
-                std::cout << player->GetHitBox().x << ' ' << player->GetHitBox().y << ' ' << player->GetHitBox().width << ' ' << player->GetHitBox().height << '\n';
-                std::cout << collectible->GetHitBox().x << ' ' << collectible->GetHitBox().y << ' ' << collectible->GetHitBox().width << ' ' << collectible->GetHitBox().height << '\n';
-
                 // Add the item to player inventory
                 player->AddItemToInventory(collectible->GetID(), 1);
 
@@ -347,7 +295,7 @@ void Grid::HandleCollectible(Entity *entity)
 
 void Grid::DrawVisibleObjects(Vector2 cameraPos)
 {
-    // Calculate the boundaries for the drawing
+    // Calculate the boundaries for the drawing (which is the visible view + an offset of the player camera)
     int minX = std::max((int)(cameraPos.x - screenWidth / scale) / CELL_SIZE, 0);
     int minY = std::max((int)(cameraPos.y - screenHeight / scale) / CELL_SIZE, 0);
     int maxX = std::min((int)(cameraPos.x + screenWidth / scale) / CELL_SIZE, NUM_CELLS - 1);

@@ -6,10 +6,12 @@
 bool Dynamic::IsCollidingWithUncollidable(std::string moveDir)
 {
     // Calculate the cells needed to be check on
-    int minX = (int)hitBox.x / grid->CELL_SIZE;
-    int minY = (int)hitBox.y / grid->CELL_SIZE;
-    int maxX = std::min((int)(hitBox.x + hitBox.width) / grid->CELL_SIZE, grid->NUM_CELLS);
-    int maxY = std::min((int)(hitBox.y + hitBox.height) / grid->CELL_SIZE, grid->NUM_CELLS);
+    int minX = std::max((int)hitBox.x / grid->CELL_SIZE - 2, 0);
+    int minY = std::max((int)hitBox.y / grid->CELL_SIZE - 2, 0);
+    int maxX = std::min((int)(hitBox.x + hitBox.width) / grid->CELL_SIZE + 2, grid->NUM_CELLS - 1);
+    int maxY = std::min((int)(hitBox.y + hitBox.height) / grid->CELL_SIZE + 2, grid->NUM_CELLS - 1);
+
+    // std::cout << minX << ' ' << minY << ' ' << maxX << ' ' << maxY << '\n';
 
     // Getting the read only cell
     const Entity *const(&cells)[Grid::NUM_CELLS][Grid::NUM_CELLS] = grid->GetReadOnlyCells();
@@ -50,9 +52,6 @@ bool Dynamic::IsCollidingWithUncollidable(std::string moveDir)
 
                 if (CheckCollisionRecs(collisionCheck, entity->GetHitBox()))
                 {
-                    std::cout << "HIT" << '\n';
-                    std::cout << collisionCheck.x << ' ' << collisionCheck.y << ' ' << collisionCheck.width << ' ' << collisionCheck.height << '\n';
-                    std::cout << entity->GetHitBox().x << ' ' << entity->GetHitBox().y << ' ' << entity->GetHitBox().width << ' ' << entity->GetHitBox().height << '\n';
                     isColliding = true;
                 }
 

@@ -63,35 +63,16 @@ std::vector<Entity*> visibleObjects;
 
 // {---------------------------------------------- Functions ----------------------------------------------}
 
-
-
-// To get visible objects based on camera for better performance
-void GetVisibleObjects(Camera2D camera)
-{
-    visibleObjects.clear();
-    Vector2 cameraPos = camera.target;
-    minX = (int)(cameraPos.x - screenWidth / scale) / gridSize;
-    minY = (int)(cameraPos.y - screenHeight / scale) / gridSize;
-    maxX = (int)(cameraPos.x + screenWidth / scale) / gridSize;
-    maxY = (int)(cameraPos.y + screenHeight / scale) / gridSize;
-
-    for (const auto &obj : gameObjects)
-    {
-        int objGridX = (int)obj->GetPosition().x / gridSize;
-        int objGridY = (int)obj->GetPosition().y / gridSize;
-        if (objGridX >= minX && objGridX <= maxX && objGridY >= minY && objGridY <= maxY)
-        {
-            visibleObjects.push_back(obj);
-        }
-
-        // Push without grid partitioning (for debugging purpose)
-        // visibleObjects.push_back(obj);
-    }
-}
-
 // Draw grid for debugging purpose
-void DrawGrid(int gridSize, Camera2D camera)
+void DrawGrid(int cellSize, int cellNumber, Camera2D camera)
 {
+    // Variables for calculation
+    Vector2 cameraPos = camera.target;
+    minX = std::max((int)(cameraPos.x - screenWidth / scale) / cellSize, 0);
+    minY = std::max((int)(cameraPos.y - screenHeight / scale) / cellSize, 0);
+    maxX = std::min((int)(cameraPos.x + screenWidth / scale) / cellSize, cellNumber - 1);
+    maxY = std::min((int)(cameraPos.y + screenHeight / scale) / cellSize, cellNumber - 1);
+
     // World
     for (int x = -5000; x <= 15000; x += gridSize)
     {
@@ -160,14 +141,14 @@ int main()
     new Collectible(Vector2{(float)screenWidth / 2 + 200, (float)screenHeight / 2 + 200}, 1, &grid);
 
     //Testing collectibles
-    // for (int i = 0; i <= 50; i += 1)
-    // {
-    //     for (int j = 0; j <= 50; j += 1)
-    //     {
-    //         new Nature(Vector2{(float)GetRandomValue(0, 10000), (float)GetRandomValue(0, 10000)}, GetRandomValue(0, 4), NatureTex, &grid);
-    //         new Collectible(Vector2{(float)GetRandomValue(0, 10000), (float)GetRandomValue(0, 10000)}, GetRandomValue(1, 9999), &grid);
-    //     }
-    // }
+    for (int i = 0; i <= 100; i += 1)
+    {
+        for (int j = 0; j <= 100; j += 1)
+        {
+            // new Nature(Vector2{(float)GetRandomValue(0, 10000), (float)GetRandomValue(0, 10000)}, GetRandomValue(0, 4), NatureTex, &grid);
+            new Collectible(Vector2{(float)GetRandomValue(0, 10000), (float)GetRandomValue(0, 10000)}, GetRandomValue(1, 9999), &grid);
+        }
+    }
 
     // Setting up camera to follow the player
     Camera2D camera = {0};
@@ -186,9 +167,6 @@ int main()
     // Window loop
     while (!WindowShouldClose())
     {
-        // Get all visible objects within the sight of the camera
-        GetVisibleObjects(camera);
-
         // Set mouse collision as false
         mouseCollision = false;
         
@@ -198,39 +176,28 @@ int main()
         if(IsKeyPressed(KEY_ENTER))
         {
             int ada = 1;
-            std::cout << "List: " << '\n';
             const Entity *const(&cells)[Grid::NUM_CELLS][Grid::NUM_CELLS] = grid.GetReadOnlyCells();
-            for(int i = 0; i < grid.NUM_CELLS; i++)
+            Vector2 cameraPos = camera.target;
+            int minX = std::max((int)(cameraPos.x - screenWidth / scale) / grid.CELL_SIZE, 0);
+            int minY = std::max((int)(cameraPos.y - screenHeight / scale) / grid.CELL_SIZE, 0);
+            int maxX = std::min((int)(cameraPos.x + screenWidth / scale) / grid.CELL_SIZE, grid.NUM_CELLS - 1);
+            int maxY = std::min((int)(cameraPos.y + screenHeight / scale) / grid.CELL_SIZE, grid.NUM_CELLS - 1);
+
+            for (int i = minX; i <= maxX; i++)
             {
-                for(int j = 0; j < grid.NUM_CELLS; j++)
+                for(int j = minY; j <= maxY; j++)
                 {
                     const Entity* entity = cells[i][j];
 
                     while(entity != NULL)
                     {
-                        std::cout << ada << ' ' << i << ' ' << j << '\n';
                         ada++;
-                        if(typeid(*entity) == typeid(Player))
-                        {
-                            std::cout << "Ada player" << '\n';
-                        }
-                        else if(typeid(*entity) == typeid(Collectible))
-                        {
-                            std::cout << "Ada collectible" << '\n';
-                        }
-                        else if(typeid(*entity) == typeid(Nature))
-                        {
-                            std::cout << "Ada nature" << '\n';
-                        }
-                        else
-                        {
-                            std::cout << "NULL" << '\n';
-                        }
-
                         entity = entity->next;
                     }
                 }
             }
+
+            std::cout << "There are " << ada << " entities" << '\n';
         }
 
         // Update Camera
@@ -256,7 +223,7 @@ int main()
         BeginMode2D(camera);
 
         // Grid for debugging
-        DrawGrid(gridSize, camera);
+        DrawGrid(grid.CELL_SIZE, grid.NUM_CELLS, camera);
 
         // Draw objects visible by player
         grid.DrawVisibleObjects(camera.target);

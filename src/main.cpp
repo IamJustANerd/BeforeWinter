@@ -195,45 +195,43 @@ int main()
         // Update all objects in the grid
         grid.UpdateGrid();
 
-        // cnt += 1;
-        // if(cnt >= 120)
-        // {
-        //     cnt = 0;
-        //     int ada = 1;
-        //     std::cout << "List: " << '\n';
-        //     const Entity *const(&cells)[Grid::NUM_CELLS][Grid::NUM_CELLS] = grid.GetReadOnlyCells();
-        //     for(int i = 0; i < grid.NUM_CELLS; i++)
-        //     {
-        //         for(int j = 0; j < grid.NUM_CELLS; j++)
-        //         {
-        //             const Entity* entity = cells[i][j];
+        if(IsKeyPressed(KEY_ENTER))
+        {
+            int ada = 1;
+            std::cout << "List: " << '\n';
+            const Entity *const(&cells)[Grid::NUM_CELLS][Grid::NUM_CELLS] = grid.GetReadOnlyCells();
+            for(int i = 0; i < grid.NUM_CELLS; i++)
+            {
+                for(int j = 0; j < grid.NUM_CELLS; j++)
+                {
+                    const Entity* entity = cells[i][j];
 
-        //             while(entity != NULL)
-        //             {
-        //                 std::cout << ada << ' ' << i << ' ' << j << '\n';
-        //                 ada++;
-        //                 if(typeid(*entity) == typeid(Player))
-        //                 {
-        //                     std::cout << "Ada player" << '\n';
-        //                 }
-        //                 else if(typeid(*entity) == typeid(Collectible))
-        //                 {
-        //                     std::cout << "Ada collectible" << '\n';
-        //                 }
-        //                 else if(typeid(*entity) == typeid(Nature))
-        //                 {
-        //                     std::cout << "Ada nature" << '\n';
-        //                 }
-        //                 else
-        //                 {
-        //                     std::cout << "NULL" << '\n';
-        //                 }
+                    while(entity != NULL)
+                    {
+                        std::cout << ada << ' ' << i << ' ' << j << '\n';
+                        ada++;
+                        if(typeid(*entity) == typeid(Player))
+                        {
+                            std::cout << "Ada player" << '\n';
+                        }
+                        else if(typeid(*entity) == typeid(Collectible))
+                        {
+                            std::cout << "Ada collectible" << '\n';
+                        }
+                        else if(typeid(*entity) == typeid(Nature))
+                        {
+                            std::cout << "Ada nature" << '\n';
+                        }
+                        else
+                        {
+                            std::cout << "NULL" << '\n';
+                        }
 
-        //                 entity = entity->next;
-        //             }
-        //         }
-        //     }
-        // }
+                        entity = entity->next;
+                    }
+                }
+            }
+        }
 
         // Update Camera
         UpdateCamera(camera, player->GetPosition(), player->GetWidth(), player->GetHeight(), scale);

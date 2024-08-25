@@ -21,8 +21,6 @@ protected:
     Rectangle hitBox;
     Texture2D* textures;
     bool isUncollidable;
-    bool hasBeenUpdated;
-    bool hasBeenDrawn;
 
     // Pointer to the grid
     Grid* grid;

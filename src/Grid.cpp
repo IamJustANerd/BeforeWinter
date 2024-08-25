@@ -41,54 +41,23 @@ const Entity *const (&Grid::GetReadOnlyCells() const)[NUM_CELLS][NUM_CELLS]
 
 void Grid::Add(Entity *entity)
 {
-    // Calculate the grid cells that the entity spans
-    int minX = (int)(entity->GetPosition().x / Grid::CELL_SIZE);
-    int minY = (int)(entity->GetPosition().y / Grid::CELL_SIZE);
-    int maxX = std::min((int)((entity->GetPosition().x + entity->GetWidth()) / Grid::CELL_SIZE), Grid::NUM_CELLS - 1);
-    int maxY = std::min((int)((entity->GetPosition().y + entity->GetHeight()) / Grid::CELL_SIZE), Grid::NUM_CELLS - 1);
+    // Determine which grid cell it's in
+    int cellX = (int)(entity->GetPosition().x / CELL_SIZE);
+    int cellY = (int)(entity->GetPosition().y / CELL_SIZE);
 
-    // Add the entity to all the cells it spans
-    for (int x = minX; x <= maxX; x++)
+    // Add to the front of list for the cell it's in
+    entity->prev = NULL;
+    entity->next = cells[cellX][cellY];
+    cells[cellX][cellY] = entity;
+
+    if (entity->next != NULL)
     {
-        for (int y = minY; y <= maxY; y++)
-        {
-            Entity *currentHead = cells[x][y];
-
-            // If the cell is empty, just place the entity
-            if (currentHead == NULL)
-            {
-                cells[x][y] = entity;
-                entity->next = NULL;
-                entity->prev = NULL;
-            }
-            else
-            {
-                // Insert the entity at the beginning of the list
-                entity->next = currentHead;
-                entity->prev = NULL;
-                currentHead->prev = entity;
-                cells[x][y] = entity;
-            }
-        }
+        entity->next->prev = entity;
     }
 }
 
 void Grid::UpdateGrid()
 {
-    // Reset the hasBeenUpdated flag for all entities
-    for (int i = 0; i < NUM_CELLS; i++)
-    {
-        for (int j = 0; j < NUM_CELLS; j++)
-        {
-            Entity *entity = cells[i][j];
-            while (entity != NULL)
-            {
-                entity->hasBeenUpdated = false;
-                entity = entity->next;
-            }
-        }
-    }
-
     // Handle each cell (update etc)
     for(int i = 0; i < NUM_CELLS; i++)
     {
@@ -105,104 +74,96 @@ void Grid::HandleCell(Entity* entity)
     // Check collisions of each entity with the others inside the cell
     while (entity != NULL)
     {   
-        if(!entity->hasBeenUpdated)
-        {
-            // Update the entity
-            entity->Update();
+        // Update the entity
+        entity->Update();
             
-            // Handling player collision
-            if (typeid(*entity) == typeid(Player))
-            {
-                HandlePlayer(entity);
-            }
-
-            // Handling collectible collision
-            if (typeid(*entity) == typeid(Collectible))
-            {
-                // HandleCollectible(entity);
-            }
-
-            // Static entites (like nature for example) doesn't need to do collision check,
-            // considering it would never touch other entity
-
-            // Mark this entity hasBeenUpdated as true to prevent a single entity being updated twice
-            entity->hasBeenUpdated = true;
+        // Handling player collision
+        if (typeid(*entity) == typeid(Player))
+        {
+            HandlePlayer(entity);
         }
 
+        // Handling collectible collision
+        if (typeid(*entity) == typeid(Collectible))
+        {
+            // HandleCollectible(entity);
+        }
+
+        // Static entites (like nature for example) doesn't need to do collision check,
+        // considering it would never touch other entity
+        
         entity = entity->next;
     }
 }
 
 void Grid::Move(Entity *entity, Vector2 addPos)
 {
-    // Calculate the grid cells the entity was in before moving
-    int oldMinX = (int)((entity->GetPosition().x - addPos.x) / CELL_SIZE);
-    int oldMinY = (int)((entity->GetPosition().y - addPos.y) / CELL_SIZE);
-    int oldMaxX = std::min((int)((entity->GetPosition().x - addPos.x + entity->GetWidth()) / CELL_SIZE), NUM_CELLS - 1);
-    int oldMaxY = std::min((int)((entity->GetPosition().y - addPos.y + entity->GetHeight()) / CELL_SIZE), NUM_CELLS - 1);
+    // See which cell it was in before moving
+    int oldCellX = (int)((entity->GetPosition().x - addPos.x) / CELL_SIZE);
+    int oldCellY = (int)((entity->GetPosition().y - addPos.y) / CELL_SIZE);
 
-    // Calculate the grid cells the entity is moving to
-    int minX = (int)(entity->GetPosition().x / CELL_SIZE);
-    int minY = (int)(entity->GetPosition().y / CELL_SIZE);
-    int maxX = std::min((int)((entity->GetPosition().x + entity->GetWidth()) / CELL_SIZE), NUM_CELLS - 1);
-    int maxY = std::min((int)((entity->GetPosition().y + entity->GetHeight()) / CELL_SIZE), NUM_CELLS - 1);
+    // See which cell it's moving to
+    int cellX = (int)(entity->GetPosition().x / CELL_SIZE);
+    int cellY = (int)(entity->GetPosition().y / CELL_SIZE);
 
     // If it didn't change cells, we're done
-    if (oldMinX == minX && oldMinY == minY && oldMaxX == maxX && oldMaxY == maxY)
+    if (oldCellX == cellX && oldCellY == cellY)
         return;
 
-    // If it does change, unlink it from the list of its old cells
-    for (int x = oldMinX; x <= oldMaxX; x++)
+    if (typeid(*entity) == typeid(Player))
     {
-        for (int y = oldMinY; y <= oldMaxY; y++)
-        {
-            Entity *temp = cells[x][y];
-            Entity *prev = NULL;
-            while (temp != NULL && temp != entity)
-            {
-                if (typeid(*temp) == typeid(Collectible))
-                {
-                    std::cout << "Huh" << '\n';
-                }
-                prev = temp;
-                temp = temp->next;
-            }
-            
-            // If the entity was found
-            if (temp == entity)
-            {
-                if(typeid(*temp) == typeid(Collectible))
-                {
-                    std::cout << "Huh" << '\n';
-                }
-                else if(typeid(*temp) == typeid(Player))
-                {
-                    std::cout << "Oke" << '\n';
-                }
-                // Unlink the entity
-                if (prev != NULL)
-                {
-                    prev->next = temp->next;
-                }
-                // If the entity was the head of the list, remove it
-                else
-                {
-                    cells[x][y] = temp->next;
-                }
+        std::cout << "Player ";
+    }
+    else if (typeid(*entity) == typeid(Collectible))
+    {
+        std::cout << "Collectible ";
+    }
+    std::cout << "moves to " << cellX << ' ' << cellY << '\n';
 
-                if (temp->next != NULL)
-                {
-                    temp->next->prev = prev;
-                }
-            }
-            else
-            {
-                std::cout << "Kok iso" << '\n';
-            }
+    // If it does change, unlink it from the list of its old cell
+    if (entity->prev != NULL)
+    {
+        entity->prev->next = entity->next;
+
+        std::cout << "Di prev " << cellX << ' ' << cellY << '\n';
+
+        if (typeid(*entity->prev) == typeid(Player))
+        {
+            std::cout << "Player" << '\n';
+        }
+        else if (typeid(*entity->prev) == typeid(Collectible))
+        {
+            std::cout << "Collectible" << '\n';
         }
     }
 
-    // Add it back to the grid at its new cell(s)
+    if (entity->next != NULL)
+    {
+        entity->next->prev = entity->prev;
+
+        std::cout << "Di next " << cellX << ' ' << cellY << '\n';
+
+        if (typeid(*entity->next) == typeid(Player))
+        {
+            std::cout << "Player" << '\n';
+        }
+        else if (typeid(*entity->next) == typeid(Collectible))
+        {
+            std::cout << "Collectible" << '\n';
+        }
+    }
+
+    // If it's the head of a list, remove it
+    if (cells[oldCellX][oldCellY] == entity)
+    {
+        cells[oldCellX][oldCellY] = entity->next;
+    }
+
+    // Reset entity pointers
+    entity->prev = NULL;
+    entity->next = NULL;
+
+    // Add it back to the grid at its new cell
     Add(entity);
 }
 
@@ -239,6 +200,8 @@ void Grid::HandlePlayer(Entity* entity)
                     // std::cout << "ADA COLLECTIBLE" << '\n';
                     // To do Collectible class specific things
                     Collectible *collectible = static_cast<Collectible *>(other);
+                    int cellX = collectible->GetPosition().x / CELL_SIZE;
+                    int cellY = collectible->GetPosition().y / CELL_SIZE;
 
                     collectible->UpdatePlayerPosition(player->GetHitBoxPosition());
 
@@ -257,7 +220,7 @@ void Grid::HandlePlayer(Entity* entity)
                     if (CheckCollisionRecs(collectible->GetHitBox(), player->GetHitBox()) &&
                         player->CanItemFitIntoInventory(collectible->GetID(), 1))
                     {
-                        std::cout << "HIT" << '\n';
+                        std::cout << "HIT by Player" << '\n';
                         std::cout << player->GetHitBox().x << ' ' << player->GetHitBox().y << ' ' << player->GetHitBox().width << ' ' << player->GetHitBox().height << '\n';
                         std::cout << collectible->GetHitBox().x << ' ' << collectible->GetHitBox().y << ' ' << collectible->GetHitBox().width << ' ' << collectible->GetHitBox().height << '\n';
                         // Add the item to player inventory
@@ -266,13 +229,36 @@ void Grid::HandlePlayer(Entity* entity)
                         // Erase object from the linked list
                         if (other->prev != NULL)
                         {
+                            std::cout << "Urus prev" << '\n';
                             other->prev->next = other->next;
                         }
 
                         if (other->next != NULL)
                         {
+                            std::cout << "Urus next" << '\n';
                             other->next->prev = other->prev;
+
+                            if (typeid(*other->next) == typeid(Player))
+                            {
+                                std::cout << "Player";
+                            }
+                            else if (typeid(*other->next) == typeid(Collectible))
+                            {
+                                std::cout << "Collectible";
+                            }
                         }
+
+                        // If it's the head of a list, remove it
+                        if (cells[cellX][cellY] == other)
+                        {
+                            cells[cellX][cellY] = other->next;
+                        }
+
+                        // Reset entity pointers
+                        other->prev = NULL;
+                        other->next = NULL;
+
+                        std::cout << "REMOVED" << '\n';
                     }
                 }
 
@@ -377,7 +363,6 @@ void Grid::DrawVisibleObjects(Vector2 cameraPos)
 
             while(entity != NULL)
             {
-                entity->hasBeenDrawn = false;
                 drawList.push_back(entity);
                 entity = entity->next;
             }
@@ -390,10 +375,6 @@ void Grid::DrawVisibleObjects(Vector2 cameraPos)
     // Draw them on order
     for (long long unsigned int i = 0; i < drawList.size(); i++)
     {
-        if(!drawList[i]->hasBeenDrawn)
-        {
-            drawList[i]->Draw();
-            drawList[i]->hasBeenDrawn = true;
-        }
+        drawList[i]->Draw();
     }
 }

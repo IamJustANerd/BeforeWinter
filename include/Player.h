@@ -9,7 +9,8 @@ class Player : public Dynamic
 {
 private:
     Inventory inventory;
-    float sprintSpeed = 80.0f;
+    // Note: There is a potential bug of infinity loop(?) when the player is moving too fast while it still has some slot in inventory
+    float sprintSpeed = 40.0f;
     bool isSprinting = false;
     Rectangle collectRadius;
     float collectRadiusLength = 32.0f;

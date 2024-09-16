@@ -4,7 +4,7 @@ CFLAGS = -O1 -Wall -std=c++17 -Wno-missing-braces -I../include/
 
 # Platform-specific libraries
 ifeq ($(OS),Windows_NT)
-    LDFLAGS = -L../lib/windows  # Path for Windows libraries
+    LDFLAGS = -L../lib/  # Path for Windows libraries
     LIBS = -lraylib -lopengl32 -lgdi32 -lwinmm
     TARGET = $(BIN_DIR)/Game.exe
 else

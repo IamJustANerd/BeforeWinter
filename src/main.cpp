@@ -2,6 +2,7 @@
     Dev note:
     1. Fixed drawing order by initializing entites width and height by their textures
     2. Need to fix mouse and objects collision (tips: mouse position is between 0 to screen size, while game objects are not)
+    3. Need to ensure that the spatial partitioning is working well
 */
 // {---------------------------------------------- Libraries ----------------------------------------------}
 #include <vector>
@@ -41,6 +42,9 @@
 
 // Grid
 #include "../include/Grid.h"
+
+// Game Manager
+#include "../include/GameManager.h"
 
 // {---------------------------------------------- Global Variables ----------------------------------------------}
 
@@ -173,6 +177,7 @@ int main()
         // Update all objects in the grid
         grid.UpdateGrid();
 
+        // Check how many entities on screen (for debugging)
         if(IsKeyPressed(KEY_ENTER))
         {
             int ada = 1;
@@ -207,6 +212,9 @@ int main()
         Rectangle mouseRect = {0, 0, mouseSize / camera.zoom, mouseSize / camera.zoom};
         UpdateMouse(mouseRect, camera);
 
+        // Update time
+        UpdateTime();
+
         // Toggle show information
         if(IsKeyPressed(KEY_TAB))
         {
@@ -217,7 +225,7 @@ int main()
         // Draw on texture
         BeginTextureMode(target);
 
-        ClearBackground(BLACK);
+        ClearBackground(WHITE);
 
         // 2D mode
         BeginMode2D(camera);
@@ -253,6 +261,9 @@ int main()
         //     }
         // }
 
+        // Draw time phase
+        DrawTimePhase(grid.CELL_SIZE, grid.NUM_CELLS, camera, gridSize);
+
         // End 2D mode
         EndMode2D();
 
@@ -262,8 +273,8 @@ int main()
             player->DrawInventory();
         }
 
-        // Draw the mouse according to screen position
-        DrawMouse(mouseCollision, scale);
+        // Print game time
+        PrintTime();
 
         // Debugging Information
         if(showInformation)
@@ -281,6 +292,10 @@ int main()
             DrawText(TextFormat("Number of Visible Objects: [%i]", visibleObjects.size()), 0, 305, 15, GREEN);
             DrawText(TextFormat("This is grid: [%i, %i]", (int)mouseRect.x / grid.CELL_SIZE, (int)mouseRect.y / grid.CELL_SIZE), 0, 335, 15, GREEN);
         }
+
+        // Draw the mouse according to screen position
+        DrawMouse(mouseCollision, scale);
+
         // Finish drawing on texture
         EndTextureMode();
 

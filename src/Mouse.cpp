@@ -38,6 +38,6 @@ void DrawMouse(bool mouseCollision, float scale)
     }
     else
     {
-        DrawRectangle(mouseScreenPos.x / scale, mouseScreenPos.y / scale, mouseSize, mouseSize, GREEN);
+        DrawRectangle(mouseScreenPos.x / scale, mouseScreenPos.y / scale, mouseSize, mouseSize, BLUE);
     }
 }

@@ -146,7 +146,7 @@ void Player::Movements()
 void Player::Draw() const
 {
     // Draw body
-    DrawRectangle(position.x, position.y, width, height, WHITE);
+    DrawRectangle(position.x, position.y, width, height, RED);
     
     // Draw collect radius box
     DrawRectangleRec(collectRadius, Color{0, 121, 241, 120});

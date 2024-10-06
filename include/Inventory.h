@@ -36,8 +36,11 @@ public :
     Inventory();
 
     // Draw inventory
-    void Draw() const;
+    void DrawInventory() const;
     
+    // Draw Toolbar
+    void DrawToolbar() const;
+
     // Update the state
     void Update();
 
@@ -52,6 +55,9 @@ public :
 
     // Return either inventory is full or not
     bool IsFull();
+
+    // Shortcut for inventory toolbar
+    void ToolbarShortcut() const;
 };
 
 #endif

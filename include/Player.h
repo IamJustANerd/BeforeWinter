@@ -34,6 +34,12 @@ public:
     // Draw player inventory
     void DrawInventory() const;
 
+    // Draw player toolbar
+    void DrawToolbar() const;
+
+    // Update player toolbar
+    void UpdateToolbar();
+
     // Add item to inventory
     void AddItemToInventory(int _id, int _amount);
 

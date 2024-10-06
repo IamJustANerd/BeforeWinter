@@ -24,6 +24,9 @@ bool isDragHovered = false;
 // Variables for swapping items
 itemPosition origin, destination;
 
+// Variable to mark the current item player is selecting in their toolbar
+int curItem = 0;
+
 // Constructor
 Inventory::Inventory()
 {
@@ -74,7 +77,7 @@ int DigitLength(int x)
     return digitLength;
 }
 
-void Inventory::Draw() const
+void Inventory::DrawInventory() const
 {
     // Calculate variables
     position.x = screenWidth / 4 / scale, position.y = screenHeight / 4 / scale;
@@ -92,6 +95,9 @@ void Inventory::Draw() const
     // To keep track of the slot position
     itemPosition pos;
     pos.x = 0, pos.y = 0;
+
+    // Draw background color
+    DrawRectangle(position.x + 20, position.y, inventoryWidth - 40, inventoryHeight, {0, 0, 0, 128});
 
     // Draw the slots
     for (int i = position.y; i < position.y + slotHeight * slotVertical; i += slotHeight, pos.x += 1, pos.y = 0)
@@ -179,6 +185,78 @@ void Inventory::Draw() const
     }
 }
 
+void Inventory::DrawToolbar() const
+{
+    // Calculate variables
+    inventoryWidth = screenWidth / 2 / scale;
+    inventoryHeight = screenHeight / 2 / scale;
+    slotWidth = inventoryWidth / (slotHorizontal + 1);
+    slotHeight = slotWidth;
+    verticalOffset = (inventoryHeight - slotHeight * (slotVertical)) / 2;
+    horizontalOffset = (inventoryWidth - slotWidth * (slotHorizontal)) / 2;
+    position.x = screenWidth / 4 / scale, position.y = screenHeight / scale - 2 * slotHeight;
+
+    // Reset hover and drag hover flags
+    isHover = false;
+
+    // To keep track of the slot position
+    itemPosition pos;
+    pos.x = 0, pos.y = 0;
+
+    // Draw background color
+    DrawRectangle(position.x + 20, position.y, inventoryWidth - 40, slotHeight + 10, {0, 0, 0, 128});
+
+    // Draw the slots
+    for (int i = position.y; i < position.y + slotHeight; i += slotHeight, pos.x += 1, pos.y = 0)
+    {
+        for (int j = position.x; j < position.x + slotWidth * slotHorizontal; j += slotWidth, pos.y += 1)
+        {
+            // Gray for the default color
+            Color slotColor = Color{130, 130, 130, 127};
+
+            // Print the items properties (texture, amount, etc)
+            if (inventoryItems[pos.x][pos.y].id != -1)
+            {
+                slotColor = Color{0, 228, 48, 127};
+
+                // Item ID
+                DrawText(TextFormat("ID: %i", inventoryItems[pos.x][pos.y].id),
+                         j + horizontalOffset + 5,
+                         i + verticalOffset + 5,
+                         7,
+                         WHITE);
+
+                // Item amount
+                DrawText(TextFormat("%i", inventoryItems[pos.x][pos.y].amount),
+                         j + horizontalOffset + slotWidth - DigitLength(inventoryItems[pos.x][pos.y].amount) * 7,
+                         i + verticalOffset + slotHeight - 10,
+                         7,
+                         WHITE);
+            }
+
+            // Handle mouse hover
+            if (CheckMouseHover(j + horizontalOffset, i + verticalOffset, slotWidth, slotHeight) && !isHover)
+            {
+                slotColor = Color{200, 200, 0, 127};
+                isHover = true;
+            }
+
+            // Draw the slot
+            DrawRectangle(j + horizontalOffset, i + verticalOffset, slotWidth, slotHeight, slotColor);
+
+            // If the player is selecting this item, highlight it
+            if(pos.y == curItem)
+            {
+                DrawRectangleLines(j + horizontalOffset, i + verticalOffset, slotWidth, slotHeight, WHITE);
+            }
+            else
+            {
+                DrawRectangleLines(j + horizontalOffset, i + verticalOffset, slotWidth, slotHeight, BLACK);
+            }
+        }
+    }
+}
+
 void Inventory::Update()
 {
     if (IsKeyPressed(KEY_I))
@@ -223,11 +301,11 @@ itemPosition Inventory::FindSlot(int _id, int _amount)
     }
 
     // If stacking is not possible, find an empty slot
-    for(int i = 0; i < slotVertical && !available; i++)
+    for (int i = 0; i < slotVertical && !available; i++)
     {
-        for(int j = 0; j < slotHorizontal && !available; j++)
+        for (int j = 0; j < slotHorizontal && !available; j++)
         {
-            if(inventoryItems[i][j].id == -1)
+            if (inventoryItems[i][j].id == -1)
             {
                 pos.x = i, pos.y = j;
                 available = true;
@@ -244,13 +322,13 @@ void Inventory::AddItem(int _id, int _amount)
     itemPosition pos = FindSlot(_id, _amount);
 
     // If full
-    if(pos.x == -1 && pos.y == -1)
+    if (pos.x == -1 && pos.y == -1)
     {
         return;
     }
 
     // Stacking item
-    if(inventoryItems[pos.x][pos.y].id == _id)
+    if (inventoryItems[pos.x][pos.y].id == _id)
     {
         inventoryItems[pos.x][pos.y].amount += 1;
     }
@@ -266,11 +344,11 @@ bool Inventory::IsFull()
 {
     bool isFull = true;
     
-    for(int i = 0; i < slotVertical; i++)
+    for (int i = 0; i < slotVertical; i++)
     {
-        for(int j = 0; j < slotHorizontal; j++)
+        for (int j = 0; j < slotHorizontal; j++)
         {
-            if(inventoryItems[i][j].id == -1)
+            if (inventoryItems[i][j].id == -1)
             {
                 isFull = false;
             }
@@ -278,4 +356,48 @@ bool Inventory::IsFull()
     }
 
     return isFull;
+}
+
+void Inventory::ToolbarShortcut() const
+{
+    if (IsKeyPressed(KEY_ONE))
+    {
+        curItem = 0;
+    }
+    else if (IsKeyPressed(KEY_TWO))
+    {
+        curItem = 1;
+    }
+    else if (IsKeyPressed(KEY_THREE))
+    {
+        curItem = 2;
+    }
+    else if (IsKeyPressed(KEY_FOUR))
+    {
+        curItem = 3;
+    }
+    else if (IsKeyPressed(KEY_FIVE))
+    {
+        curItem = 4;
+    }
+    else if (IsKeyPressed(KEY_SIX))
+    {
+        curItem = 5;
+    }
+    else if (IsKeyPressed(KEY_SEVEN))
+    {
+        curItem = 6;
+    }
+    else if (IsKeyPressed(KEY_EIGHT))
+    {
+        curItem = 7;
+    }
+    else if (IsKeyPressed(KEY_NINE))
+    {
+        curItem = 8;
+    }
+    else if (IsKeyPressed(KEY_ZERO))
+    {
+        curItem = 9;
+    }
 }

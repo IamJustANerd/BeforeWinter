@@ -171,7 +171,18 @@ bool Player::IsInventoryCalled()
 
 void Player::DrawInventory() const
 {
-    inventory.Draw();
+    inventory.DrawInventory();
+}
+
+void Player::DrawToolbar() const
+{
+    inventory.DrawToolbar();
+}
+
+void Player::UpdateToolbar()
+{
+    inventory.ToolbarShortcut();
+    Player::DrawToolbar();
 }
 
 void Player::AddItemToInventory(int _id, int _amount)

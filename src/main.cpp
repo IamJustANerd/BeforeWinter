@@ -115,7 +115,7 @@ int main()
     SetWindowMinSize(320, 180);
 
     // Toggle full screen
-    //ToggleFullscreen();
+    // ToggleFullscreen();
 
     // Update screen width and height to the current window size
     screenWidth = GetScreenWidth();
@@ -266,6 +266,9 @@ int main()
 
         // End 2D mode
         EndMode2D();
+
+        // Draw and update player toolbar
+        player->UpdateToolbar();
 
         // Draw inventory
         if(player->IsInventoryCalled())

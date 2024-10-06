@@ -239,8 +239,14 @@ void Inventory::DrawToolbar() const
             {
                 slotColor = Color{200, 200, 0, 127};
                 isHover = true;
-            }
 
+                // If the player clicked on this slot, highlight it as the selected item
+                if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+                {
+                    curItem = pos.y;
+                }
+            }
+            
             // Draw the slot
             DrawRectangle(j + horizontalOffset, i + verticalOffset, slotWidth, slotHeight, slotColor);
 

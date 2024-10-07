@@ -194,7 +194,7 @@ void Inventory::DrawToolbar() const
     slotHeight = slotWidth;
     verticalOffset = (inventoryHeight - slotHeight * (slotVertical)) / 2;
     horizontalOffset = (inventoryWidth - slotWidth * (slotHorizontal)) / 2;
-    position.x = screenWidth / 4 / scale, position.y = screenHeight / scale - 2 * slotHeight;
+    position.x = screenWidth / 4 / scale, position.y = screenHeight / scale - 2 * slotHeight + horizontalOffset;
 
     // Reset hover and drag hover flags
     isHover = false;

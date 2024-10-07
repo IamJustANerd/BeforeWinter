@@ -15,6 +15,10 @@ Player::Player(Vector2 _position, Grid* _grid)
                               position.y - collectRadiusLength,
                               (float)width + 2 * collectRadiusLength,
                               (float)height + 2 * collectRadiusLength};
+    interactionRadius = Rectangle{position.x - interactionRadiusLength,
+                                  position.y - interactionRadiusLength,
+                                  (float)width + 2 * interactionRadiusLength,
+                                  (float)height + 2 * interactionRadiusLength};
 
     // Player is uncollidable
     isUncollidable = true;
@@ -139,6 +143,10 @@ void Player::Movements()
     collectRadius.x = position.x - collectRadiusLength;
     collectRadius.y = position.y - collectRadiusLength;
 
+    // Update interaction radius position
+    interactionRadius.x = position.x - interactionRadiusLength;
+    interactionRadius.y = position.y - interactionRadiusLength;
+
     // Update player's cell
     grid->Move(this, change);
 }
@@ -150,6 +158,9 @@ void Player::Draw() const
     
     // Draw collect radius box
     DrawRectangleRec(collectRadius, Color{0, 121, 241, 120});
+
+    // Draw interaction radius box
+    DrawRectangleRec(interactionRadius, Color{253, 249, 0, 128});
 
     // Draw hitbox
     DrawRectangleRec(hitBox, Color{0, 228, 48, 120});

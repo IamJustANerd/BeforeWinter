@@ -39,8 +39,7 @@ void UpdateTime()
 void PrintTime()
 {
     DrawText(TextFormat("Hari ke-%d", gameTime.days), gameScreenWidth - 90, 5, 15, GREEN);
-    DrawText(TextFormat("Jam ke-%d", gameTime.hours), gameScreenWidth - 90, 35, 15, GREEN);
-    DrawText(TextFormat("Menit ke-%d", gameTime.minutes), gameScreenWidth - 90, 65, 15, GREEN);
+    DrawText(TextFormat("%02d:%02d", gameTime.hours, gameTime.minutes), gameScreenWidth - 90, 35, 15, GREEN);
 }
 
 void DrawTimePhase(int cellSize, int cellNumber, Camera2D camera, const int gridSize)

@@ -239,27 +239,28 @@ int main()
         // Draw player and rectangle (for debugging)
 
         // Mouse collision testing
-        // Rectangle testBlue = {player->GetPosition().x - gridSize, player->GetPosition().y - gridSize, gridSize * 2 + player->GetWidth(), gridSize * 2 + player->GetHeight()};
-        // // Only hover when the inventory is not called
-        // if (CheckCollisionRecs(testBlue, mouseRect) && !player->IsInventoryCalled())
-        // {
-        //     DrawRectangleRec(testBlue, Color{230, 41, 55, 127});
-        //     mouseCollision = true;
-        // }
-        // else
-        // {
-        //     DrawRectangleRec(testBlue, Color{0, 121, 241, 127});
-        // }
+        Rectangle testBlue = {player->GetPosition().x - gridSize, player->GetPosition().y - gridSize, gridSize * 2 + player->GetWidth(), gridSize * 2 + player->GetHeight()};
+        // Only hover when the inventory is not called
+        if (CheckCollisionRecs(testBlue, mouseRect) && !player->IsInventoryCalled())
+        {
+            DrawRectangleRec(testBlue, Color{230, 41, 55, 127});
+            mouseCollision = true;
+        }
+        else
+        {
+            DrawRectangleRec(testBlue, Color{0, 121, 241, 127});
+        }
 
         // Collision test with world objects
-        // for (const auto &obj : visibleObjects)
-        // {
-        //     if(CheckCollisionRecs(mouseRect,
-        //                           Rectangle{obj->GetPosition().x, obj->GetPosition().y, (float)obj->GetWidth(), (float)obj->GetHeight()}))
-        //     {
-        //         mouseCollision = true;
-        //     }
-        // }
+        for (const auto &obj : visibleObjects)
+        {
+            std::cout << "ada" << '\n';
+            if(CheckCollisionRecs(mouseRect,
+                                  Rectangle{obj->GetPosition().x, obj->GetPosition().y, (float)obj->GetWidth(), (float)obj->GetHeight()}))
+            {
+                mouseCollision = true;
+            }
+        }
 
         // Draw time phase
         DrawTimePhase(grid.CELL_SIZE, grid.NUM_CELLS, camera, gridSize);

@@ -13,6 +13,8 @@ private:
     float sprintSpeed = 40.0f;
     bool isSprinting = false;
     Rectangle collectRadius;
+    Rectangle interactionRadius;
+    float interactionRadiusLength = 16.0f;
     float collectRadiusLength = 32.0f;
 
 public:

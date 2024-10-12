@@ -139,7 +139,7 @@ int main()
 
     // Declare player
     Player* player = new Player(Vector2{(float)screenWidth, (float)screenHeight}, &grid);
-    new Nature(Vector2{384, 384}, 1, NatureTex, &grid);
+    new Nature(Vector2{540, 384}, 1, NatureTex, &grid);
 
     new Collectible(Vector2{(float)screenWidth / 2 + 50, (float)screenHeight / 2 + 50}, 1, &grid);
     new Collectible(Vector2{(float)screenWidth / 2 + 200, (float)screenHeight / 2 + 200}, 1, &grid);

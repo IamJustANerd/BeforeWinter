@@ -67,7 +67,11 @@ void Grid::UpdateGrid()
         
             // Handle mouse
             int mousePosX = (int)GetMouseRect().x / CELL_SIZE, mousePosY = (int)GetMouseRect().y / CELL_SIZE;
-            HandleMouse(cells[i][i]);
+            if(i == mousePosX && j == mousePosY)
+            {
+                // std::cout << mousePosX << ' ' << mousePosY << '\n';
+                HandleMouse();
+            }
         }
     }
 }
@@ -92,9 +96,6 @@ void Grid::HandleCell(Entity* entity)
         {
             // HandleCollectible(entity);
         }
-
-        // Handling mouse collision by checking if this entity is colliding with the mouse
-        
 
         // Static entites (like nature for example) doesn't need to do collision check,
         // considering it would never touch other entity
@@ -334,7 +335,35 @@ void Grid::DrawVisibleObjects(Vector2 cameraPos)
     }
 }
 
-void Grid::HandleMouse(Entity *entity)
+void Grid::HandleMouse()
 {
+    Rectangle mouseRect = GetMouseRect();
 
+    int minX = std::max((int)mouseRect.x / CELL_SIZE - 1, 0);
+    int minY = std::max((int)mouseRect.y / CELL_SIZE - 1, 0);
+    int maxX = std::min((int)(mouseRect.x + mouseRect.width) / CELL_SIZE + 1, NUM_CELLS - 1);
+    int maxY = std::min((int)(mouseRect.y + mouseRect.height) / CELL_SIZE + 1, NUM_CELLS - 1);
+
+    std::cout << minX << ' ' << minY << ' ' << maxX << ' ' << maxY << '\n';
+
+    // Handle mouse and interactable entities collision
+    int cnt = 0;
+    for (int x = minX; x <= maxX; x++)
+    {
+        for (int y = minY; y <= maxY; y++)
+        {
+            const Entity *entity = cells[x][y];
+            while (entity != NULL)
+            {
+                // Collision with nature
+                if (typeid(*entity) == typeid(Nature))
+                {
+                    std::cout << "COLLIDE" << '\n';
+                }
+
+                // Move to next other entity
+                entity = entity->next;
+            }
+        }
+    }
 }

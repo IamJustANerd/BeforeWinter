@@ -165,6 +165,9 @@ int main()
     // Scale the content based on the window size
     scale = std::min((float)screenWidth / gameScreenWidth, (float)screenHeight / gameScreenHeight);
 
+    // Initialize mouse
+    InitializeMouse(camera);
+
     // Counting time for debugging
     int cnt = 0;
 
@@ -209,8 +212,7 @@ int main()
         UpdateCamera(camera, player->GetPosition(), player->GetWidth(), player->GetHeight(), scale);
 
         // Update mouse according to world position
-        Rectangle mouseRect = {0, 0, mouseSize / camera.zoom, mouseSize / camera.zoom};
-        UpdateMouse(mouseRect, camera);
+        UpdateMouse(camera);
 
         // Update time
         UpdateTime();
@@ -241,7 +243,7 @@ int main()
         // Mouse collision testing
         Rectangle testBlue = {player->GetPosition().x - gridSize, player->GetPosition().y - gridSize, gridSize * 2 + player->GetWidth(), gridSize * 2 + player->GetHeight()};
         // Only hover when the inventory is not called
-        if (CheckCollisionRecs(testBlue, mouseRect) && !player->IsInventoryCalled())
+        if (CheckCollisionRecs(testBlue, GetMouseRect()) && !player->IsInventoryCalled())
         {
             DrawRectangleRec(testBlue, Color{230, 41, 55, 127});
             mouseCollision = true;
@@ -254,9 +256,8 @@ int main()
         // Collision test with world objects
         for (const auto &obj : visibleObjects)
         {
-            std::cout << "ada" << '\n';
-            if(CheckCollisionRecs(mouseRect,
-                                  Rectangle{obj->GetPosition().x, obj->GetPosition().y, (float)obj->GetWidth(), (float)obj->GetHeight()}))
+            if (CheckCollisionRecs(GetMouseRect(),
+                                   Rectangle{obj->GetPosition().x, obj->GetPosition().y, (float)obj->GetWidth(), (float)obj->GetHeight()}))
             {
                 mouseCollision = true;
             }
@@ -291,10 +292,10 @@ int main()
             DrawText(TextFormat("Player Grid: [%i , %i]", (int)player->GetPosition().x / gridSize, (int)player->GetPosition().y / gridSize), 0, 155, 15, GREEN);
             DrawText(TextFormat("Scale: [%f]", (float)scale), 0, 185, 15, GREEN);
             DrawText(TextFormat("Mouse Screen Position: [%f , %f]", (float)GetMousePosition().x, (float)GetMousePosition().y), 0, 215, 15, GREEN);
-            DrawText(TextFormat("Mouse World Position: [%f , %f]", (float)mouseRect.x, (float)mouseRect.y), 0, 245, 15, GREEN);
+            DrawText(TextFormat("Mouse World Position: [%f , %f]", (float)GetMouseRect().x, (float)GetMouseRect().y), 0, 245, 15, GREEN);
             DrawText(TextFormat("FPS: [%i]", GetFPS()), 0, 275, 15, GREEN);
             DrawText(TextFormat("Number of Visible Objects: [%i]", visibleObjects.size()), 0, 305, 15, GREEN);
-            DrawText(TextFormat("This is grid: [%i, %i]", (int)mouseRect.x / grid.CELL_SIZE, (int)mouseRect.y / grid.CELL_SIZE), 0, 335, 15, GREEN);
+            DrawText(TextFormat("This is grid: [%i, %i]", (int)GetMouseRect().x / grid.CELL_SIZE, (int)GetMouseRect().y / grid.CELL_SIZE), 0, 335, 15, GREEN);
         }
 
         // Draw the mouse according to screen position

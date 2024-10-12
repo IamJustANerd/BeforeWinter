@@ -1,14 +1,21 @@
 #include "../include/Mouse.h"
 #include "../include/raymath.h"
 #include "../include/Screen.h"
+#include "../include/Camera.h"
 
 // Mouse collision check
 bool mouseCollision;
 bool mouseGrab;
 Vector2 mousePosition;
 int mouseSize = 20;
+Rectangle mouseRect;
 
-void UpdateMouse(Rectangle &mouseRect, Camera2D camera)
+void InitializeMouse(Camera2D &camera)
+{
+    mouseRect = {0, 0, mouseSize / camera.zoom, mouseSize / camera.zoom};
+}
+
+void UpdateMouse(Camera2D camera)
 {
     // Get mouse position in screen space
     mousePosition = GetMousePosition();
@@ -40,4 +47,9 @@ void DrawMouse(bool mouseCollision, float scale)
     {
         DrawRectangle(mouseScreenPos.x / scale, mouseScreenPos.y / scale, mouseSize, mouseSize, BLUE);
     }
+}
+
+Rectangle GetMouseRect()
+{
+    return mouseRect;
 }

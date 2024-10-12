@@ -3,13 +3,12 @@
 #include "../include/Player.h"
 #include "../include/Collectible.h"
 #include "../include/Nature.h"
+#include "../include/Mouse.h"
 #include "../include/raylib.h"
 #include <cstddef>
 #include <algorithm>
 #include <vector>
 #include <iostream>
-
-// NOTE: NEED TO FIX DOUBLED ITEM COLLECTION (DONE)
 
 // Custom compare bool
 struct CompareObjectPosition
@@ -63,7 +62,12 @@ void Grid::UpdateGrid()
     {
         for(int j = 0; j < NUM_CELLS; j++)
         {
+            // Handle entities
             HandleCell(cells[i][j]);
+        
+            // Handle mouse
+            int mousePosX = (int)GetMouseRect().x / CELL_SIZE, mousePosY = (int)GetMouseRect().y / CELL_SIZE;
+            HandleMouse(cells[i][i]);
         }
     }
 }
@@ -88,6 +92,9 @@ void Grid::HandleCell(Entity* entity)
         {
             // HandleCollectible(entity);
         }
+
+        // Handling mouse collision by checking if this entity is colliding with the mouse
+        
 
         // Static entites (like nature for example) doesn't need to do collision check,
         // considering it would never touch other entity
@@ -142,6 +149,7 @@ void Grid::HandlePlayer(Entity* entity)
 
     // Loop List:
     // 1. Loop to detect collectibles within player collect radius
+    // Note: Might need to increase the collision detection radius in order to handle objects that are bigger than the cell itself
     Rectangle collectRadius = player->GetCollectRadiusRectangle();
     int minX = (int)collectRadius.x / CELL_SIZE;
     int minY = (int)collectRadius.y / CELL_SIZE;
@@ -165,7 +173,6 @@ void Grid::HandlePlayer(Entity* entity)
                 // Player and Collectible class collision
                 if (typeid(*other) == typeid(Collectible))
                 {
-                    // std::cout << "ADA COLLECTIBLE" << '\n';
                     // To do Collectible class specific things
                     Collectible *collectible = static_cast<Collectible *>(other);
                     int cellX = collectible->GetPosition().x / CELL_SIZE;
@@ -238,7 +245,7 @@ void Grid::HandleCollectible(Entity *entity)
         // Collectible and Player class collision
         if (typeid(*other) == typeid(Player))
         {
-            // To do Collectible class specific things
+            // To do Player class specific things
             Player *player = static_cast<Player *>(other);
 
             // std::cout << "Dan ada player" << '\n';
@@ -325,4 +332,9 @@ void Grid::DrawVisibleObjects(Vector2 cameraPos)
     {
         drawList[i]->Draw();
     }
+}
+
+void Grid::HandleMouse(Entity *entity)
+{
+
 }

@@ -10,7 +10,9 @@ extern bool mouseGrab;
 extern Vector2 mousePosition;
 extern int mouseSize;
 
-void UpdateMouse(Rectangle &mouseRect, Camera2D camera);
+void InitializeMouse(Camera2D &camera);
+void UpdateMouse(Camera2D camera);
 void DrawMouse(bool mouseCollision, float scale);
+Rectangle GetMouseRect();
 
 #endif 

@@ -32,6 +32,9 @@ public:
     // Handle collectible
     void HandleCollectible(Entity *entity);
 
+    // Handle mouse
+    void HandleMouse(Entity *entity);
+
     // Draw objects visible by player
     void DrawVisibleObjects(Vector2 cameraPos);
 

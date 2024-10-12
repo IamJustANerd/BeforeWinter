@@ -21,6 +21,7 @@ protected:
     Rectangle hitBox;
     Texture2D* textures;
     bool isUncollidable;
+    bool isCollidingWithMouse = false;
 
     // Pointer to the grid
     Grid* grid;

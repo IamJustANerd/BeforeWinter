@@ -28,7 +28,14 @@ void Nature::Draw() const
     DrawTexture(textures[id], position.x, position.y, WHITE);
 
     // Draw hitbox
-    DrawRectangleRec(hitBox, Color{0, 228, 48, 120});
+    if(isCollidingWithMouse)
+    {
+        DrawRectangleRec(hitBox, Color{230, 41, 55, 120});
+    }
+    else
+    {
+        DrawRectangleRec(hitBox, Color{0, 228, 48, 120});
+    }
 }
 
 void Nature::Update()

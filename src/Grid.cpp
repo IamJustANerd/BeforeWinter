@@ -352,13 +352,24 @@ void Grid::HandleMouse()
     {
         for (int y = minY; y <= maxY; y++)
         {
-            const Entity *entity = cells[x][y];
+            Entity *entity = cells[x][y];
             while (entity != NULL)
             {
                 // Collision with nature
                 if (typeid(*entity) == typeid(Nature))
                 {
-                    std::cout << "COLLIDE" << '\n';
+                    // To do nature specific functions
+                    Nature *nature = static_cast<Nature *>(entity);
+
+                    if (CheckCollisionRecs(mouseRect, nature->GetHitBox()))
+                    {
+                        std::cout << "COLLIDE" << '\n';
+                        nature->isCollidingWithMouse = true;
+                    }
+                    else
+                    {
+                        nature->isCollidingWithMouse = false;
+                    }
                 }
 
                 // Move to next other entity

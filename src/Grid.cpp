@@ -85,6 +85,9 @@ void Grid::HandleCell(Entity* entity)
     {   
         // Update the entity
         entity->Update();
+
+        // Reset mouse collision
+        entity->isCollidingWithMouse = false;
             
         // Handling player collision
         if (typeid(*entity) == typeid(Player))
@@ -348,15 +351,14 @@ void Grid::HandleMouse()
     // std::cout << minX << ' ' << minY << ' ' << maxX << ' ' << maxY << '\n';
 
     // Handle mouse and interactable entities collision
-    int cnt = 0;
+    Nature *temp; // To store temp entity
+    float distance = CELL_SIZE * 5; // To store shortest distance between entity and mouse
+    bool collided = false; // To prevent from accessing non-existent entity
     for (int x = minX; x <= maxX; x++)
     {
         for (int y = minY; y <= maxY; y++)
         {
             Entity *entity = cells[x][y];
-            Nature *temp;
-            // To prevent from accessing non-existent entity
-            bool collided = false;
 
             while (entity != NULL)
             {
@@ -365,11 +367,10 @@ void Grid::HandleMouse()
                 {
                     // To do nature specific functions
                     Nature *nature = static_cast<Nature *>(entity);
-                    float distance = CELL_SIZE * 5;
-
+                
                     // There can only be one entity that can collide with mouse at a time.
-                    // Thus, a selection is required (it will prioritize entity with lowest distance)
-                    // in case there are more than one entity colliding with mouse
+                    // Thus, a selection is required (it will prioritize entity with lowest
+                    // distance from) in case there are more than one entity colliding with mouse
                     if (CheckCollisionRecs(mouseRect, nature->GetHitBox()))
                     {
                         // std::cout << "COLLIDE" << '\n';
@@ -388,14 +389,14 @@ void Grid::HandleMouse()
                     }
                 }
 
-                if(collided)
-                {
-                    temp->isCollidingWithMouse = true;
-                }
-
                 // Move to next other entity
                 entity = entity->next;
             }
         }
+    }
+
+    if (collided)
+    {
+        temp->isCollidingWithMouse = true;
     }
 }

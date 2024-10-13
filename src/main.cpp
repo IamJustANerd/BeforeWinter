@@ -176,6 +176,7 @@ int main()
         {
             // new Nature(Vector2{(float)GetRandomValue(0, 10000), (float)GetRandomValue(0, 10000)}, GetRandomValue(0, 4), NatureTex, &grid);
             new Collectible(Vector2{(float)GetRandomValue(0, 10000), (float)GetRandomValue(0, 10000)}, GetRandomValue(1, 9999), &grid);
+            new Nature(Vector2{(float)GetRandomValue(0, 10000), (float)GetRandomValue(0, 10000)}, GetRandomValue(0, 4), NatureTex, &grid);
         }
     }
 

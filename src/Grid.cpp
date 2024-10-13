@@ -339,6 +339,45 @@ void Grid::DrawVisibleObjects(Vector2 cameraPos)
     }
 }
 
+void Grid::DrawOutlinedObjects(Vector2 cameraPos)
+{
+    // Calculate the boundaries for the drawing (which is the visible view + an offset of the player camera)
+    int minX = std::max((int)(cameraPos.x - screenWidth / scale) / CELL_SIZE, 0);
+    int minY = std::max((int)(cameraPos.y - screenHeight / scale) / CELL_SIZE, 0);
+    int maxX = std::min((int)(cameraPos.x + screenWidth / scale) / CELL_SIZE, NUM_CELLS - 1);
+    int maxY = std::min((int)(cameraPos.y + screenHeight / scale) / CELL_SIZE, NUM_CELLS - 1);
+
+    // Collect all entities in the cell and sort them before drawing for consistent order
+    std::vector<Entity *> drawList;
+    for (int x = minX; x <= maxX; x++)
+    {
+        for (int y = minY; y <= maxY; y++)
+        {
+            Entity *entity = cells[x][y];
+
+            while (entity != NULL)
+            {
+                if (entity->isCollidingWithMouse)
+                {
+                    drawList.push_back(entity);
+                }
+                entity = entity->next;
+            }
+        }
+    }
+
+    // Sort them based on their position in the world
+    std::sort(drawList.begin(), drawList.end(), CompareObjectPosition());
+
+    // Draw them on order
+    for (long long unsigned int i = 0; i < drawList.size(); i++)
+    {
+        drawList[i]->Draw();
+    }
+
+    std::cout << "GAMBAR " << drawList.size() << '\n';
+}
+
 void Grid::HandleMouse()
 {
     Rectangle mouseRect = GetMouseRect();

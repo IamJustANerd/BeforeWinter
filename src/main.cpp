@@ -176,7 +176,6 @@ int main()
         {
             // new Nature(Vector2{(float)GetRandomValue(0, 10000), (float)GetRandomValue(0, 10000)}, GetRandomValue(0, 4), NatureTex, &grid);
             new Collectible(Vector2{(float)GetRandomValue(0, 10000), (float)GetRandomValue(0, 10000)}, GetRandomValue(1, 9999), &grid);
-            new Nature(Vector2{(float)GetRandomValue(0, 10000), (float)GetRandomValue(0, 10000)}, GetRandomValue(0, 4), NatureTex, &grid);
         }
     }
 
@@ -258,43 +257,19 @@ int main()
         // 2D mode
         BeginMode2D(camera);
 
-        // Testing Shader
-        BeginShaderMode(shdrOutline);
-
-        DrawTexture(NatureTex[1], tes->GetPosition().x, tes->GetPosition().y, WHITE);
-
-        EndShaderMode();
-
         // Grid for debugging
         DrawGrid(grid.CELL_SIZE, grid.NUM_CELLS, camera);
 
+        // Draw outlined entities
+        BeginShaderMode(shdrOutline);
+
+        // DrawTexture(NatureTex[1], tes->GetPosition().x, tes->GetPosition().y, WHITE);
+        grid.DrawOutlinedObjects(camera.target);
+
+        EndShaderMode();
+
         // Draw objects visible by player
         grid.DrawVisibleObjects(camera.target);
-
-        // Draw player and rectangle (for debugging)
-
-        // Mouse collision testing
-        Rectangle testBlue = {player->GetPosition().x - gridSize, player->GetPosition().y - gridSize, gridSize * 2 + player->GetWidth(), gridSize * 2 + player->GetHeight()};
-        // Only hover when the inventory is not called
-        if (CheckCollisionRecs(testBlue, GetMouseRect()) && !player->IsInventoryCalled())
-        {
-            DrawRectangleRec(testBlue, Color{230, 41, 55, 127});
-            mouseCollision = true;
-        }
-        else
-        {
-            DrawRectangleRec(testBlue, Color{0, 121, 241, 127});
-        }
-
-        // Collision test with world objects
-        // for (const auto &obj : visibleObjects)
-        // {
-        //     if (CheckCollisionRecs(GetMouseRect(),
-        //                            Rectangle{obj->GetPosition().x, obj->GetPosition().y, (float)obj->GetWidth(), (float)obj->GetHeight()}))
-        //     {
-        //         mouseCollision = true;
-        //     }
-        // }
 
         // Draw time phase
         DrawTimePhase(grid.CELL_SIZE, grid.NUM_CELLS, camera, gridSize);

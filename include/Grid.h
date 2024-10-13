@@ -32,13 +32,16 @@ public:
     // Handle collectible
     void HandleCollectible(Entity *entity);
 
+    // Draw objects visible to player
+    void DrawVisibleObjects(Vector2 cameraPos);
+
+    // Draw outlined objects visible to player
+    void DrawOutlinedObjects(Vector2 cameraPos);
+
     // Handle mouse
     void HandleMouse();
 
-    // Draw objects visible by player
-    void DrawVisibleObjects(Vector2 cameraPos);
-
-    private:
+private:
     Entity *cells[NUM_CELLS][NUM_CELLS];
 };
 

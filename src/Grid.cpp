@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <vector>
 #include <iostream>
+#include <math.h>
 
 // Custom compare bool
 struct CompareObjectPosition
@@ -344,7 +345,7 @@ void Grid::HandleMouse()
     int maxX = std::min((int)(mouseRect.x + mouseRect.width) / CELL_SIZE + 1, NUM_CELLS - 1);
     int maxY = std::min((int)(mouseRect.y + mouseRect.height) / CELL_SIZE + 1, NUM_CELLS - 1);
 
-    std::cout << minX << ' ' << minY << ' ' << maxX << ' ' << maxY << '\n';
+    // std::cout << minX << ' ' << minY << ' ' << maxX << ' ' << maxY << '\n';
 
     // Handle mouse and interactable entities collision
     int cnt = 0;
@@ -353,6 +354,10 @@ void Grid::HandleMouse()
         for (int y = minY; y <= maxY; y++)
         {
             Entity *entity = cells[x][y];
+            Nature *temp;
+            // To prevent from accessing non-existent entity
+            bool collided = false;
+
             while (entity != NULL)
             {
                 // Collision with nature
@@ -360,16 +365,32 @@ void Grid::HandleMouse()
                 {
                     // To do nature specific functions
                     Nature *nature = static_cast<Nature *>(entity);
+                    float distance = CELL_SIZE * 5;
 
+                    // There can only be one entity that can collide with mouse at a time.
+                    // Thus, a selection is required (it will prioritize entity with lowest distance)
+                    // in case there are more than one entity colliding with mouse
                     if (CheckCollisionRecs(mouseRect, nature->GetHitBox()))
                     {
-                        std::cout << "COLLIDE" << '\n';
-                        nature->isCollidingWithMouse = true;
+                        // std::cout << "COLLIDE" << '\n';
+                        float curDistance = sqrt(pow(mouseRect.x - nature->GetHitBox().x, 2) + pow(mouseRect.y - nature->GetHitBox().y, 2));
+
+                        if (distance > curDistance)
+                        {
+                            temp = nature;
+                            distance = curDistance;
+                            collided = true;
+                        }
                     }
                     else
                     {
                         nature->isCollidingWithMouse = false;
                     }
+                }
+
+                if(collided)
+                {
+                    temp->isCollidingWithMouse = true;
                 }
 
                 // Move to next other entity

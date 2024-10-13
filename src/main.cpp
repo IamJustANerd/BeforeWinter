@@ -10,6 +10,13 @@
 #include <cmath>
 #include <iostream>
 
+// {---------------------------------------------- GLSL_VERSION ----------------------------------------------}
+#if defined(PLATFORM_DESKTOP)
+#define GLSL_VERSION 330
+#else // PLATFORM_ANDROID, PLATFORM_WEB
+#define GLSL_VERSION 100
+#endif
+
 // {---------------------------------------------- Headers ----------------------------------------------}
 
 // Raylib
@@ -124,6 +131,23 @@ int main()
     // Setup Assets
     SetupAssets();
 
+    // Shaders for texture outline
+    Shader shdrOutline = LoadShader(0, TextFormat("..\\shaders\\resources\\glsl%i\\outline.fs", GLSL_VERSION));
+
+    float outlineSize = 1.0f;
+    float outlineColor[4] = {1.0f, 0.0f, 0.0f, 1.0f}; // Normalized RED color
+    float textureSize[2] = {(float)NatureTex[0].width, (float)NatureTex[0].height};
+
+    // Get shader locations
+    int outlineSizeLoc = GetShaderLocation(shdrOutline, "outlineSize");
+    int outlineColorLoc = GetShaderLocation(shdrOutline, "outlineColor");
+    int textureSizeLoc = GetShaderLocation(shdrOutline, "textureSize");
+
+    // Set shader values (they can be changed later)
+    SetShaderValue(shdrOutline, outlineSizeLoc, &outlineSize, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(shdrOutline, outlineColorLoc, outlineColor, SHADER_UNIFORM_VEC4);
+    SetShaderValue(shdrOutline, textureSizeLoc, textureSize, SHADER_UNIFORM_VEC2);
+
     /*
         To make the content of the game scales based on the window size, we will use render-to-texture technique.
         This is achievable by making a target texture and draw on it instead of directly on the screen. Eventually,
@@ -138,7 +162,8 @@ int main()
     Grid grid;
 
     // Declare player
-    Player* player = new Player(Vector2{(float)screenWidth, (float)screenHeight}, &grid);
+    Player* player = new Player(Vector2{(float)1980, (float)1280}, &grid);
+    Nature *tes = new Nature(Vector2{800, 400}, 1, NatureTex, &grid);
     new Nature(Vector2{540, 384}, 1, NatureTex, &grid);
 
     new Collectible(Vector2{(float)screenWidth / 2 + 50, (float)screenHeight / 2 + 50}, 1, &grid);
@@ -232,6 +257,13 @@ int main()
         // 2D mode
         BeginMode2D(camera);
 
+        // Testing Shader
+        BeginShaderMode(shdrOutline);
+
+        DrawTexture(NatureTex[1], tes->GetPosition().x, tes->GetPosition().y, WHITE);
+
+        EndShaderMode();
+
         // Grid for debugging
         DrawGrid(grid.CELL_SIZE, grid.NUM_CELLS, camera);
 
@@ -254,14 +286,14 @@ int main()
         }
 
         // Collision test with world objects
-        for (const auto &obj : visibleObjects)
-        {
-            if (CheckCollisionRecs(GetMouseRect(),
-                                   Rectangle{obj->GetPosition().x, obj->GetPosition().y, (float)obj->GetWidth(), (float)obj->GetHeight()}))
-            {
-                mouseCollision = true;
-            }
-        }
+        // for (const auto &obj : visibleObjects)
+        // {
+        //     if (CheckCollisionRecs(GetMouseRect(),
+        //                            Rectangle{obj->GetPosition().x, obj->GetPosition().y, (float)obj->GetWidth(), (float)obj->GetHeight()}))
+        //     {
+        //         mouseCollision = true;
+        //     }
+        // }
 
         // Draw time phase
         DrawTimePhase(grid.CELL_SIZE, grid.NUM_CELLS, camera, gridSize);

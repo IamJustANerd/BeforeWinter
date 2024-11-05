@@ -1,6 +1,5 @@
 // Camera.cpp
 #include "../include/Camera.h"
-#include "../include/raymath.h"
 
 void UpdateCamera(Camera2D &camera, Vector2 playerPos, int playerWidth, int playerHeight, float scale)
 {

@@ -1,7 +1,7 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include "raylib.h"
+#include "../include/raylib_includes.h"
 #include "Dynamic.h"
 #include "Inventory.h"
 

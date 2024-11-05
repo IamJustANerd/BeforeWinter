@@ -1,7 +1,7 @@
 #ifndef ENTITY_H
 #define ENTITY_H
 
-#include "raylib.h"
+#include "../include/raylib_includes.h"
 
 // Entity position in the grid for spatial partitioning
 
@@ -22,6 +22,7 @@ protected:
     Texture2D* textures;
     bool isUncollidable;
     bool isCollidingWithMouse = false;
+    Vector2 direction;
 
     // Pointer to the grid
     Grid* grid;

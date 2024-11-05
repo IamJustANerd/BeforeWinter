@@ -1,7 +1,7 @@
 #ifndef DYNAMIC_H
 #define DYNAMIC_H
 
-#include "raylib.h"
+#include "../include/raylib_includes.h"
 #include "Entity.h"
 #include <string>
 

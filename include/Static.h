@@ -1,7 +1,7 @@
 #ifndef STATIC_H
 #define STATIC_H
 
-#include "raylib.h"
+#include "../include/raylib_includes.h"
 #include "Entity.h"
 
 class Static : public Entity

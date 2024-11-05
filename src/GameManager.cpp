@@ -1,6 +1,5 @@
 #include "../include/GameManager.h"
 #include "../include/Screen.h"
-#include "../include/raylib.h"
 #include <iostream>
 #include <algorithm>
 

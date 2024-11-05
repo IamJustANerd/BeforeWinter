@@ -1,7 +1,7 @@
 #ifndef GAMEMANAGER_H
 #define GAMEMANAGER_H
 
-#include "../include/raylib.h"
+#include "../include/raylib_includes.h"
 
 struct GameTime {
     int seconds;

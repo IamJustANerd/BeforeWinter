@@ -1,7 +1,7 @@
 #ifndef NATURE_H
 #define NATURE_H
 
-#include "raylib.h"
+#include "../include/raylib_includes.h"
 #include "Static.h"
 
 class Nature : public Entity

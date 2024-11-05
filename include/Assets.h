@@ -1,7 +1,7 @@
 #ifndef ASSETS_H
 #define ASSETS_H
 
-#include "../include/raylib.h"
+#include "../include/raylib_includes.h"
 
 // Images
 extern Image playerImg[5];

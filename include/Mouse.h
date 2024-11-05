@@ -1,7 +1,7 @@
 #ifndef MOUSE_H
 #define MOUSE_H
 
-#include "../include/raylib.h"
+#include "../include/raylib_includes.h"
 #include "../include/Screen.h"
 
 // Mouse collision check

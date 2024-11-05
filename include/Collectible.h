@@ -1,7 +1,7 @@
 #ifndef COLLECTIBLE_H
 #define COLLECTIBLE_H
 
-#include "raylib.h"
+#include "../include/raylib_includes.h"
 #include "Dynamic.h"
 
 class Collectible : public Dynamic

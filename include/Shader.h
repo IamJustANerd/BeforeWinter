@@ -7,8 +7,7 @@
 #define GLSL_VERSION 100
 #endif
 
-#include "../include/raylib.h"
-#include "../include/raymath.h"
+#include "../include/raylib_includes.h"
 #include "../include/Assets.h"
 
 extern Shader shdrOutline;

@@ -1,5 +1,4 @@
 #include "../include/Mouse.h"
-#include "../include/raymath.h"
 #include "../include/Screen.h"
 #include "../include/Camera.h"
 

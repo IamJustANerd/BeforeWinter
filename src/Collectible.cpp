@@ -1,5 +1,4 @@
 #include "../include/Collectible.h"
-#include "../include/raymath.h"
 #include "../include/Grid.h"
 #include <cmath>
 #include <iostream>

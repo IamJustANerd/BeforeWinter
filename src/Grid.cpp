@@ -4,7 +4,7 @@
 #include "../include/Collectible.h"
 #include "../include/Nature.h"
 #include "../include/Mouse.h"
-#include "../include/raylib.h"
+#include "../include/raylib_includes.h"
 #include <cstddef>
 #include <algorithm>
 #include <vector>

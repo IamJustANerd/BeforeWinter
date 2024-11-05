@@ -374,8 +374,6 @@ void Grid::DrawOutlinedObjects(Vector2 cameraPos)
     {
         drawList[i]->Draw();
     }
-
-    std::cout << "GAMBAR " << drawList.size() << '\n';
 }
 
 void Grid::HandleMouse()

@@ -1,8 +1,5 @@
 /*
     Dev note:
-    1. Fixed drawing order by initializing entites width and height by their textures
-    2. Need to fix mouse and objects collision (tips: mouse position is between 0 to screen size, while game objects are not)
-    3. Need to ensure that the spatial partitioning is working well
 */
 // {---------------------------------------------- Libraries ----------------------------------------------}
 #include <vector>
@@ -43,6 +40,9 @@
 
 // Nature
 #include "../include/Nature.h"
+
+// Shader
+#include "../include/Shader.h"
 
 // Collectible
 #include "../include/Collectible.h"
@@ -131,22 +131,8 @@ int main()
     // Setup Assets
     SetupAssets();
 
-    // Shaders for texture outline
-    Shader shdrOutline = LoadShader(0, TextFormat("..\\shaders\\resources\\glsl%i\\outline.fs", GLSL_VERSION));
-
-    float outlineSize = 1.0f;
-    float outlineColor[4] = {1.0f, 0.0f, 0.0f, 1.0f}; // Normalized RED color
-    float textureSize[2] = {(float)NatureTex[0].width, (float)NatureTex[0].height};
-
-    // Get shader locations
-    int outlineSizeLoc = GetShaderLocation(shdrOutline, "outlineSize");
-    int outlineColorLoc = GetShaderLocation(shdrOutline, "outlineColor");
-    int textureSizeLoc = GetShaderLocation(shdrOutline, "textureSize");
-
-    // Set shader values (they can be changed later)
-    SetShaderValue(shdrOutline, outlineSizeLoc, &outlineSize, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(shdrOutline, outlineColorLoc, outlineColor, SHADER_UNIFORM_VEC4);
-    SetShaderValue(shdrOutline, textureSizeLoc, textureSize, SHADER_UNIFORM_VEC2);
+    // Setup Shader
+    SetupShader();
 
     /*
         To make the content of the game scales based on the window size, we will use render-to-texture technique.
@@ -163,13 +149,13 @@ int main()
 
     // Declare player
     Player* player = new Player(Vector2{(float)1980, (float)1280}, &grid);
-    Nature *tes = new Nature(Vector2{800, 400}, 1, NatureTex, &grid);
-    new Nature(Vector2{540, 384}, 1, NatureTex, &grid);
+    Nature *tes = new Nature(Vector2{800, 400}, 1, natureTex, &grid);
+    new Nature(Vector2{540, 384}, 1, natureTex, &grid);
 
     new Collectible(Vector2{(float)screenWidth / 2 + 50, (float)screenHeight / 2 + 50}, 1, &grid);
     new Collectible(Vector2{(float)screenWidth / 2 + 200, (float)screenHeight / 2 + 200}, 1, &grid);
 
-    //Testing collectibles
+    // Testing collectibles
     for (int i = 0; i <= 100; i += 1)
     {
         for (int j = 0; j <= 100; j += 1)

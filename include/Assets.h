@@ -4,10 +4,12 @@
 #include "../include/raylib.h"
 
 // Images
-extern Image NatureImg[100];
+extern Image playerImg[5];
+extern Image natureImg[100];
 
 // Textures
-extern Texture2D NatureTex[100];
+extern Texture2D playerTex[5];
+extern Texture2D natureTex[100];
 
 // Load all images
 void LoadAllImage();

@@ -21,6 +21,7 @@ protected:
     int type;
     int id;
     Rectangle hitBox;
+    Rectangle frameRec;
     Texture2D* textures;
     bool isUncollidable;
     bool isCollidingWithMouse = false;

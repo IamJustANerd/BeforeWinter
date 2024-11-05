@@ -24,6 +24,10 @@ void LoadAllImage()
 // Resize all images
 void ResizeAllImage()
 {
+    // Player
+    // Knight
+    ImageResizeNN(&playerImg[0], playerImg->width / 2, playerImg->height / 2);
+
     // Nature
     // Trees
     for (int i = 0; i < 3; i++)
@@ -41,6 +45,10 @@ void ResizeAllImage()
 // Load all textures from images
 void LoadAllTexture()
 {
+    // Player
+    playerTex[0] = LoadTextureFromImage(playerImg[0]);
+
+    // Nature
     for (int i = 0; i < 5; i++)
     {
         natureTex[i] = LoadTextureFromImage(natureImg[i]);
@@ -51,6 +59,10 @@ void LoadAllTexture()
 // Unload all images
 void UnloadAllImage()
 {
+    // Player
+    UnloadImage(playerImg[0]);
+
+    // Nature
     for (int i = 0; i < 5; i++)
     {
         UnloadImage(natureImg[i]);
@@ -60,6 +72,10 @@ void UnloadAllImage()
 // Unload all textures
 void UnloadAllTexture()
 {
+    // PLayer
+    UnloadTexture(playerTex[0]);
+
+    // Nature
     for (int i = 0; i < 5; i++)
     {
         UnloadTexture(natureTex[i]);
@@ -73,4 +89,5 @@ void SetupAssets()
     ResizeAllImage();
     LoadAllTexture();
     UnloadAllImage();
+    std::cout << "SETUP ASSETS SUCCESS!" << '\n';
 }

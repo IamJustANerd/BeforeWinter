@@ -2,7 +2,7 @@
 #include "../include/Grid.h"
 #include <iostream>
 
-Nature::Nature(Vector2 _position, int _id, Texture2D* _textures, Grid* _grid)
+Nature::Nature(Vector2 _position, int _id, Texture2D *_textures, Grid *_grid)
 {
     position = _position;
     id = _id;

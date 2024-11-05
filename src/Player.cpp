@@ -4,12 +4,13 @@
 #include "../include/Collectible.h"
 #include <iostream>
 
-Player::Player(Vector2 _position, Grid* _grid)
+Player::Player(Vector2 _position, Grid *_grid, Texture2D *_textures)
 {
     position = _position;
-    width = 32, height = 32;
+    width = 64, height = 64;
     id = 0;
-    hitBox = Rectangle{ position.x, position.y + (float)height * 0.75f, (float)width, (float)height / 4 };
+    hitBox = Rectangle{position.x, position.y + (float)height * 0.75f, (float)width, (float)height / 4};
+    frameRec = Rectangle{0, 0, 96, 96};
     speed = 2.5f;
     collectRadius = Rectangle{position.x - collectRadiusLength,
                               position.y - collectRadiusLength,
@@ -19,6 +20,7 @@ Player::Player(Vector2 _position, Grid* _grid)
                                   position.y - interactionRadiusLength,
                                   (float)width + 2 * interactionRadiusLength,
                                   (float)height + 2 * interactionRadiusLength};
+    textures = _textures;
 
     // Player is uncollidable
     isUncollidable = true;
@@ -35,7 +37,7 @@ void Player::Movements()
 {
     // Variables for calculating cell changes
     Vector2 change = {0, 0};
-    
+
     // Border for player movement to prevent player from moving out of the grid
     int minBorderX = grid->CELL_SIZE;
     int maxBorderX = (grid->NUM_CELLS - 1) * grid->CELL_SIZE;
@@ -48,7 +50,7 @@ void Player::Movements()
         speed += sprintSpeed;
         isSprinting = true;
     }
-    else if(IsKeyPressed(KEY_LEFT_SHIFT) && isSprinting)
+    else if (IsKeyPressed(KEY_LEFT_SHIFT) && isSprinting)
     {
         speed -= sprintSpeed;
         isSprinting = false;
@@ -72,10 +74,12 @@ void Player::Movements()
     if (IsKeyDown(KEY_A))
     {
         int i = 0;
-        while((i < speed && hitBox.x > minBorderX) &&
-              !IsCollidingWithUncollidable("Left"))
+
+        while ((i < speed && hitBox.x > minBorderX) &&
+               !IsCollidingWithUncollidable("Left"))
         {
             i += 1;
+            std::cout << i << '\n';
 
             // Update player position (in the grid as well)
             position.x -= 1;
@@ -180,8 +184,9 @@ void Player::Movements()
 void Player::Draw() const
 {
     // Draw body
-    DrawRectangle(position.x, position.y, width, height, RED);
-    
+    // DrawRectangle(position.x, position.y, width, height, RED);
+    DrawTextureRec(textures[0], frameRec, position, WHITE); // Draw part of the texture
+
     // Draw collect radius box
     DrawRectangleRec(collectRadius, Color{0, 121, 241, 120});
 
@@ -246,7 +251,7 @@ bool Player::CanItemFitIntoInventory(int _id, int _amount)
 {
     itemPosition pos = inventory.FindSlot(_id, _amount);
 
-    if(pos.x != -1 && pos.y != -1)
+    if (pos.x != -1 && pos.y != -1)
     {
         return true;
     }
@@ -258,5 +263,4 @@ bool Player::CanItemFitIntoInventory(int _id, int _amount)
 
 void IsColliding()
 {
-
 }

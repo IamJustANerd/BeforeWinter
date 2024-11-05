@@ -289,6 +289,7 @@ int main()
             DrawText(TextFormat("FPS: [%i]", GetFPS()), 0, 275, 15, GREEN);
             DrawText(TextFormat("Number of Visible Objects: [%i]", visibleObjects.size()), 0, 305, 15, GREEN);
             DrawText(TextFormat("This is grid: [%i, %i]", (int)GetMouseRect().x / grid.CELL_SIZE, (int)GetMouseRect().y / grid.CELL_SIZE), 0, 335, 15, GREEN);
+            DrawText(TextFormat("Player is facing: [%f, %f]", (float)player->GetDirection().x, (float)player->GetDirection().y), 0, 365, 15, GREEN);
         }
 
         // Draw the mouse according to screen position

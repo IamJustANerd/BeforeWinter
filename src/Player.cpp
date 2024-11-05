@@ -23,6 +23,9 @@ Player::Player(Vector2 _position, Grid* _grid)
     // Player is uncollidable
     isUncollidable = true;
 
+    // Set starting direction as neutral right
+    direction = Vector2({1.0f, 0.0f});
+
     // Insert player into the grid
     grid = _grid;
     grid->Add(this);
@@ -62,6 +65,9 @@ void Player::Movements()
     // 1. Is still within the border
     // 2. Wouldn't collide with other uncollidable entity
 
+    // To check if the player is moving or not (will be set as true if the player moves in any direction)
+    isMoving = false;
+
     // Left movement
     if (IsKeyDown(KEY_A))
     {
@@ -78,10 +84,15 @@ void Player::Movements()
             // Update hitBox position
             hitBox.x = position.x;
         }
-    }
 
+        // Update player direction
+        direction.x = -1.0f;
+        direction.y = 0.0f;
+
+        isMoving = true;
+    }
     // Right movement
-    if (IsKeyDown(KEY_D))
+    else if (IsKeyDown(KEY_D))
     {
         int i = 0;
         while ((i < speed && (hitBox.x + hitBox.width) < maxBorderX) &&
@@ -96,6 +107,12 @@ void Player::Movements()
             // Update hitBox position
             hitBox.x = position.x;
         }
+
+        // Update player direction
+        direction.x = 1.0f;
+        direction.y = 0.0f;
+
+        isMoving = true;
     }
 
     // Up movement
@@ -114,10 +131,14 @@ void Player::Movements()
             // Update hitBox position
             hitBox.y = position.y + (float)height * 0.75f;
         }
-    }
 
+        // Update player direction
+        direction.y = -1.0f;
+
+        isMoving = true;
+    }
     // Down movement
-    if (IsKeyDown(KEY_S))
+    else if (IsKeyDown(KEY_S))
     {
         // Add player position while is still within the border
         int i = 0;
@@ -133,6 +154,11 @@ void Player::Movements()
             // Update hitBox position
             hitBox.y = position.y + (float)height * 0.75f;
         }
+
+        // Update player direction
+        direction.y = 1.0f;
+
+        isMoving = true;
     }
 
     // Update hitBox position

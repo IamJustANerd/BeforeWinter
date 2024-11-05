@@ -6,6 +6,11 @@ Vector2 Entity::GetPosition() const
     return position;
 }
 
+Vector2 Entity::GetDirection() const
+{
+    return direction;
+}
+
 int Entity::GetWidth() const
 {
     return width;

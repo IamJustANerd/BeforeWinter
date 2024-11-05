@@ -10,6 +10,8 @@ class Dynamic : public Entity
 protected:
     float speed = 0;
     float rotation = 0;
+    bool isMoving = false;
+    bool isAttacking = false;
 
 public:
     // Movements

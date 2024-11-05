@@ -15,6 +15,8 @@ class Entity
 
 protected:
     Vector2 position;
+    // Direction is in x and y (-1.0 for up and left, 1.0 for down and right, 0 for neither up down or left right [lets call it as neutral])
+    Vector2 direction;
     int width, height;
     int type;
     int id;
@@ -22,8 +24,7 @@ protected:
     Texture2D* textures;
     bool isUncollidable;
     bool isCollidingWithMouse = false;
-    Vector2 direction;
-
+    
     // Pointer to the grid
     Grid* grid;
     
@@ -32,6 +33,7 @@ public:
     virtual void Draw() const = 0;
     virtual void Update() = 0;
     Vector2 GetPosition() const;
+    Vector2 GetDirection() const;
     int GetWidth() const;
     int GetHeight() const;
     int GetID() const;

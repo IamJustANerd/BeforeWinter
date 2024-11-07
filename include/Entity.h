@@ -25,6 +25,7 @@ protected:
     Texture2D* textures;
     bool isUncollidable;
     bool isCollidingWithMouse = false;
+    float rotation;
     
     // Pointer to the grid
     Grid* grid;
@@ -40,6 +41,7 @@ public:
     int GetID() const;
     Rectangle GetHitBox() const;
     bool GetIsUncollidable() const;
+    Rectangle FlipTexture(Rectangle frameRec) const;
 
     // Linked list for faster insertion and deletion
     Entity *prev;

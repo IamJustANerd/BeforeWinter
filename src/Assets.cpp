@@ -26,7 +26,7 @@ void ResizeAllImage()
 {
     // Player
     // Knight
-    ImageResizeNN(&playerImg[0], playerImg->width / 2, playerImg->height / 2);
+    ImageResizeNN(&playerImg[0], playerImg->width * 2 / 3, playerImg->height * 2 / 3);
 
     // Nature
     // Trees
@@ -52,7 +52,6 @@ void LoadAllTexture()
     for (int i = 0; i < 5; i++)
     {
         natureTex[i] = LoadTextureFromImage(natureImg[i]);
-        std::cout << natureTex[i].width << ' ' << natureTex[i].height << '\n';
     }
 }
 
@@ -89,5 +88,4 @@ void SetupAssets()
     ResizeAllImage();
     LoadAllTexture();
     UnloadAllImage();
-    std::cout << "SETUP ASSETS SUCCESS!" << '\n';
 }

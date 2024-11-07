@@ -1,6 +1,11 @@
 #include "../include/Entity.h"
 #include <iostream>
 
+Rectangle Entity::FlipTexture(Rectangle frameRec) const
+{
+    return {frameRec.x + frameRec.width, frameRec.y, -frameRec.width, frameRec.height};
+}
+
 Vector2 Entity::GetPosition() const
 {
     return position;

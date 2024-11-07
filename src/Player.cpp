@@ -7,10 +7,10 @@
 Player::Player(Vector2 _position, Grid *_grid, Texture2D *_textures)
 {
     position = _position;
-    width = 64, height = 64;
+    width = 128, height = 128;
     id = 0;
-    hitBox = Rectangle{position.x, position.y + (float)height * 0.75f, (float)width, (float)height / 4};
-    frameRec = Rectangle{0, 0, 96, 96};
+    hitBox = Rectangle{position.x + (float)width / 3, position.y + (float)height * 0.6f, (float)width / 3, (float)height / 8};
+    frameRec = Rectangle{0, 0, 128, 128};
     speed = 2.5f;
     collectRadius = Rectangle{position.x - collectRadiusLength,
                               position.y - collectRadiusLength,
@@ -21,6 +21,7 @@ Player::Player(Vector2 _position, Grid *_grid, Texture2D *_textures)
                                   (float)width + 2 * interactionRadiusLength,
                                   (float)height + 2 * interactionRadiusLength};
     textures = _textures;
+    rotation = 0;
 
     // Player is uncollidable
     isUncollidable = true;
@@ -79,14 +80,13 @@ void Player::Movements()
                !IsCollidingWithUncollidable("Left"))
         {
             i += 1;
-            std::cout << i << '\n';
 
             // Update player position (in the grid as well)
             position.x -= 1;
             change.x -= 1;
 
             // Update hitBox position
-            hitBox.x = position.x;
+            hitBox.x = position.x + (float)width / 3;
         }
 
         // Update player direction
@@ -109,7 +109,7 @@ void Player::Movements()
             change.x += 1;
 
             // Update hitBox position
-            hitBox.x = position.x;
+            hitBox.x = position.x + (float)width / 3;
         }
 
         // Update player direction
@@ -133,7 +133,7 @@ void Player::Movements()
             change.y -= 1;
 
             // Update hitBox position
-            hitBox.y = position.y + (float)height * 0.75f;
+            hitBox.y = position.y + (float)height * 0.6f;
         }
 
         // Update player direction
@@ -156,7 +156,7 @@ void Player::Movements()
             change.y += 1;
 
             // Update hitBox position
-            hitBox.y = position.y + (float)height * 0.75f;
+            hitBox.y = position.y + (float)height * 0.6f;
         }
 
         // Update player direction
@@ -164,10 +164,6 @@ void Player::Movements()
 
         isMoving = true;
     }
-
-    // Update hitBox position
-    hitBox.x = position.x;
-    hitBox.y = position.y + (float)height * 0.75f;
 
     // Update collect radius position
     collectRadius.x = position.x - collectRadiusLength;
@@ -184,8 +180,9 @@ void Player::Movements()
 void Player::Draw() const
 {
     // Draw body
-    // DrawRectangle(position.x, position.y, width, height, RED);
-    DrawTextureRec(textures[0], frameRec, position, WHITE); // Draw part of the texture
+    DrawRectangle(position.x, position.y, 128, 128, RED);
+    // DrawTextureRec(textures[0], frameRec, position, WHITE); // Draw part of the texture
+    DrawTextureRec(textures[0], FlipTexture(frameRec), {position.x, position.y}, WHITE); // Draw part of the texture (flipped)
 
     // Draw collect radius box
     DrawRectangleRec(collectRadius, Color{0, 121, 241, 120});
@@ -200,6 +197,8 @@ void Player::Draw() const
 void Player::Update()
 {
     Movements();
+
+    rotation++;
 
     // TakeCollectibles();
 

@@ -55,7 +55,7 @@
 // {---------------------------------------------- Global Variables ----------------------------------------------}
 
 // Grid size
-const int gridSize = 128;
+const int gridSize = 256;
 
 // Minimum and maximum value for visible grid (set as global for debugging purpose)
 int minX;

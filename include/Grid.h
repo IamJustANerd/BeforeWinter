@@ -9,7 +9,7 @@ public:
     Grid();
 
     static const int NUM_CELLS = 100;
-    static const int CELL_SIZE = 128;
+    static const int CELL_SIZE = 256;
 
     // Return read only cells
     const Entity *const (&GetReadOnlyCells() const)[NUM_CELLS][NUM_CELLS];

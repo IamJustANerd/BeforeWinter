@@ -33,7 +33,6 @@ protected:
     Rectangle hitBox;
     Rectangle frameRec;
     Texture2D* textures;
-    Animation* animations;
     bool isUncollidable;
     bool isCollidingWithMouse = false;
     float rotation;

@@ -40,7 +40,6 @@ Player::Player(Vector2 _position, Grid *_grid, Texture2D *_textures)
 
     // Set the frame rec according to the current state
     frameRec = playerAnimation[type][(int)curState].sourceFrame;
-    std::cout << type << ' ' << (int)curState << '\n';
 
     // Player is uncollidable
     isUncollidable = true;
@@ -200,6 +199,7 @@ void Player::Draw() const
 {
     // Draw body
     DrawRectangle(position.x, position.y, 128, 128, RED);
+
     if(direction.x >= 1)
     {
         DrawTextureRec(textures[0], frameRec, position, WHITE); // Draw part of the texture
@@ -228,7 +228,17 @@ void Player::Update()
 
     // TakeCollectibles();
 
-    inventory.Update();
+    // Update frame
+    frameCounter += 1;
+    if (frameCounter >= playerAnimation[type][(int)curState].frameTime / playerAnimation[type][(int)curState].totalFrames)
+    {
+        frameCounter = 0;
+        std::cout << "Ganti frame\n";
+        frameRec.x = ((int)(frameRec.x + 128) % (int)textures[0].width);
+        std::cout << frameRec.x << '\n';
+    }
+
+        inventory.Update();
 }
 
 bool Player::IsInventoryCalled()

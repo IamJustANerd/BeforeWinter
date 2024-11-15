@@ -244,17 +244,9 @@ void Player::Update()
 {
     Movements();
 
-    rotation++;
-
     // TakeCollectibles();
 
-    // Update frame
-    frameCounter += 1;
-    if (frameCounter >= playerAnimation[type][(int)curState].frameTime / playerAnimation[type][(int)curState].totalFrames)
-    {
-        frameCounter = 0;
-        frameRec.x = ((int)(frameRec.x + 128) % (int)textures[0].width);
-    }
+    UpdateSpriteFrame();
 
     inventory.Update();
 }
@@ -311,6 +303,16 @@ bool Player::CanItemFitIntoInventory(int _id, int _amount)
     else
     {
         return false;
+    }
+}
+
+void Player::UpdateSpriteFrame()
+{
+    frameCounter += 1;
+    if (frameCounter >= playerAnimation[type][(int)curState].frameTime / playerAnimation[type][(int)curState].totalFrames)
+    {
+        frameCounter = 0;
+        frameRec.x = ((int)(frameRec.x + 128) % (int)textures[0].width);
     }
 }
 

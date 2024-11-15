@@ -28,6 +28,9 @@ public:
     // Update player
     void Update() override;
 
+    // Update sprite frame
+    void UpdateSpriteFrame() override;
+
     // Draw
     void Draw() const override;
 

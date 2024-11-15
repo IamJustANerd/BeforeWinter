@@ -27,6 +27,9 @@ class Collectible : public Dynamic
     // Draw
     void Draw() const override;
 
+    // Update sprite frame
+    void UpdateSpriteFrame() override;
+
     // Update player pos
     void UpdatePlayerPosition(Vector2 _playerPos);
 };

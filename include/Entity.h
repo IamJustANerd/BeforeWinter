@@ -46,6 +46,8 @@ protected:
 public:
     virtual void Draw() const = 0;
     virtual void Update() = 0;
+    // Update sprite frame (which will depends on the animation and state)
+    virtual void UpdateSpriteFrame() = 0;
     Vector2 GetPosition() const;
     Vector2 GetDirection() const;
     int GetWidth() const;

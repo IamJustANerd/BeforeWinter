@@ -84,14 +84,16 @@ void DrawGrid(int cellSize, int cellNumber, Camera2D camera)
     maxY = std::min((int)(cameraPos.y + screenHeight / scale) / cellSize, cellNumber - 1);
 
     // World
-    for (int x = -5000; x <= 15000; x += gridSize)
+    // Agar rapi, samakan dengan kelipatan grid size
+    int border = gridSize * 90;
+    for (int x = -border; x <= border; x += gridSize) 
     {
-        DrawLine(x + 8, -5000, x + 8, 15000, DARKGRAY);
+        DrawLine(x, -border, x, border, DARKGRAY);
     }
 
-    for (int y = -5000; y <= 15000; y += gridSize)
+    for (int y = -border; y <= border; y += gridSize)
     {
-        DrawLine(-5000, y + 8, 15000, y + 8, DARKGRAY);
+        DrawLine(-border, y, border, y, DARKGRAY);
     }
 
     // Visible view
@@ -245,6 +247,9 @@ int main()
         // Grid for debugging
         DrawGrid(grid.CELL_SIZE, grid.NUM_CELLS, camera);
 
+        // Draw objects visible by player
+        grid.DrawVisibleObjects(camera.target);
+
         // Draw outlined entities
         BeginShaderMode(shdrOutline);
 
@@ -252,9 +257,6 @@ int main()
         grid.DrawOutlinedObjects(camera.target);
 
         EndShaderMode();
-
-        // Draw objects visible by player
-        grid.DrawVisibleObjects(camera.target);
 
         // Draw time phase
         DrawTimePhase(grid.CELL_SIZE, grid.NUM_CELLS, camera, gridSize);

@@ -104,39 +104,39 @@ void LoadAnimation()
     playerAnimation[0][0].sourceFrame = {0, 0, 128, 128};
 
     // --> Running
-    playerAnimation[0][1].frameTime = 120;
+    playerAnimation[0][1].frameTime = 60;
     playerAnimation[0][1].totalFrames = 6;
-    playerAnimation[0][1].sourceFrame = {0, 129, 128, 256};
+    playerAnimation[0][1].sourceFrame = {0, 129, 128, 128};
 
     // --> Attack type 1 (right)
     playerAnimation[0][2].frameTime = 60;
     playerAnimation[0][2].totalFrames = 6;
-    playerAnimation[0][2].sourceFrame = {0, 257, 128, 384};
+    playerAnimation[0][2].sourceFrame = {0, 257, 128, 128};
 
     // --> Attack type 2 (right)
     playerAnimation[0][3].frameTime = 60;
     playerAnimation[0][3].totalFrames = 6;
-    playerAnimation[0][3].sourceFrame = {0, 385, 128, 512};
+    playerAnimation[0][3].sourceFrame = {0, 385, 128, 128};
 
     // --> Attack type 1 (down)
     playerAnimation[0][4].frameTime = 60;
     playerAnimation[0][4].totalFrames = 6;
-    playerAnimation[0][4].sourceFrame = {0, 513, 128, 640};
+    playerAnimation[0][4].sourceFrame = {0, 513, 128, 128};
 
     // --> Attack type 2 (down)
     playerAnimation[0][5].frameTime = 60;
     playerAnimation[0][5].totalFrames = 6;
-    playerAnimation[0][5].sourceFrame = {0, 641, 128, 768};
+    playerAnimation[0][5].sourceFrame = {0, 641, 128, 128};
 
     // --> Attack type 1 (up)
     playerAnimation[0][6].frameTime = 60;
     playerAnimation[0][6].totalFrames = 6;
-    playerAnimation[0][6].sourceFrame = {0, 769, 128, 896};
+    playerAnimation[0][6].sourceFrame = {0, 769, 128, 128};
 
     // --> Attack type 2 (up)
     playerAnimation[0][7].frameTime = 60;
     playerAnimation[0][7].totalFrames = 6;
-    playerAnimation[0][7].sourceFrame = {0, 897, 128, 1024};
+    playerAnimation[0][7].sourceFrame = {0, 897, 128, 128};
 }
 
 // Setup assets (images, textures, etc)

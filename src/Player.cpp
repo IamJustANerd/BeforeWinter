@@ -183,6 +183,26 @@ void Player::Movements()
         isMoving = true;
     }
 
+    // Switch to running animation
+    if(isMoving && curState != State::running)
+    {
+        curState = State::running;
+        frameRec = playerAnimation[type][(int)curState].sourceFrame;
+        
+        // Reset frame counter
+        frameCounter = 0;
+    }
+    
+    // Switch to idle animation
+    if(!isMoving && curState != State::idle)
+    {
+        curState = State::idle;
+        frameRec = playerAnimation[type][(int)curState].sourceFrame;
+
+        // Reset frame counter
+        frameCounter = 0;
+    }
+
     // Update collect radius position
     collectRadius.x = position.x - collectRadiusLength;
     collectRadius.y = position.y - collectRadiusLength;
@@ -198,13 +218,13 @@ void Player::Movements()
 void Player::Draw() const
 {
     // Draw body
-    DrawRectangle(position.x, position.y, 128, 128, RED);
+    DrawRectangle(position.x, position.y, 128, 128, {230, 41, 55, 128});
 
-    if(direction.x >= 1)
+    if(direction.x >= 0)
     {
         DrawTextureRec(textures[0], frameRec, position, WHITE); // Draw part of the texture
     }
-    else
+    else if(direction.x <= -1)
     {
         DrawTextureRec(textures[0], FlipTexture(frameRec), {position.x, position.y}, WHITE); // Draw part of the texture (flipped)
     }
@@ -233,12 +253,10 @@ void Player::Update()
     if (frameCounter >= playerAnimation[type][(int)curState].frameTime / playerAnimation[type][(int)curState].totalFrames)
     {
         frameCounter = 0;
-        std::cout << "Ganti frame\n";
         frameRec.x = ((int)(frameRec.x + 128) % (int)textures[0].width);
-        std::cout << frameRec.x << '\n';
     }
 
-        inventory.Update();
+    inventory.Update();
 }
 
 bool Player::IsInventoryCalled()

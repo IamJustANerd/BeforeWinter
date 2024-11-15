@@ -3,6 +3,7 @@
 
 #include "../include/raylib_includes.h"
 #include "Dynamic.h"
+#include "Assets.h"
 #include "Inventory.h"
 
 class Player : public Dynamic

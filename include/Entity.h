@@ -1,12 +1,22 @@
 #ifndef ENTITY_H
 #define ENTITY_H
+#define FPS 60
 
 #include "../include/raylib_includes.h"
+#include "../include/Assets.h"
 
 // Entity position in the grid for spatial partitioning
 
 // Forward the definition of grid first
 class Grid;
+
+enum class State
+{
+    idle,
+    running,
+    attacking,
+    dying,
+};
 
 class Entity
 {
@@ -23,13 +33,16 @@ protected:
     Rectangle hitBox;
     Rectangle frameRec;
     Texture2D* textures;
+    Animation* animations;
     bool isUncollidable;
     bool isCollidingWithMouse = false;
     float rotation;
+    int frameCounter = 0;
+    int curFrame = 0;
+    State curState;
     
     // Pointer to the grid
     Grid* grid;
-    
 
 public:
     virtual void Draw() const = 0;

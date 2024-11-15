@@ -4,24 +4,43 @@
 #include "../include/Collectible.h"
 #include <iostream>
 
+// Idea: Try to pass animation or share the global variable for even an easier use
 Player::Player(Vector2 _position, Grid *_grid, Texture2D *_textures)
 {
     position = _position;
+    
     width = 128, height = 128;
+    
     id = 0;
+
+    type = 0;
+    
+    // Assign player hitbox
     hitBox = Rectangle{position.x + (float)width / 3, position.y + (float)height * 0.6f, (float)width / 3, (float)height / 8};
-    frameRec = Rectangle{0, 0, 128, 128};
+    
     speed = 2.5f;
+
+    // Assign player collect radius
     collectRadius = Rectangle{position.x - collectRadiusLength,
                               position.y - collectRadiusLength,
                               (float)width + 2 * collectRadiusLength,
                               (float)height + 2 * collectRadiusLength};
+    
+    // Assign player interaction radius
     interactionRadius = Rectangle{position.x - interactionRadiusLength,
                                   position.y - interactionRadiusLength,
                                   (float)width + 2 * interactionRadiusLength,
                                   (float)height + 2 * interactionRadiusLength};
     textures = _textures;
+    
     rotation = 0;
+
+    // The starting state is idle
+    curState = State::idle;
+
+    // Set the frame rec according to the current state
+    frameRec = playerAnimation[type][(int)curState].sourceFrame;
+    std::cout << type << ' ' << (int)curState << '\n';
 
     // Player is uncollidable
     isUncollidable = true;
@@ -70,7 +89,7 @@ void Player::Movements()
 
     // To check if the player is moving or not (will be set as true if the player moves in any direction)
     isMoving = false;
-
+    
     // Left movement
     if (IsKeyDown(KEY_A))
     {
@@ -181,8 +200,15 @@ void Player::Draw() const
 {
     // Draw body
     DrawRectangle(position.x, position.y, 128, 128, RED);
-    // DrawTextureRec(textures[0], frameRec, position, WHITE); // Draw part of the texture
-    DrawTextureRec(textures[0], FlipTexture(frameRec), {position.x, position.y}, WHITE); // Draw part of the texture (flipped)
+    if(direction.x >= 1)
+    {
+        DrawTextureRec(textures[0], frameRec, position, WHITE); // Draw part of the texture
+    }
+    else
+    {
+        DrawTextureRec(textures[0], FlipTexture(frameRec), {position.x, position.y}, WHITE); // Draw part of the texture (flipped)
+    }
+    
 
     // Draw collect radius box
     DrawRectangleRec(collectRadius, Color{0, 121, 241, 120});

@@ -3,6 +3,17 @@
 
 #include "../include/raylib_includes.h"
 
+// Animation
+struct Animation
+{
+    int frameTime; // In fps
+    int totalFrames; // The amount of frames for an animation
+    Rectangle sourceFrame; // The starting point of a frame (in sprite sheet)
+};
+
+// Animation
+extern Animation playerAnimation[5][10];
+
 // Images
 extern Image playerImg[5];
 extern Image natureImg[100];
@@ -22,6 +33,9 @@ void LoadAllTexture();
 
 // Unload all images
 void UnloadAllImage();
+
+// Load animations
+void LoadAnimation();
 
 // Unload all textures
 void UnloadAllTexture();

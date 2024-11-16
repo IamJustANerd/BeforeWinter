@@ -227,8 +227,9 @@ void Player::Movements()
 void Player::Draw() const
 {
     // Draw body
-    DrawRectangle(position.x, position.y, 128, 128, {230, 41, 55, 128});
+    DrawRectangle(position.x, position.y, width, height, {230, 41, 55, 128});
 
+    // Draw texture
     if(direction.x >= 0)
     {
         DrawTextureRec(textures[0], frameRec, position, WHITE); // Draw part of the texture
@@ -236,9 +237,10 @@ void Player::Draw() const
     else if(direction.x <= -1)
     {
         DrawTextureRec(textures[0], FlipTexture(frameRec), {position.x, position.y}, WHITE); // Draw part of the texture (flipped)
+        if(curState == State::heavy_attacking)
+        std::cout << FlipTexture(frameRec).x / width << '\n';
     }
     
-
     // Draw collect radius box
     DrawRectangleRec(collectRadius, Color{0, 121, 241, 120});
 
@@ -321,7 +323,13 @@ void Player::UpdateSpriteFrame()
     if (frameCounter >= playerAnimation[(int)curState][0].frameTime / playerAnimation[(int)curState][0].totalFrames)
     {
         frameCounter = 0;
-        frameRec.x = ((int)(frameRec.x + 128) % (int)textures[0].width);
+
+        if(curState == State::light_attacking || curState == State::heavy_attacking)
+        {
+            std::cout << "This is frame: " << frameRec.x / width << '\n';
+        }
+
+        frameRec.x = ((int)(frameRec.x + width) % (int)textures[0].width);
     
         // Check if this is an attack animation
         if(curState == State::light_attacking || curState == State::heavy_attacking)
@@ -334,8 +342,17 @@ void Player::UpdateSpriteFrame()
 
                 curState = State::idle;
             
-                frameRec = playerAnimation[type][(int)curState].sourceFrame;
+                frameRec = playerAnimation[(int)curState][0].sourceFrame;
+                std::cout << frameRec.x << ' ' << frameRec.y << ' ' << frameRec.width << ' ' << frameRec.height << '\n';
             }
+            // if (!isMoving && curState != State::idle)
+            // {
+            //     curState = State::idle;
+            //     frameRec = playerAnimation[(int)curState][0].sourceFrame;
+
+            //     // Reset frame counter
+            //     frameCounter = 0;
+            // }
         }
     }
 }
@@ -373,6 +390,8 @@ void Player::Attack()
 
             // Reset frame counter
             frameCounter = 0;
+
+            std::cout << "Mulai dari frame: " << frameRec.x / width << '\n';
         }
         // Heavy attack
         else if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT))
@@ -398,6 +417,10 @@ void Player::Attack()
 
             // Reset frame counter
             frameCounter = 0;
+
+            std::cout << "Mulai dari frame: " << frameRec.x / width << '\n';
         }
+
+        
     }
 }

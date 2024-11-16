@@ -114,7 +114,7 @@ void LoadAnimation()
     playerAnimation[2][0].sourceFrame = {0, 257, 128, 128};
 
     // --> Attack type 2 (right) - heavy attack
-    playerAnimation[3][0].frameTime = 60;
+    playerAnimation[3][0].frameTime = 600;
     playerAnimation[3][0].totalFrames = 6;
     playerAnimation[3][0].sourceFrame = {0, 385, 128, 128};
 

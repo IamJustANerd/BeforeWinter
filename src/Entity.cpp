@@ -3,7 +3,7 @@
 
 Rectangle Entity::FlipTexture(Rectangle frameRec) const
 {
-    return {frameRec.x + frameRec.width, frameRec.y, -frameRec.width, frameRec.height};
+    return {frameRec.x, frameRec.y, -frameRec.width, frameRec.height};
 }
 
 Vector2 Entity::GetPosition() const

@@ -1,11 +1,12 @@
 #include "../include/Nature.h"
 #include "../include/Grid.h"
+#include "../include/Mouse.h"
 #include <iostream>
 
-Nature::Nature(Vector2 _position, int _id, Texture2D *_textures, Grid *_grid)
+Nature::Nature(Vector2 _position, int _type, Texture2D *_textures, Grid *_grid)
 {
     position = _position;
-    id = _id;
+    type = _type;
     textures = _textures;
 
     width = 128;
@@ -20,7 +21,7 @@ Nature::Nature(Vector2 _position, int _id, Texture2D *_textures, Grid *_grid)
     curState = State::idle;
 
     // Set the frame rec according to the current state
-    frameRec = natureAnimation[_id][(int)curState][0].sourceFrame;
+    frameRec = natureAnimation[type][(int)curState][0].sourceFrame;
 
     // Player is uncollidable
     isUncollidable = true;
@@ -48,10 +49,45 @@ void Nature::Draw() const
 
 void Nature::Update()
 {
-    
+    UpdateSpriteFrame();
+
+    // For testing hit animation
+    if(CheckCollisionRecs(GetMouseRect(), hitBox) && IsMouseButtonDown(MOUSE_BUTTON_LEFT))
+    {
+        std::cout << "Here" << '\n';
+        // Reset frame counter
+        frameCounter = 0;
+
+        // Change state into hit
+        curState = State::hit;
+
+        // Change frame
+        frameRec = natureAnimation[type][(int)curState][0].sourceFrame;
+    }
 }
 
 void Nature::UpdateSpriteFrame()
 {
-    
+    frameCounter += 1;
+    if (frameCounter >= natureAnimation[type][(int)curState][0].frameTime / natureAnimation[type][(int)curState][0].totalFrames)
+    {
+        if(curState == State::hit)
+            std::cout << "Ini frame ke-" << frameRec.x / 128 << ' ' << natureAnimation[type][(int)curState][0].frameTime << ' ' << natureAnimation[type][(int)curState][0].totalFrames << '\n';
+        frameCounter = 0;
+
+        frameRec.x = ((int)(frameRec.x + width) % (natureAnimation[type][(int)curState][0].totalFrames * width));
+
+        // Check if this is a hit animation
+        if (curState == State::hit)
+        {
+            // If it is, make sure to stop the hit animation once it reaches back to the first frame
+            if (frameRec.x <= 0)
+            {
+                // Return back to idle animation
+                curState = State::idle;
+
+                frameRec = natureAnimation[type][(int)curState][0].sourceFrame;
+            }
+        }
+    }
 }

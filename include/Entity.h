@@ -16,6 +16,7 @@ enum class State
     running,
     light_attacking,
     heavy_attacking,
+    hit,
     dying,
 };
 

@@ -143,15 +143,19 @@ void LoadAnimation()
     // Nature
     // -> Tree
     // --> Idle
-    natureAnimation[0][0][0].frameTime = 60;
+    natureAnimation[0][0][0].frameTime = 120;
     natureAnimation[0][0][0].totalFrames = 4;
     natureAnimation[0][0][0].sourceFrame = {0, 0, 128, 128};
 
     // --> Hit
+    natureAnimation[0][4][0].frameTime = 16;
+    natureAnimation[0][4][0].totalFrames = 2;
+    natureAnimation[0][4][0].sourceFrame = {0, 129, 128, 128};
 
-
-    // --> Chopped
-
+    // --> Chopped (Keknya ga perlu?)
+    // natureAnimation[0][5][0].frameTime = 30;
+    // natureAnimation[0][5][0].totalFrames = 2;
+    // natureAnimation[0][5][0].sourceFrame = {0, 129, 128, 128};
 }
 
 // Setup assets (images, textures, etc)

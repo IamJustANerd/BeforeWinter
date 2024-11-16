@@ -322,8 +322,8 @@ void Player::UpdateSpriteFrame()
     {
         frameCounter = 0;
 
-        frameRec.x = ((int)(frameRec.x + width) % (int)textures[0].width);
-    
+        frameRec.x = ((int)(frameRec.x + width) % (int)(playerAnimation[(int)curState][0].totalFrames * width));
+
         // Check if this is an attack animation
         if(curState == State::light_attacking || curState == State::heavy_attacking)
         {
@@ -337,14 +337,6 @@ void Player::UpdateSpriteFrame()
             
                 frameRec = playerAnimation[(int)curState][0].sourceFrame;
             }
-            // if (!isMoving && curState != State::idle)
-            // {
-            //     curState = State::idle;
-            //     frameRec = playerAnimation[(int)curState][0].sourceFrame;
-
-            //     // Reset frame counter
-            //     frameCounter = 0;
-            // }
         }
     }
 }
@@ -368,6 +360,7 @@ void Player::Attack()
             // The animation depends on the direction the player is facing (will prioritize x axis direction first)
             // Note: check Assets.cpp for player animation's reference
             
+            // Note: Need to change the attack direction based on the mouse position instead
             if(direction.y == 1)
             {
                 frameRec = playerAnimation[(int)curState][1].sourceFrame;

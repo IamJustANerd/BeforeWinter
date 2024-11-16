@@ -247,9 +247,7 @@ int main()
         // Grid for debugging
         DrawGrid(grid.CELL_SIZE, grid.NUM_CELLS, camera);
 
-        // Draw objects visible by player
-        grid.DrawVisibleObjects(camera.target);
-
+        // -------------------------------------------- Need to move this to the grid later on
         // Draw outlined entities
         BeginShaderMode(shdrOutline);
 
@@ -257,6 +255,10 @@ int main()
         grid.DrawOutlinedObjects(camera.target);
 
         EndShaderMode();
+        // --------------------------------------------
+
+        // Draw objects visible by player
+        grid.DrawVisibleObjects(camera.target);
 
         // Draw time phase
         DrawTimePhase(grid.CELL_SIZE, grid.NUM_CELLS, camera, gridSize);

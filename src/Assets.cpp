@@ -1,7 +1,7 @@
 #include "../include/Assets.h"
 #include <iostream>
 
-Animation playerAnimation[5][10]; // [player type (knight, archer, etc)][animation type (running, attacking, etc)]
+Animation playerAnimation[5][10]; // [animation type (running, attacking, etc)][variety (light attack, heavy attack, etc)]
 
 Image playerImg[5];
 Image natureImg[100];
@@ -104,39 +104,39 @@ void LoadAnimation()
     playerAnimation[0][0].sourceFrame = {0, 0, 128, 128};
 
     // --> Running
-    playerAnimation[0][1].frameTime = 60;
-    playerAnimation[0][1].totalFrames = 6;
-    playerAnimation[0][1].sourceFrame = {0, 129, 128, 128};
+    playerAnimation[1][0].frameTime = 60;
+    playerAnimation[1][0].totalFrames = 6;
+    playerAnimation[1][0].sourceFrame = {0, 129, 128, 128};
 
-    // --> Attack type 1 (right)
-    playerAnimation[0][2].frameTime = 60;
-    playerAnimation[0][2].totalFrames = 6;
-    playerAnimation[0][2].sourceFrame = {0, 257, 128, 128};
+    // --> Attack type 1 (right) - light attack
+    playerAnimation[2][0].frameTime = 30;
+    playerAnimation[2][0].totalFrames = 6;
+    playerAnimation[2][0].sourceFrame = {0, 257, 128, 128};
 
-    // --> Attack type 2 (right)
-    playerAnimation[0][3].frameTime = 60;
-    playerAnimation[0][3].totalFrames = 6;
-    playerAnimation[0][3].sourceFrame = {0, 385, 128, 128};
+    // --> Attack type 2 (right) - heavy attack
+    playerAnimation[3][0].frameTime = 60;
+    playerAnimation[3][0].totalFrames = 6;
+    playerAnimation[3][0].sourceFrame = {0, 385, 128, 128};
 
-    // --> Attack type 1 (down)
-    playerAnimation[0][4].frameTime = 60;
-    playerAnimation[0][4].totalFrames = 6;
-    playerAnimation[0][4].sourceFrame = {0, 513, 128, 128};
+    // --> Attack type 1 (down) - light attack
+    playerAnimation[2][1].frameTime = 30;
+    playerAnimation[2][1].totalFrames = 6;
+    playerAnimation[2][1].sourceFrame = {0, 513, 128, 128};
 
-    // --> Attack type 2 (down)
-    playerAnimation[0][5].frameTime = 60;
-    playerAnimation[0][5].totalFrames = 6;
-    playerAnimation[0][5].sourceFrame = {0, 641, 128, 128};
+    // --> Attack type 2 (down) - heavy attack
+    playerAnimation[3][1].frameTime = 60;
+    playerAnimation[3][1].totalFrames = 6;
+    playerAnimation[3][1].sourceFrame = {0, 641, 128, 128};
 
-    // --> Attack type 1 (up)
-    playerAnimation[0][6].frameTime = 60;
-    playerAnimation[0][6].totalFrames = 6;
-    playerAnimation[0][6].sourceFrame = {0, 769, 128, 128};
+    // --> Attack type 1 (up) - light attack
+    playerAnimation[2][2].frameTime = 30;
+    playerAnimation[2][2].totalFrames = 6;
+    playerAnimation[2][2].sourceFrame = {0, 769, 128, 128};
 
-    // --> Attack type 2 (up)
-    playerAnimation[0][7].frameTime = 60;
-    playerAnimation[0][7].totalFrames = 6;
-    playerAnimation[0][7].sourceFrame = {0, 897, 128, 128};
+    // --> Attack type 2 (up) - heavy attack
+    playerAnimation[3][2].frameTime = 60;
+    playerAnimation[3][2].totalFrames = 6;
+    playerAnimation[3][2].sourceFrame = {0, 897, 128, 128};
 }
 
 // Setup assets (images, textures, etc)

@@ -17,6 +17,9 @@ public:
     // Movements
     virtual void Movements() = 0;
 
+    // Attack
+    virtual void Attack() = 0;
+
     // Check if the dynamic entity is colliding with uncollidable
     bool IsCollidingWithUncollidable(std::string moveDir);
 };

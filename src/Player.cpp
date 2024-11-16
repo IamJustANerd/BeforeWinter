@@ -31,15 +31,18 @@ Player::Player(Vector2 _position, Grid *_grid, Texture2D *_textures)
                                   position.y - interactionRadiusLength,
                                   (float)width + 2 * interactionRadiusLength,
                                   (float)height + 2 * interactionRadiusLength};
+
     textures = _textures;
     
     rotation = 0;
+
+    isAttacking = false;
 
     // The starting state is idle
     curState = State::idle;
 
     // Set the frame rec according to the current state
-    frameRec = playerAnimation[type][(int)curState].sourceFrame;
+    frameRec = playerAnimation[(int)curState][0].sourceFrame;
 
     // Player is uncollidable
     isUncollidable = true;
@@ -54,6 +57,12 @@ Player::Player(Vector2 _position, Grid *_grid, Texture2D *_textures)
 
 void Player::Movements()
 {
+    // Can only move if player is not attacking
+    if(isAttacking)
+    {
+        return;
+    }
+
     // Variables for calculating cell changes
     Vector2 change = {0, 0};
 
@@ -187,7 +196,7 @@ void Player::Movements()
     if(isMoving && curState != State::running)
     {
         curState = State::running;
-        frameRec = playerAnimation[type][(int)curState].sourceFrame;
+        frameRec = playerAnimation[(int)curState][0].sourceFrame;
         
         // Reset frame counter
         frameCounter = 0;
@@ -197,7 +206,7 @@ void Player::Movements()
     if(!isMoving && curState != State::idle)
     {
         curState = State::idle;
-        frameRec = playerAnimation[type][(int)curState].sourceFrame;
+        frameRec = playerAnimation[(int)curState][0].sourceFrame;
 
         // Reset frame counter
         frameCounter = 0;
@@ -244,7 +253,7 @@ void Player::Update()
 {
     Movements();
 
-    // TakeCollectibles();
+    Attack();
 
     UpdateSpriteFrame();
 
@@ -309,13 +318,86 @@ bool Player::CanItemFitIntoInventory(int _id, int _amount)
 void Player::UpdateSpriteFrame()
 {
     frameCounter += 1;
-    if (frameCounter >= playerAnimation[type][(int)curState].frameTime / playerAnimation[type][(int)curState].totalFrames)
+    if (frameCounter >= playerAnimation[(int)curState][0].frameTime / playerAnimation[(int)curState][0].totalFrames)
     {
         frameCounter = 0;
         frameRec.x = ((int)(frameRec.x + 128) % (int)textures[0].width);
+    
+        // Check if this is an attack animation
+        if(curState == State::light_attacking || curState == State::heavy_attacking)
+        {
+            // If it is, make sure to stop the attack animation once it reaches back to the first frame
+            if(frameRec.x <= 0)
+            {
+                // Return back to idle animation
+                isAttacking = false;
+
+                curState = State::idle;
+            
+                frameRec = playerAnimation[type][(int)curState].sourceFrame;
+            }
+        }
     }
 }
 
 void IsColliding()
 {
+}
+
+void Player::Attack()
+{
+    // Player can only attack if it is currently not attacking
+    if(!isAttacking)
+    {
+        // Light attack
+        if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+        {
+            // Set player state as attacking to prevent player from doing other action (for example: running)
+            isAttacking = true;
+            curState = State::light_attacking;
+
+            // The animation depends on the direction the player is facing (will prioritize x axis direction first)
+            // Note: check Assets.cpp for player animation's reference
+            if(direction.x == 1 || direction.x == -1)
+            {
+                frameRec = playerAnimation[(int)curState][0].sourceFrame;
+            }
+            else if(direction.y == 1)
+            {
+                frameRec = playerAnimation[(int)curState][1].sourceFrame;
+            }
+            else if(direction.y == -1)
+            {
+                frameRec = playerAnimation[(int)curState][2].sourceFrame;
+            }
+
+            // Reset frame counter
+            frameCounter = 0;
+        }
+        // Heavy attack
+        else if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT))
+        {
+            // Set player state as attacking to prevent player from doing other action (for example: running)
+            isAttacking = true;
+            curState = State::heavy_attacking;
+
+            // The animation depends on the direction the player is facing (will prioritize x axis direction first)
+            // Note: check Assets.cpp for player animation's reference
+            if (direction.x == 1 || direction.x == -1)
+            {
+                frameRec = playerAnimation[(int)curState][0].sourceFrame;
+            }
+            else if (direction.y == 1)
+            {
+                frameRec = playerAnimation[(int)curState][1].sourceFrame;
+            }
+            else if (direction.y == -1)
+            {
+                frameRec = playerAnimation[(int)curState][2].sourceFrame;
+            }
+
+            // Reset frame counter
+            frameCounter = 0;
+        }
+    }
 }

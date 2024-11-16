@@ -31,6 +31,9 @@ public:
     // Update sprite frame
     void UpdateSpriteFrame() override;
 
+    // Attack
+    void Attack() override;
+
     // Draw
     void Draw() const override;
 

@@ -14,7 +14,8 @@ enum class State
 {
     idle,
     running,
-    attacking,
+    light_attacking,
+    heavy_attacking,
     dying,
 };
 

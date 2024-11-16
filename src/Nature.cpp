@@ -42,3 +42,8 @@ void Nature::Update()
 {
     
 }
+
+void Nature::UpdateSpriteFrame()
+{
+    
+}

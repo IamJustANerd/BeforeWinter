@@ -79,3 +79,13 @@ void Collectible::UpdatePlayerPosition(Vector2 _playerPos)
 {
     playerPos = _playerPos;
 }
+
+void Collectible::UpdateSpriteFrame()
+{
+    
+}
+
+void Collectible::Attack()
+{
+
+}

@@ -23,6 +23,9 @@ class Collectible : public Dynamic
 
     // Movement
     void Movements() override;
+
+    // Attack (we are not using it though)
+    void Attack() override;
     
     // Draw
     void Draw() const override;

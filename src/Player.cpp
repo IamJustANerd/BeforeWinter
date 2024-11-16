@@ -375,17 +375,18 @@ void Player::Attack()
 
             // The animation depends on the direction the player is facing (will prioritize x axis direction first)
             // Note: check Assets.cpp for player animation's reference
-            if(direction.x == 1 || direction.x == -1)
-            {
-                frameRec = playerAnimation[(int)curState][0].sourceFrame;
-            }
-            else if(direction.y == 1)
+            
+            if(direction.y == 1)
             {
                 frameRec = playerAnimation[(int)curState][1].sourceFrame;
             }
             else if(direction.y == -1)
             {
                 frameRec = playerAnimation[(int)curState][2].sourceFrame;
+            }
+            else if (direction.x == 1 || direction.x == -1)
+            {
+                frameRec = playerAnimation[(int)curState][0].sourceFrame;
             }
 
             // Reset frame counter
@@ -402,17 +403,17 @@ void Player::Attack()
 
             // The animation depends on the direction the player is facing (will prioritize x axis direction first)
             // Note: check Assets.cpp for player animation's reference
-            if (direction.x == 1 || direction.x == -1)
-            {
-                frameRec = playerAnimation[(int)curState][0].sourceFrame;
-            }
-            else if (direction.y == 1)
+            if (direction.y == 1)
             {
                 frameRec = playerAnimation[(int)curState][1].sourceFrame;
             }
             else if (direction.y == -1)
             {
                 frameRec = playerAnimation[(int)curState][2].sourceFrame;
+            }
+            else if (direction.x == 1 || direction.x == -1)
+            {
+                frameRec = playerAnimation[(int)curState][0].sourceFrame;
             }
 
             // Reset frame counter

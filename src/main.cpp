@@ -150,8 +150,8 @@ int main()
 
     // Declare player
     Player* player = new Player(Vector2{(float)1980, (float)1280}, &grid, playerTex);
-    Nature *tes = new Nature(Vector2{800, 400}, 1, natureTex, &grid);
-    new Nature(Vector2{540, 384}, 1, natureTex, &grid);
+    Nature *tes = new Nature(Vector2{800, 400}, 0, natureTex, &grid);
+    new Nature(Vector2{540, 384}, 0, natureTex, &grid);
 
     new Collectible(Vector2{(float)screenWidth / 2 + 50, (float)screenHeight / 2 + 50}, 1, &grid);
     new Collectible(Vector2{(float)screenWidth / 2 + 200, (float)screenHeight / 2 + 200}, 1, &grid);

@@ -12,7 +12,8 @@ struct Animation
 };
 
 // Animation
-extern Animation playerAnimation[5][10];
+extern Animation playerAnimation[5][10]; // [animation type (running, attacking, etc)][variety (light attack, heavy attack, etc)]
+extern Animation natureAnimation[10][5][10]; // [nature type (tree, bush, etc)][animation type (running, attacking, etc)][variety (light attack, heavy attack, etc)]
 
 // Images
 extern Image playerImg[5];

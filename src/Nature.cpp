@@ -8,14 +8,22 @@ Nature::Nature(Vector2 _position, int _id, Texture2D *_textures, Grid *_grid)
     id = _id;
     textures = _textures;
 
-    width = textures[id].width;
-    height = textures[id].height;
+    width = 128;
+    height = 128;
 
     // Nature is uncollidable
     isUncollidable = true;
 
-    // Testing hitbox
     hitBox = Rectangle{position.x, position.y, (float)width, (float)height};
+
+    // The starting state is idle
+    curState = State::idle;
+
+    // Set the frame rec according to the current state
+    frameRec = natureAnimation[_id][(int)curState][0].sourceFrame;
+
+    // Player is uncollidable
+    isUncollidable = true;
 
     // Insert nature into the grid
     grid = _grid;
@@ -25,7 +33,7 @@ Nature::Nature(Vector2 _position, int _id, Texture2D *_textures, Grid *_grid)
 void Nature::Draw() const
 {
     // Draw body
-    DrawTexture(textures[id], position.x, position.y, WHITE);
+    DrawTextureRec(textures[0], frameRec, position, WHITE);
 
     // Draw hitbox
     if(!isCollidingWithMouse)

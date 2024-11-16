@@ -1,7 +1,8 @@
 #include "../include/Assets.h"
 #include <iostream>
 
-Animation playerAnimation[5][10]; // [animation type (running, attacking, etc)][variety (light attack, heavy attack, etc)]
+Animation playerAnimation[5][10]; 
+Animation natureAnimation[10][5][10];
 
 Image playerImg[5];
 Image natureImg[100];
@@ -18,7 +19,7 @@ void LoadAllImage()
 
     // Nature
     // -> Trees
-    natureImg[0] = LoadImage("../graphics/tree_green_1.png");
+    natureImg[0] = LoadImage("../graphics/nature/tree.png");
     natureImg[1] = LoadImage("../graphics/tree_green_2.png");
     natureImg[2] = LoadImage("../graphics/tree_green_3.png");
     
@@ -36,7 +37,8 @@ void ResizeAllImage()
 
     // Nature
     // -> Trees
-    for (int i = 0; i < 3; i++)
+    ImageResizeNN(&natureImg[0], natureImg->width * 2 / 3, natureImg->height * 2 / 3);
+    for (int i = 1; i < 3; i++)
     {
         ImageResizeNN(&natureImg[i], 144, 144);
     }
@@ -137,6 +139,19 @@ void LoadAnimation()
     playerAnimation[3][2].frameTime = 60;
     playerAnimation[3][2].totalFrames = 6;
     playerAnimation[3][2].sourceFrame = {0, 897, 128, 128};
+
+    // Nature
+    // -> Tree
+    // --> Idle
+    natureAnimation[0][0][0].frameTime = 60;
+    natureAnimation[0][0][0].totalFrames = 4;
+    natureAnimation[0][0][0].sourceFrame = {0, 0, 128, 128};
+
+    // --> Hit
+
+
+    // --> Chopped
+
 }
 
 // Setup assets (images, textures, etc)

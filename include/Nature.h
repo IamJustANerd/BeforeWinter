@@ -15,7 +15,7 @@ public:
     void Draw() const override;
     // Update
     void Update() override;
-    // Update sprite frame
+    // Update sprite frame/
     void UpdateSpriteFrame() override;
 };
 

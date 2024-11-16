@@ -4,7 +4,7 @@
 #include "../include/Collectible.h"
 #include <iostream>
 
-// Idea: Try to pass animation or share the global variable for even an easier use
+// Idea: Try to use texture as global variable instead
 Player::Player(Vector2 _position, Grid *_grid, Texture2D *_textures)
 {
     position = _position;
@@ -232,13 +232,11 @@ void Player::Draw() const
     // Draw texture
     if(direction.x >= 0)
     {
-        DrawTextureRec(textures[0], frameRec, position, WHITE); // Draw part of the texture
+        DrawTextureRec(textures[0], frameRec, position, WHITE); 
     }
     else if(direction.x <= -1)
     {
-        DrawTextureRec(textures[0], FlipTexture(frameRec), {position.x, position.y}, WHITE); // Draw part of the texture (flipped)
-        if(curState == State::heavy_attacking)
-        std::cout << FlipTexture(frameRec).x / width << '\n';
+        DrawTextureRec(textures[0], FlipTexture(frameRec), {position.x, position.y}, WHITE);
     }
     
     // Draw collect radius box
@@ -324,11 +322,6 @@ void Player::UpdateSpriteFrame()
     {
         frameCounter = 0;
 
-        if(curState == State::light_attacking || curState == State::heavy_attacking)
-        {
-            std::cout << "This is frame: " << frameRec.x / width << '\n';
-        }
-
         frameRec.x = ((int)(frameRec.x + width) % (int)textures[0].width);
     
         // Check if this is an attack animation
@@ -343,7 +336,6 @@ void Player::UpdateSpriteFrame()
                 curState = State::idle;
             
                 frameRec = playerAnimation[(int)curState][0].sourceFrame;
-                std::cout << frameRec.x << ' ' << frameRec.y << ' ' << frameRec.width << ' ' << frameRec.height << '\n';
             }
             // if (!isMoving && curState != State::idle)
             // {
@@ -391,8 +383,6 @@ void Player::Attack()
 
             // Reset frame counter
             frameCounter = 0;
-
-            std::cout << "Mulai dari frame: " << frameRec.x / width << '\n';
         }
         // Heavy attack
         else if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT))
@@ -418,8 +408,6 @@ void Player::Attack()
 
             // Reset frame counter
             frameCounter = 0;
-
-            std::cout << "Mulai dari frame: " << frameRec.x / width << '\n';
         }
 
         

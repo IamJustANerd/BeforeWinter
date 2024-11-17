@@ -54,7 +54,6 @@ void Nature::Update()
     // For testing hit animation
     if(CheckCollisionRecs(GetMouseRect(), hitBox) && IsMouseButtonDown(MOUSE_BUTTON_LEFT))
     {
-        std::cout << "Here" << '\n';
         // Reset frame counter
         frameCounter = 0;
 
@@ -71,8 +70,6 @@ void Nature::UpdateSpriteFrame()
     frameCounter += 1;
     if (frameCounter >= natureAnimation[type][(int)curState][0].frameTime / natureAnimation[type][(int)curState][0].totalFrames)
     {
-        if(curState == State::hit)
-            std::cout << "Ini frame ke-" << frameRec.x / 128 << ' ' << natureAnimation[type][(int)curState][0].frameTime << ' ' << natureAnimation[type][(int)curState][0].totalFrames << '\n';
         frameCounter = 0;
 
         frameRec.x = ((int)(frameRec.x + width) % (natureAnimation[type][(int)curState][0].totalFrames * width));

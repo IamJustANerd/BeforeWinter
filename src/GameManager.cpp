@@ -10,7 +10,10 @@ Color nightBlue = {6, 21, 88, 155};
 unsigned char sunsetOrangeMaxA = 80;
 unsigned char nightBlueMaxA = 155;
 
-GameTime gameTime = {0, 0, 0, 0};
+// To change the alpha of the current light every second in real life time (or every minute in game time)
+bool changeA = false;
+
+GameTime gameTime = {0, 0, 4, 0};
 
 void UpdateTime()
 {
@@ -20,6 +23,8 @@ void UpdateTime()
     {
         gameTime.minutes += 1;
         gameTime.seconds = 0;
+
+        changeA = true;
     }
 
     if (gameTime.minutes >= 60)
@@ -51,8 +56,10 @@ void DrawTimePhase(int cellSize, int cellNumber, Camera2D camera, const int grid
     int maxY = std::min((int)(cameraPos.y + screenHeight / scale) / cellSize, cellNumber - 1);
 
     // Afternoon
-    if(gameTime.hours >= 14 && gameTime.hours <= 17)
+    if(gameTime.hours >= 12 && gameTime.hours <= 15 && changeA)
     {
+        changeA = false;
+
         if(sunsetOrange.a < sunsetOrangeMaxA)
         {
             sunsetOrange.a += 1;
@@ -64,8 +71,10 @@ void DrawTimePhase(int cellSize, int cellNumber, Camera2D camera, const int grid
         }
     }
     // Night
-    else if ((gameTime.hours >= 0 && gameTime.hours <= 5) || (gameTime.hours >= 18 && gameTime.hours <= 23))
+    else if (((gameTime.hours >= 0 && gameTime.hours <= 4) || (gameTime.hours >= 16 && gameTime.hours <= 23)) && changeA)
     {
+        changeA = false;
+
         if (nightBlue.a < nightBlueMaxA)
         {
             nightBlue.a += 1;
@@ -77,8 +86,10 @@ void DrawTimePhase(int cellSize, int cellNumber, Camera2D camera, const int grid
         }
     }
     // Noon
-    else
+    else if(changeA)
     {
+        changeA = false;
+
         if (nightBlue.a > 0)
         {
             nightBlue.a -= 1;

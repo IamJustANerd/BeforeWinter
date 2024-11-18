@@ -5,7 +5,7 @@
 #include <iostream>
 
 // Idea: Try to use texture as global variable instead
-Player::Player(Vector2 _position, Grid *_grid, Texture2D *_textures)
+Player::Player(Vector2 _position, Grid *_grid)
 {
     position = _position;
     
@@ -31,8 +31,6 @@ Player::Player(Vector2 _position, Grid *_grid, Texture2D *_textures)
                                   position.y - interactionRadiusLength,
                                   (float)width + 2 * interactionRadiusLength,
                                   (float)height + 2 * interactionRadiusLength};
-
-    textures = _textures;
     
     rotation = 0;
 
@@ -232,11 +230,11 @@ void Player::Draw() const
     // Draw texture
     if(direction.x >= 0)
     {
-        DrawTextureRec(textures[0], frameRec, position, WHITE); 
+        DrawTextureRec(playerTex[0], frameRec, position, WHITE); 
     }
     else if(direction.x <= -1)
     {
-        DrawTextureRec(textures[0], FlipTexture(frameRec), {position.x, position.y}, WHITE);
+        DrawTextureRec(playerTex[0], FlipTexture(frameRec), {position.x, position.y}, WHITE);
     }
     
     // Draw collect radius box

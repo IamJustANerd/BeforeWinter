@@ -18,6 +18,9 @@ enum class State
     heavy_attacking,
     hit,
     dying,
+    chopping,
+    carry_idle,
+    carry_running
 };
 
 class Entity
@@ -34,7 +37,6 @@ protected:
     int id;
     Rectangle hitBox;
     Rectangle frameRec;
-    Texture2D* textures;
     bool isUncollidable;
     bool isCollidingWithMouse = false;
     float rotation;

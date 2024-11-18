@@ -10,7 +10,7 @@ protected:
 
 public:
     // Constructor
-    Nature(Vector2 _position, int _type, Texture2D *_textures, Grid* _grid);
+    Nature(Vector2 _position, int _type, Grid* _grid);
     // Draw
     void Draw() const override;
     // Update

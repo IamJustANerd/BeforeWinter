@@ -3,11 +3,10 @@
 #include "../include/Mouse.h"
 #include <iostream>
 
-Nature::Nature(Vector2 _position, int _type, Texture2D *_textures, Grid *_grid)
+Nature::Nature(Vector2 _position, int _type, Grid *_grid)
 {
     position = _position;
     type = _type;
-    textures = _textures;
 
     width = 128;
     height = 128;
@@ -34,7 +33,7 @@ Nature::Nature(Vector2 _position, int _type, Texture2D *_textures, Grid *_grid)
 void Nature::Draw() const
 {
     // Draw body
-    DrawTextureRec(textures[0], frameRec, position, WHITE);
+    DrawTextureRec(natureTex[type], frameRec, position, WHITE);
 
     // Draw hitbox
     if(!isCollidingWithMouse)

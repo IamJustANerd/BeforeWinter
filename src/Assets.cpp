@@ -3,12 +3,15 @@
 
 Animation playerAnimation[5][10]; 
 Animation natureAnimation[10][5][10];
+Animation NPCAnimation[10][5][10];
 
 Image playerImg[5];
-Image natureImg[100];
+Image natureImg[10];
+Image NPCImg[5];
 
-Texture2D natureTex[100];
 Texture2D playerTex[5];
+Texture2D natureTex[10];
+Texture2D NPCTex[5];
 
 // Load all images
 void LoadAllImage()
@@ -26,6 +29,10 @@ void LoadAllImage()
     // -> Bushes
     natureImg[3] = LoadImage("../graphics/bush_green_1.png");
     natureImg[4] = LoadImage("../graphics/bush_green_2.png");
+
+    // NPC
+    // -> Pawn
+    NPCImg[0] = LoadImage("../graphics/npc/pawn/pawnBlue.png");
 }
 
 // Resize all images
@@ -48,6 +55,10 @@ void ResizeAllImage()
     {
         ImageResizeNN(&natureImg[i], 64, 64);
     }
+
+    // NPC
+    // -> Pawn
+    ImageResizeNN(&NPCImg[0], NPCImg->width * 2 / 3, NPCImg->height * 2 / 3);
 }
 
 // Load all textures from images
@@ -63,6 +74,10 @@ void LoadAllTexture()
     {
         natureTex[i] = LoadTextureFromImage(natureImg[i]);
     }
+
+    // NPC
+    // -> Pawn
+    NPCTex[0] = LoadTextureFromImage(NPCImg[0]);
 }
 
 // Unload all images
@@ -78,6 +93,10 @@ void UnloadAllImage()
     {
         UnloadImage(natureImg[i]);
     }
+
+    // NPC
+    // -> Pawn
+    UnloadImage(NPCImg[0]);
 }
 
 // Unload all textures
@@ -93,6 +112,10 @@ void UnloadAllTexture()
     {
         UnloadTexture(natureTex[i]);
     }
+
+    // NPC
+    // -> Pawn
+    UnloadTexture(NPCTex[0]);
 }
 
 // Load animation for all entities
@@ -156,6 +179,38 @@ void LoadAnimation()
     // natureAnimation[0][5][0].frameTime = 30;
     // natureAnimation[0][5][0].totalFrames = 2;
     // natureAnimation[0][5][0].sourceFrame = {0, 129, 128, 128};
+
+    // NPC
+    // -> Pawn
+    // --> Idle
+    NPCAnimation[0][0][0].frameTime = 60;
+    NPCAnimation[0][0][0].totalFrames = 6;
+    NPCAnimation[0][0][0].sourceFrame = {0, 0, 128, 128};
+
+    // --> Running
+    NPCAnimation[0][1][0].frameTime = 60;
+    NPCAnimation[0][1][0].totalFrames = 6;
+    NPCAnimation[0][1][0].sourceFrame = {0, 129, 128, 128};
+
+    // --> Attack type 1 (right) - light attack (building)
+    NPCAnimation[0][2][0].frameTime = 30;
+    NPCAnimation[0][2][0].totalFrames = 6;
+    NPCAnimation[0][2][0].sourceFrame = {0, 257, 128, 128};
+
+    // --> Attack type 2 (right) - heavy attack (chopping)
+    NPCAnimation[0][3][0].frameTime = 30;
+    NPCAnimation[0][3][0].totalFrames = 6;
+    NPCAnimation[0][3][0].sourceFrame = {0, 385, 128, 128};
+
+    // --> Idle + Carrying
+    NPCAnimation[0][0][1].frameTime = 60;
+    NPCAnimation[0][0][1].totalFrames = 6;
+    NPCAnimation[0][0][1].sourceFrame = {0, 513, 128, 128};
+
+    // --> Running + Carrying
+    NPCAnimation[0][1][1].frameTime = 60;
+    NPCAnimation[0][1][1].totalFrames = 6;
+    NPCAnimation[0][1][1].sourceFrame = {0, 641, 128, 128};
 }
 
 // Setup assets (images, textures, etc)

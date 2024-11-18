@@ -4,7 +4,6 @@
 #include "../include/Collectible.h"
 #include <iostream>
 
-// Idea: Try to use texture as global variable instead
 Player::Player(Vector2 _position, Grid *_grid)
 {
     position = _position;

@@ -14,14 +14,17 @@ struct Animation
 // Animation
 extern Animation playerAnimation[5][10]; // [animation type (running, attacking, etc)][variety (light attack, heavy attack, etc)]
 extern Animation natureAnimation[10][5][10]; // [nature type (tree, bush, etc)][animation type (running, attacking, etc)][variety (light attack, heavy attack, etc)]
+extern Animation NPCAnimation[10][5][10]; // [NPC type (pawn, goblin, etc)][animation type (running, attacking, etc)][variety (chopping, building, etc)]
 
 // Images
 extern Image playerImg[5];
-extern Image natureImg[100];
+extern Image natureImg[10];
+extern Image NPCImg[5];
 
 // Textures
 extern Texture2D playerTex[5];
-extern Texture2D natureTex[100];
+extern Texture2D natureTex[10];
+extern Texture2D NPCTex[5];
 
 // Load all images
 void LoadAllImage();

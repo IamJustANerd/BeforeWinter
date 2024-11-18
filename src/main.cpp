@@ -40,6 +40,9 @@
 // Nature
 #include "../include/Nature.h"
 
+// NPC
+#include "../include/NPC.h"
+
 // Shader
 #include "../include/Shader.h"
 
@@ -155,6 +158,9 @@ int main()
 
     new Collectible(Vector2{(float)screenWidth / 2 + 50, (float)screenHeight / 2 + 50}, 1, &grid);
     new Collectible(Vector2{(float)screenWidth / 2 + 200, (float)screenHeight / 2 + 200}, 1, &grid);
+
+    // Testing NPC
+    new NPC(Vector2{(float)1780, (float)1080}, 0, player, &grid);
 
     // Testing collectibles
     for (int i = 0; i <= 100; i += 1)

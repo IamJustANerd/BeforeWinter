@@ -18,9 +18,6 @@ enum class State
     heavy_attacking,
     hit,
     dying,
-    chopping,
-    carry_idle,
-    carry_running
 };
 
 class Entity

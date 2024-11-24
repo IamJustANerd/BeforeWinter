@@ -1,5 +1,7 @@
 #include "../include/NPC.h"
 #include "../include/Grid.h"
+#include <iostream>
+#include <typeinfo>
 
 NPC::NPC(Vector2 _position, int _type, Player *_NPC, Grid *_grid)
 {
@@ -158,14 +160,14 @@ void NPC::Movements()
     }
 
     // Switch to idle animation
-    if (!isMoving && curState != State::idle)
-    {
-        curState = State::idle;
-        frameRec = frameRec = NPCAnimation[type][(int)curState][0].sourceFrame;
+    // if (!isMoving && curState != State::idle)
+    // {
+    //     curState = State::idle;
+    //     frameRec = frameRec = NPCAnimation[type][(int)curState][0].sourceFrame;
 
-        // Reset frame counter
-        frameCounter = 0;
-    }
+    //     // Reset frame counter
+    //     frameCounter = 0;
+    // }
 
     // Update NPC's cell
     grid->Move(this, change);
@@ -190,6 +192,8 @@ void NPC::Draw() const
     DrawRectangleRec(hitBox, Color{0, 228, 48, 120});
 }
 
+int x = 0;
+
 void NPC::Update()
 {
     Movements();
@@ -197,6 +201,13 @@ void NPC::Update()
     Attack();
 
     UpdateSpriteFrame();
+
+    if(x == 0)
+    {
+        Vector2 pos = FindTarget(typeid(Player), 0);
+        std::cout << pos.x << ' ' << pos.y << '\n';
+    }
+    x++;
 }
 
 void NPC::UpdateSpriteFrame()
@@ -209,19 +220,19 @@ void NPC::UpdateSpriteFrame()
         frameRec.x = ((int)(frameRec.x + width) % (int)(NPCAnimation[type][(int)curState][0].totalFrames * width));
 
         // Check if this is an attack animation
-        if (curState == State::light_attacking || curState == State::heavy_attacking)
-        {
-            // If it is, make sure to stop the attack animation once it reaches back to the first frame
-            if (frameRec.x <= 0)
-            {
-                // Return back to idle animation
-                isAttacking = false;
+        // if (curState == State::light_attacking || curState == State::heavy_attacking)
+        // {
+        //     // If it is, make sure to stop the attack animation once it reaches back to the first frame
+        //     if (frameRec.x <= 0)
+        //     {
+        //         // Return back to idle animation
+        //         isAttacking = false;
 
-                curState = State::idle;
+        //         curState = State::idle;
 
-                frameRec = NPCAnimation[type][(int)curState][0].sourceFrame;
-            }
-        }
+        //         frameRec = NPCAnimation[type][(int)curState][0].sourceFrame;
+        //     }
+        // }
     }
 }
 

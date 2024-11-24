@@ -193,12 +193,12 @@ void LoadAnimation()
     NPCAnimation[0][1][0].sourceFrame = {0, 129, 128, 128};
 
     // --> Attack type 1 (right) - light attack (building)
-    NPCAnimation[0][2][0].frameTime = 30;
+    NPCAnimation[0][2][0].frameTime = 42;
     NPCAnimation[0][2][0].totalFrames = 6;
     NPCAnimation[0][2][0].sourceFrame = {0, 257, 128, 128};
 
     // --> Attack type 2 (right) - heavy attack (chopping)
-    NPCAnimation[0][3][0].frameTime = 30;
+    NPCAnimation[0][3][0].frameTime = 42;
     NPCAnimation[0][3][0].totalFrames = 6;
     NPCAnimation[0][3][0].sourceFrame = {0, 385, 128, 128};
 

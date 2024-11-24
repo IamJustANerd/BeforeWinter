@@ -4,6 +4,12 @@
 #include "../include/raylib_includes.h"
 #include "Entity.h"
 #include <string>
+#include <typeinfo>
+
+struct cellPos
+{
+    int x, y;
+};
 
 class Dynamic : public Entity
 {
@@ -22,6 +28,9 @@ public:
 
     // Check if the dynamic entity is colliding with uncollidable
     bool IsCollidingWithUncollidable(std::string moveDir);
+
+    // Find a certain target (tree, player, etc)
+    Vector2 FindTarget(const std::type_info& targetClass, int targetType);
 };
 
 #endif // PLAYER_H

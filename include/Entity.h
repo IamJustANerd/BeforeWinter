@@ -54,6 +54,7 @@ public:
     int GetWidth() const;
     int GetHeight() const;
     int GetID() const;
+    int GetType() const;
     Rectangle GetHitBox() const;
     bool GetIsUncollidable() const;
     Rectangle FlipTexture(Rectangle frameRec) const;

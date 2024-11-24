@@ -31,6 +31,11 @@ int Entity::GetID() const
     return id;
 }
 
+int Entity::GetType() const
+{
+    return type;
+}
+
 Rectangle Entity::GetHitBox() const
 {
     return hitBox;

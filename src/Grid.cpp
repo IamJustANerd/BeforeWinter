@@ -16,9 +16,9 @@ struct CompareObjectPosition
 {
     bool operator()(const Entity *a, const Entity *b) const
     {
-        if (a->GetPosition().y + a->GetHeight() != b->GetPosition().y + b->GetHeight())
-            return a->GetPosition().y + a->GetHeight() < b->GetPosition().y + b->GetHeight(); // Compare by y first
-        return a->GetPosition().x < b->GetPosition().x;                                       // If y is the same, compare by x
+        if (a->GetHitBox().y + a->GetHitBox().height != b->GetHitBox().y + b->GetHitBox().height)
+            return a->GetHitBox().y + a->GetHitBox().height < b->GetHitBox().y + b->GetHitBox().height; // Compare by y first
+        return a->GetHitBox().x < b->GetHitBox().x;                                                     // If y is the same, compare by x
     }
 };
 

@@ -14,7 +14,15 @@ Nature::Nature(Vector2 _position, int _type, Grid *_grid)
     // Nature is uncollidable
     isUncollidable = true;
 
-    hitBox = Rectangle{position.x, position.y, (float)width, (float)height};
+    // Assign hitbox (the size depends on the type)
+    if(type == 0) // Tree
+    {
+        hitBox = Rectangle{position.x + (float)width * 0.4f, position.y + (float)height * 0.8f, (float)width * 0.2f, (float)height / 8};
+    }
+    else
+    {
+        hitBox = Rectangle{position.x, position.y, (float)width, (float)height};
+    }
 
     // The starting state is idle
     curState = State::idle;

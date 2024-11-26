@@ -1,5 +1,4 @@
 #include "../include/NPC.h"
-#include "../include/Grid.h"
 #include <iostream>
 #include <typeinfo>
 
@@ -204,7 +203,7 @@ void NPC::Update()
 
     if(x == 0)
     {
-        Vector2 pos = FindTarget(typeid(Player), 0);
+        Vector2 pos = FindTarget(typeid(Nature), 0);
         std::cout << pos.x << ' ' << pos.y << '\n';
     }
     x++;

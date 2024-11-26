@@ -51,6 +51,7 @@ public:
     virtual void UpdateSpriteFrame() = 0;
     Vector2 GetPosition() const;
     Vector2 GetDirection() const;
+    Vector2 GetHitBoxPosition() const;
     int GetWidth() const;
     int GetHeight() const;
     int GetID() const;

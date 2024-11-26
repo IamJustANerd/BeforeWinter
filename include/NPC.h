@@ -4,6 +4,8 @@
 #include "raylib_includes.h"
 #include "../include/Dynamic.h"
 #include "../include/Player.h"
+#include "../include/Grid.h"
+#include "../include/Nature.h"
 
 class NPC : public Dynamic
 {

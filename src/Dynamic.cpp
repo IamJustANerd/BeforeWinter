@@ -117,7 +117,7 @@ Vector2 Dynamic::FindTarget(const std::type_info& targetClass, int targetType)
                 if (curCell->GetType() == targetType)
                 {
                     // Note: might want to mark the targeted entity in the future (for example, to prevent more than one pawn to cut a single tree)
-                    return curCell->GetPosition();
+                    return curCell->GetHitBoxPosition();
                 }
             }
             curCell = curCell->next;

@@ -16,6 +16,11 @@ Vector2 Entity::GetDirection() const
     return direction;
 }
 
+Vector2 Entity::GetHitBoxPosition() const
+{
+    return {hitBox.x + width / 2, hitBox.y + height / 2};
+}
+
 int Entity::GetWidth() const
 {
     return width;

@@ -12,8 +12,10 @@ class NPC : public Dynamic
 private:
     bool isWorking;
     bool isCarrying;
+    bool hasDestination;
     int carriedObjectValue;
     Player* targetPlayer;
+    Vector2 destination;
 
 public:
     NPC(Vector2 _position, int type, Player *_player, Grid *_grid);
@@ -31,6 +33,9 @@ public:
 
     // Attack
     void Attack() override;
+
+    // Set destination
+    void SetDestination();
 };
 
 #endif

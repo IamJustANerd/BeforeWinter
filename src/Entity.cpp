@@ -18,7 +18,7 @@ Vector2 Entity::GetDirection() const
 
 Vector2 Entity::GetHitBoxPosition() const
 {
-    return {hitBox.x + width / 2, hitBox.y + height / 2};
+    return {(float)hitBox.x + hitBox.width / 2, (float)hitBox.y + hitBox.height / 2};
 }
 
 int Entity::GetWidth() const

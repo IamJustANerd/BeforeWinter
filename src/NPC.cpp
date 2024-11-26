@@ -27,6 +27,8 @@ NPC::NPC(Vector2 _position, int _type, Player *_NPC, Grid *_grid)
 
     isCarrying = false;
 
+    hasDestination = false;
+
     // The starting state is idle
     curState = State::idle;
 
@@ -65,8 +67,9 @@ void NPC::Movements()
     isMoving = false;
 
     // Left movement
-    if (IsKeyDown(KEY_A))
+    if (hitBox.x > destination.x)
     {
+        // std::cout << "LEFT: " << position.x << " " << destination.x << '\n';
         int i = 0;
 
         while ((i < speed && hitBox.x > minBorderX) &&
@@ -89,8 +92,9 @@ void NPC::Movements()
         isMoving = true;
     }
     // Right movement
-    else if (IsKeyDown(KEY_D))
+    else if (hitBox.x < destination.x)
     {
+        // std::cout << "RIGHT: " << position.x - destination.x << '\n';
         int i = 0;
         while ((i < speed && (hitBox.x + hitBox.width) < maxBorderX) &&
                !IsCollidingWithUncollidable("Right"))
@@ -113,8 +117,9 @@ void NPC::Movements()
     }
 
     // Up movement
-    if (IsKeyDown(KEY_W))
+    if (hitBox.y - destination.y > 5)
     {
+        // std::cout << "UP: " << position.y - destination.y << '\n';
         int i = 0;
         while ((i < speed && hitBox.y > minBorderY) &&
                !IsCollidingWithUncollidable("Up"))
@@ -135,9 +140,9 @@ void NPC::Movements()
         isMoving = true;
     }
     // Down movement
-    else if (IsKeyDown(KEY_S))
+    else if (hitBox.y - destination.y < 5)
     {
-        // Add NPC position while is still within the border
+        // std::cout << "DOWN: " << position.y - destination.y << '\n';
         int i = 0;
         while ((i < speed && (hitBox.y + hitBox.height) < maxBorderY) &&
                !IsCollidingWithUncollidable("Down"))
@@ -195,18 +200,13 @@ int x = 0;
 
 void NPC::Update()
 {
+    SetDestination();
+
     Movements();
 
     Attack();
 
     UpdateSpriteFrame();
-
-    if(x == 0)
-    {
-        Vector2 pos = FindTarget(typeid(Nature), 0);
-        std::cout << pos.x << ' ' << pos.y << '\n';
-    }
-    x++;
 }
 
 void NPC::UpdateSpriteFrame()
@@ -238,4 +238,27 @@ void NPC::UpdateSpriteFrame()
 void NPC::Attack()
 {
 
+}
+
+void NPC::SetDestination()
+{
+    // If the pawn is not working, then it should be moving
+    if (!isWorking && !hasDestination)
+    {
+        hasDestination = true;
+
+        // Return harvest to home
+        if (isCarrying)
+        {
+
+        }
+        // Look for the closest tree
+        else
+        {
+            // std::cout << "POHON" << '\n';
+            destination = FindTarget(typeid(Nature), 0);
+            std::cout << FindTarget(typeid(Nature), 0).x << ' ' << FindTarget(typeid(Nature), 0).y << '\n';
+            // std::cout << destination.x << ' ' << destination.y << '\n';
+        }
+    }
 }

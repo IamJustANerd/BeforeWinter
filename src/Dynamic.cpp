@@ -15,8 +15,6 @@ bool Dynamic::IsCollidingWithUncollidable(std::string moveDir)
     int maxX = std::min((int)(hitBox.x + hitBox.width) / grid->CELL_SIZE + 2, grid->NUM_CELLS - 1);
     int maxY = std::min((int)(hitBox.y + hitBox.height) / grid->CELL_SIZE + 2, grid->NUM_CELLS - 1);
 
-    // std::cout << minX << ' ' << minY << ' ' << maxX << ' ' << maxY << '\n';
-
     // Getting the read only cell
     const Entity *const(&cells)[Grid::NUM_CELLS][Grid::NUM_CELLS] = grid->GetReadOnlyCells();
 
@@ -103,8 +101,6 @@ Vector2 Dynamic::FindTarget(const std::type_info& targetClass, int targetType)
         cellPos curCellPos = nextCell.front();
         const Entity *curCell = cells[curCellPos.x][curCellPos.y];
 
-        std::cout << curCellPos.x << ' ' << curCellPos.y << '\n';
-
         // Delete it
         nextCell.pop();
 
@@ -117,6 +113,7 @@ Vector2 Dynamic::FindTarget(const std::type_info& targetClass, int targetType)
                 if (curCell->GetType() == targetType)
                 {
                     // Note: might want to mark the targeted entity in the future (for example, to prevent more than one pawn to cut a single tree)
+                    std::cout << curCell->GetHitBoxPosition().x << ' ' << curCell->GetHitBoxPosition().y << '\n';
                     return curCell->GetHitBoxPosition();
                 }
             }

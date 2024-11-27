@@ -30,9 +30,6 @@ Nature::Nature(Vector2 _position, int _type, Grid *_grid)
     // Set the frame rec according to the current state
     frameRec = natureAnimation[type][(int)curState][0].sourceFrame;
 
-    // Player is uncollidable
-    isUncollidable = true;
-
     // Insert nature into the grid
     grid = _grid;
     grid->Add(this);

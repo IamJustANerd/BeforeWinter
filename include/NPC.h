@@ -17,6 +17,7 @@ private:
     int carriedObjectValue;
     int rotationCounter;
     int count = 0;
+    int distanceTolerance = 2;
     Player* targetPlayer;
     Rectangle destination;
 

@@ -79,12 +79,15 @@ void NPC::Movements()
             std::cout << "Moving to destination" << '\n';
         }
         // Left movement
-        if (hitBox.x - destination.x >= destination.width / 2 + hitBox.width / 2 && !isCollidingWithOther)
+        if (hitBox.x - destination.x >= destination.width && !isCollidingWithOther)
         {
             moveDirectionIndex = 0;
+            if (frameCounter == 0 && !isCollidingWithOther)
+            {
+                // std::cout << "LEFT: " << hitBox.x << " " << destination.x << " " << hitBox.width / 2 << " " << destination.width << '\n';
+                // std::cout << hitBox.x - destination.x << ' ' << destination.width + hitBox.width / 2 << '\n';
+            }
 
-            if(frameCounter == 0)
-                std::cout << "LEFT: " << hitBox.x << " " << destination.x << '\n';
             int i = 0;
             isCollidingWithOther = IsCollidingWithUncollidable();
 
@@ -109,12 +112,12 @@ void NPC::Movements()
             isMoving = true;
         }
         // Right movement
-        else if (destination.x - hitBox.x >= destination.width / 2 + hitBox.width / 2 && !isCollidingWithOther)
+        else if (destination.x - hitBox.x >= hitBox.width && !isCollidingWithOther)
         {
             moveDirectionIndex = 2;
 
-            if(frameCounter == 0)
-                std::cout << "RIGHT: " << hitBox.x << " " << destination.x + destination.width / 2 << '\n';
+            // if(frameCounter == 0)
+            //     std::cout << "RIGHT: " << hitBox.x << " " << destination.x + destination.width / 2 << '\n';
             int i = 0;
             isCollidingWithOther = IsCollidingWithUncollidable();
 
@@ -140,15 +143,15 @@ void NPC::Movements()
         }
 
         // Up movement
-        if (hitBox.y - destination.y >= destination.height / 2 + hitBox.height / 2 && !isCollidingWithOther)
+        if (hitBox.y - destination.y >= destination.height && !isCollidingWithOther)
         {
             moveDirectionIndex = 1;
 
             int i = 0;
             isCollidingWithOther = IsCollidingWithUncollidable();
 
-            if (frameCounter == 0)
-                std::cout << "UP: " << hitBox.y << " " << destination.y + destination.height / 2 << '\n';
+            // if (frameCounter == 0)
+            //     std::cout << "UP: " << hitBox.y << " " << destination.y + destination.height / 2 << '\n';
 
             while ((i < speed && hitBox.y > minBorderY) &&
                    !isCollidingWithOther)
@@ -170,7 +173,7 @@ void NPC::Movements()
             isMoving = true;
         }
         // Down movement
-        else if (destination.y - hitBox.y >= destination.height / 2 + hitBox.height / 2 && !isCollidingWithOther)
+        else if (destination.y - hitBox.y >= hitBox.height && !isCollidingWithOther)
         {
             moveDirectionIndex = 3;
 
@@ -283,7 +286,7 @@ void NPC::Movements()
     }
 
     // If the NPC already reach the destination, stop moving
-    if (CheckCollisionRecs({hitBox.x - 2, hitBox.y - 2, hitBox.width + 2, hitBox.height + 2}, destination))
+    if (CheckCollisionRecs({hitBox.x - distanceTolerance, hitBox.y - distanceTolerance, hitBox.width + distanceTolerance, hitBox.height + distanceTolerance}, destination))
     {
         isWorking = true;
         curState = State::idle;
@@ -382,8 +385,8 @@ void NPC::SetDestination()
         {
             // std::cout << "POHON" << '\n';
             destination = FindTarget(typeid(Nature), 0);
-            // std::cout << FindTarget(typeid(Nature), 0).x << ' ' << FindTarget(typeid(Nature), 0).y << '\n';
-            // std::cout << destination.x << ' ' << destination.y << '\n';
+            std::cout << FindTarget(typeid(Nature), 0).x << ' ' << FindTarget(typeid(Nature), 0).y << '\n';
+            std::cout << destination.x << ' ' << destination.y << '\n';
         }
     }
 }

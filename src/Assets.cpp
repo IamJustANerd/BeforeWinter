@@ -8,10 +8,12 @@ Animation NPCAnimation[10][5][10];
 Image playerImg[5];
 Image natureImg[10];
 Image NPCImg[5];
+Image buildingImg[5];
 
 Texture2D playerTex[5];
 Texture2D natureTex[10];
 Texture2D NPCTex[5];
+Texture2D buildingTex[5];
 
 // Load all images
 void LoadAllImage()
@@ -33,6 +35,10 @@ void LoadAllImage()
     // NPC
     // -> Pawn
     NPCImg[0] = LoadImage("../graphics/npc/pawn/pawnBlue.png");
+
+    // Building
+    // -> House
+    buildingImg[0] = LoadImage("../graphics/building/houseBlue.png");
 }
 
 // Resize all images
@@ -59,6 +65,10 @@ void ResizeAllImage()
     // NPC
     // -> Pawn
     ImageResizeNN(&NPCImg[0], NPCImg->width * 2 / 3, NPCImg->height * 2 / 3);
+
+    // Building
+    // -> House
+    ImageResizeNN(&buildingImg[0], buildingImg->width, buildingImg->height);
 }
 
 // Load all textures from images
@@ -78,6 +88,10 @@ void LoadAllTexture()
     // NPC
     // -> Pawn
     NPCTex[0] = LoadTextureFromImage(NPCImg[0]);
+
+    // Building
+    // -> House
+    buildingTex[0] = LoadTextureFromImage(buildingImg[0]);
 }
 
 // Unload all images
@@ -97,6 +111,10 @@ void UnloadAllImage()
     // NPC
     // -> Pawn
     UnloadImage(NPCImg[0]);
+
+    // Building
+    // -> House
+    UnloadImage(buildingImg[0]);
 }
 
 // Unload all textures
@@ -116,6 +134,10 @@ void UnloadAllTexture()
     // NPC
     // -> Pawn
     UnloadTexture(NPCTex[0]);
+
+    // Building
+    // -> House
+    UnloadTexture(buildingTex[0]);
 }
 
 // Load animation for all entities

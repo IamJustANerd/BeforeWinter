@@ -15,7 +15,7 @@ private:
     bool hasDestination;
     int carriedObjectValue;
     Player* targetPlayer;
-    Vector2 destination;
+    Rectangle destination;
 
 public:
     NPC(Vector2 _position, int type, Player *_player, Grid *_grid);

@@ -66,7 +66,7 @@ bool Dynamic::IsCollidingWithUncollidable(std::string moveDir)
     return isColliding;
 }
 
-Vector2 Dynamic::FindTarget(const std::type_info& targetClass, int targetType)
+Rectangle Dynamic::FindTarget(const std::type_info& targetClass, int targetType)
 {
     // Count initial cell position
     int cellX = (int)(position.x / grid->CELL_SIZE);
@@ -114,7 +114,7 @@ Vector2 Dynamic::FindTarget(const std::type_info& targetClass, int targetType)
                 {
                     // Note: might want to mark the targeted entity in the future (for example, to prevent more than one pawn to cut a single tree)
                     std::cout << curCell->GetHitBoxPosition().x << ' ' << curCell->GetHitBoxPosition().y << '\n';
-                    return curCell->GetHitBoxPosition();
+                    return curCell->GetHitBox();
                 }
             }
             curCell = curCell->next;

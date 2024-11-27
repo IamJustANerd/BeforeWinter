@@ -67,7 +67,7 @@ void NPC::Movements()
     isMoving = false;
 
     // Left movement
-    if (hitBox.x > destination.x)
+    if (hitBox.x >= destination.x + destination.width / 2)
     {
         // std::cout << "LEFT: " << position.x << " " << destination.x << '\n';
         int i = 0;
@@ -92,7 +92,7 @@ void NPC::Movements()
         isMoving = true;
     }
     // Right movement
-    else if (hitBox.x < destination.x)
+    else if (hitBox.x < destination.x + destination.width / 2)
     {
         // std::cout << "RIGHT: " << position.x - destination.x << '\n';
         int i = 0;
@@ -117,9 +117,9 @@ void NPC::Movements()
     }
 
     // Up movement
-    if (hitBox.y - destination.y > 5)
+    if (hitBox.y >= destination.y + destination.height / 2)
     {
-        // std::cout << "UP: " << position.y - destination.y << '\n';
+        // std::cout << "UP: " << position.y << " " <<  destination.y << '\n';
         int i = 0;
         while ((i < speed && hitBox.y > minBorderY) &&
                !IsCollidingWithUncollidable("Up"))
@@ -140,7 +140,7 @@ void NPC::Movements()
         isMoving = true;
     }
     // Down movement
-    else if (hitBox.y - destination.y < 5)
+    else if (hitBox.y < destination.y + destination.height / 2)
     {
         // std::cout << "DOWN: " << position.y - destination.y << '\n';
         int i = 0;
@@ -163,9 +163,31 @@ void NPC::Movements()
         isMoving = true;
     }
 
+    // Switch to running animation
+    if (isMoving && curState != State::running)
+    {
+        curState = State::running;
+        frameRec = frameRec = NPCAnimation[type][(int)curState][0].sourceFrame;
+
+        // Reset frame counter
+        frameCounter = 0;
+    }
+
+    // If the NPC already reach the destination, stop moving
+    if (CheckCollisionRecs({hitBox.x - 2, hitBox.y - 2, hitBox.width + 2, hitBox.height + 2}, destination))
+    {
+        isWorking = true;
+        curState = State::idle;
+        frameRec = frameRec = NPCAnimation[type][(int)curState][0].sourceFrame;
+
+        // Reset frame counter
+        frameCounter = 0;
+    }
+
     // Switch to idle animation
     // if (!isMoving && curState != State::idle)
     // {
+    //     std::cout << "SAMPAI" << '\n';
     //     curState = State::idle;
     //     frameRec = frameRec = NPCAnimation[type][(int)curState][0].sourceFrame;
 

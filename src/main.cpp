@@ -161,8 +161,8 @@ int main()
 
     // Testing NPC
     new NPC(Vector2{(float)1780, (float)1080}, 0, player, &grid);
-    new NPC(Vector2{(float)1480, (float)1080}, 0, player, &grid);
-    new NPC(Vector2{(float)2080, (float)1080}, 0, player, &grid);
+    // new NPC(Vector2{(float)1480, (float)1080}, 0, player, &grid);
+    // new NPC(Vector2{(float)2080, (float)1080}, 0, player, &grid);
 
     // Testing collectibles
     for (int i = 0; i <= 100; i += 1)

@@ -30,7 +30,7 @@ public:
     bool IsCollidingWithUncollidable(std::string moveDir);
 
     // Find a certain target (tree, player, etc)
-    Vector2 FindTarget(const std::type_info& targetClass, int targetType);
+    Rectangle FindTarget(const std::type_info& targetClass, int targetType);
 };
 
 #endif // PLAYER_H

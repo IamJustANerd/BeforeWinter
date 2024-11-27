@@ -76,11 +76,12 @@ void NPC::Movements()
     if(!isCollidingWithOther)
     {
         // Left movement
-        if (hitBox.x >= destination.x + destination.width / 2 && !isCollidingWithOther)
+        if (hitBox.x - destination.x >= destination.width / 2 + hitBox.width / 2 && !isCollidingWithOther)
         {
             moveDirection = {-1, 0};
 
-            // std::cout << "LEFT: " << position.x << " " << destination.x << '\n';
+            if(frameCounter == 0)
+                std::cout << "LEFT: " << hitBox.x << " " << destination.x << '\n';
             int i = 0;
             isCollidingWithOther = IsCollidingWithUncollidable();
 
@@ -105,11 +106,12 @@ void NPC::Movements()
             isMoving = true;
         }
         // Right movement
-        else if (hitBox.x < destination.x + destination.width / 2 && !isCollidingWithOther)
+        else if (destination.x - hitBox.x >= destination.width / 2 + hitBox.width / 2 && !isCollidingWithOther)
         {
             moveDirection = {1, 0};
 
-            // std::cout << "RIGHT: " << position.x - destination.x << '\n';
+            if(frameCounter == 0)
+                std::cout << "RIGHT: " << hitBox.x << " " << destination.x + destination.width / 2 << '\n';
             int i = 0;
             isCollidingWithOther = IsCollidingWithUncollidable();
 
@@ -135,11 +137,12 @@ void NPC::Movements()
         }
 
         // Up movement
-        if (hitBox.y >= destination.y + destination.height / 2 && !isCollidingWithOther)
+        if (hitBox.y - destination.y >= destination.height / 2 + hitBox.height / 2 && !isCollidingWithOther)
         {
             moveDirection = {0, -1};
 
-            // std::cout << "UP: " << position.y << " " <<  destination.y << '\n';
+            if(frameCounter == 0)
+                std::cout << "UP: " << hitBox.y << " " << destination.y + destination.height / 2 << '\n';
             int i = 0;
             isCollidingWithOther = IsCollidingWithUncollidable();
 
@@ -163,11 +166,12 @@ void NPC::Movements()
             isMoving = true;
         }
         // Down movement
-        else if (hitBox.y < destination.y + destination.height / 2 && !isCollidingWithOther)
+        else if (destination.y - hitBox.y >= destination.height / 2 + hitBox.height / 2 && !isCollidingWithOther)
         {
             moveDirection = {0, 1};
 
-            // std::cout << "DOWN: " << position.y - destination.y << '\n';
+            if(frameCounter == 0)
+                std::cout << "DOWN: " << hitBox.y << " " << destination.y + destination.height / 2 << '\n';
             int i = 0;
             isCollidingWithOther = IsCollidingWithUncollidable();
 

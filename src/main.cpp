@@ -153,7 +153,7 @@ int main()
 
     // Declare player
     Player* player = new Player(Vector2{(float)1980, (float)1280}, &grid);
-    Nature *tes = new Nature(Vector2{2500, 500}, 0, &grid);
+    Nature *tes = new Nature(Vector2{25000, 500}, 0, &grid);
     // new Nature(Vector2{540, 384}, 0, &grid);
 
     new Collectible(Vector2{(float)screenWidth / 2 + 50, (float)screenHeight / 2 + 50}, 1, &grid);

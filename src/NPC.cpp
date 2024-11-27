@@ -31,8 +31,6 @@ NPC::NPC(Vector2 _position, int _type, Player *_NPC, Grid *_grid)
 
     isCollidingWithOther = false;
 
-    moveDirection = {0, 0};
-
     angleCounter = 0;
 
     // The starting state is idle
@@ -46,6 +44,7 @@ NPC::NPC(Vector2 _position, int _type, Player *_NPC, Grid *_grid)
 
     // Set starting direction as neutral right
     direction = Vector2({1.0f, 0.0f});
+    moveDirectionIndex = 2;
 
     // Insert NPC into the grid
     grid = _grid;
@@ -78,10 +77,10 @@ void NPC::Movements()
         // Left movement
         if (hitBox.x - destination.x >= destination.width / 2 + hitBox.width / 2 && !isCollidingWithOther)
         {
-            moveDirection = {-1, 0};
+            moveDirectionIndex = 0;
 
-            if(frameCounter == 0)
-                std::cout << "LEFT: " << hitBox.x << " " << destination.x << '\n';
+            // if(frameCounter == 0)
+            //     std::cout << "LEFT: " << hitBox.x << " " << destination.x << '\n';
             int i = 0;
             isCollidingWithOther = IsCollidingWithUncollidable();
 
@@ -108,10 +107,10 @@ void NPC::Movements()
         // Right movement
         else if (destination.x - hitBox.x >= destination.width / 2 + hitBox.width / 2 && !isCollidingWithOther)
         {
-            moveDirection = {1, 0};
+            moveDirectionIndex = 2;
 
-            if(frameCounter == 0)
-                std::cout << "RIGHT: " << hitBox.x << " " << destination.x + destination.width / 2 << '\n';
+            // if(frameCounter == 0)
+            //     std::cout << "RIGHT: " << hitBox.x << " " << destination.x + destination.width / 2 << '\n';
             int i = 0;
             isCollidingWithOther = IsCollidingWithUncollidable();
 
@@ -139,10 +138,10 @@ void NPC::Movements()
         // Up movement
         if (hitBox.y - destination.y >= destination.height / 2 + hitBox.height / 2 && !isCollidingWithOther)
         {
-            moveDirection = {0, -1};
+            moveDirectionIndex = 1;
 
-            if(frameCounter == 0)
-                std::cout << "UP: " << hitBox.y << " " << destination.y + destination.height / 2 << '\n';
+            // if(frameCounter == 0)
+            //     std::cout << "UP: " << hitBox.y << " " << destination.y + destination.height / 2 << '\n';
             int i = 0;
             isCollidingWithOther = IsCollidingWithUncollidable();
 
@@ -168,10 +167,10 @@ void NPC::Movements()
         // Down movement
         else if (destination.y - hitBox.y >= destination.height / 2 + hitBox.height / 2 && !isCollidingWithOther)
         {
-            moveDirection = {0, 1};
+            moveDirectionIndex = 3;
 
-            if(frameCounter == 0)
-                std::cout << "DOWN: " << hitBox.y << " " << destination.y + destination.height / 2 << '\n';
+            // if(frameCounter == 0)
+            //     std::cout << "DOWN: " << hitBox.y << " " << destination.y + destination.height / 2 << '\n';
             int i = 0;
             isCollidingWithOther = IsCollidingWithUncollidable();
 
@@ -198,7 +197,7 @@ void NPC::Movements()
     // If the NPC collide with obstacle along the way, enter the Pledge's Algorithm
     else
     {
-        std::cout << "Last direction: " << moveDirection.x << ' ' << moveDirection.y << '\n';
+        std::cout << "Last direction: " << moveDirection[moveDirectionIndex].x << ' ' << moveDirection[moveDirectionIndex].y << '\n';
         
 
     }

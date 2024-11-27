@@ -29,7 +29,11 @@ protected:
     Vector2 position;
     // Direction is in x and y (-1.0 for up and left, 1.0 for down and right, 0 for neither up down or left right [lets call it as neutral])
     Vector2 direction; // For animation
-    Vector2 moveDirection; // For movement
+    // Left, Up, Right, Down
+    Vector2 moveDirection[4] = {
+        {-1.0f, 0.0f}, {0.0f, -1.0f}, {1.0f, 0.0f}, {0.0f, 1.0f}
+    };
+    int moveDirectionIndex; // For movement
     int width, height;
     int type;
     int id;

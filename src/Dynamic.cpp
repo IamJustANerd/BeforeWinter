@@ -22,8 +22,8 @@ bool Dynamic::IsCollidingWithUncollidable()
 
     // Rectangle to check collision based on the move direction
     Rectangle collisionCheck = this->GetHitBox();
-    collisionCheck.x += moveDirection.x;
-    collisionCheck.y += moveDirection.y;
+    collisionCheck.x += moveDirection[moveDirectionIndex].x;
+    collisionCheck.y += moveDirection[moveDirectionIndex].y;
 
     for (int x = minX; x <= maxX; x++)
     {

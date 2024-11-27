@@ -31,7 +31,7 @@ NPC::NPC(Vector2 _position, int _type, Player *_NPC, Grid *_grid)
 
     isCollidingWithOther = false;
 
-    angleCounter = 0;
+    rotationCounter = 0;
 
     // The starting state is idle
     curState = State::idle;
@@ -39,8 +39,8 @@ NPC::NPC(Vector2 _position, int _type, Player *_NPC, Grid *_grid)
     // Set the frame rec according to the current state
     frameRec = NPCAnimation[type][(int)curState][0].sourceFrame;
 
-    // NPC is uncollidable
-    isUncollidable = true;
+    // NPC is collidable
+    isUncollidable = false;
 
     // Set starting direction as neutral right
     direction = Vector2({1.0f, 0.0f});
@@ -74,13 +74,17 @@ void NPC::Movements()
     // If there is no obstacle around, keep moving towards destination
     if(!isCollidingWithOther)
     {
+        if(count >= 60)
+        {
+            std::cout << "Moving to destination" << '\n';
+        }
         // Left movement
         if (hitBox.x - destination.x >= destination.width / 2 + hitBox.width / 2 && !isCollidingWithOther)
         {
             moveDirectionIndex = 0;
 
-            // if(frameCounter == 0)
-            //     std::cout << "LEFT: " << hitBox.x << " " << destination.x << '\n';
+            if(frameCounter == 0)
+                std::cout << "LEFT: " << hitBox.x << " " << destination.x << '\n';
             int i = 0;
             isCollidingWithOther = IsCollidingWithUncollidable();
 
@@ -109,8 +113,8 @@ void NPC::Movements()
         {
             moveDirectionIndex = 2;
 
-            // if(frameCounter == 0)
-            //     std::cout << "RIGHT: " << hitBox.x << " " << destination.x + destination.width / 2 << '\n';
+            if(frameCounter == 0)
+                std::cout << "RIGHT: " << hitBox.x << " " << destination.x + destination.width / 2 << '\n';
             int i = 0;
             isCollidingWithOther = IsCollidingWithUncollidable();
 
@@ -140,10 +144,11 @@ void NPC::Movements()
         {
             moveDirectionIndex = 1;
 
-            // if(frameCounter == 0)
-            //     std::cout << "UP: " << hitBox.y << " " << destination.y + destination.height / 2 << '\n';
             int i = 0;
             isCollidingWithOther = IsCollidingWithUncollidable();
+
+            if (frameCounter == 0)
+                std::cout << "UP: " << hitBox.y << " " << destination.y + destination.height / 2 << '\n';
 
             while ((i < speed && hitBox.y > minBorderY) &&
                    !isCollidingWithOther)
@@ -169,8 +174,8 @@ void NPC::Movements()
         {
             moveDirectionIndex = 3;
 
-            // if(frameCounter == 0)
-            //     std::cout << "DOWN: " << hitBox.y << " " << destination.y + destination.height / 2 << '\n';
+            if(frameCounter == 0)
+                std::cout << "DOWN: " << hitBox.y << " " << destination.y + destination.height / 2 << '\n';
             int i = 0;
             isCollidingWithOther = IsCollidingWithUncollidable();
 
@@ -193,13 +198,78 @@ void NPC::Movements()
 
             isMoving = true;
         }
+
+        if(isCollidingWithOther)
+        {
+            rotationCounter = 0;
+        }
     }
     // If the NPC collide with obstacle along the way, enter the Pledge's Algorithm
     else
     {
-        std::cout << "Last direction: " << moveDirection[moveDirectionIndex].x << ' ' << moveDirection[moveDirectionIndex].y << '\n';
-        
+        if (count >= 0)
+        {
+            // std::cout << "Avoiding obstacle..." << '\n';
+            // std::cout << "Last direction: " << moveDirectionIndex << '\n';
+            // std::cout << "Rotation: " << rotationCounter << '\n';
+        }
 
+        // If it is colliding with obstacle, rotate 90 degree (clockwise)
+        if(IsCollidingWithUncollidable())
+        {
+            if(count >= 0)
+            {
+                // std::cout << "Colliding with " << moveDirectionIndex << '\n'; 
+            }
+            moveDirectionIndex = (moveDirectionIndex + 1) % 4;
+            rotationCounter += 1;
+        }
+
+        // Follow the obstacle's edge
+        int i = 0;
+
+        while ((i < speed && (hitBox.y + hitBox.height) < maxBorderY &&
+                (hitBox.x + hitBox.width) < maxBorderX &&
+                (hitBox.y > minBorderY && hitBox.x > minBorderX)) &&
+               !IsCollidingWithUncollidable())
+        {
+            if (count >= 0)
+            {
+                std::cout << "MOVE to " << moveDirectionIndex << "\n";
+                count = 0;
+            }
+            
+            i += 1;
+
+            // Update NPC position (in the grid as well)
+            position.x += moveDirection[moveDirectionIndex].x;
+            position.y += moveDirection[moveDirectionIndex].y;
+            change.x += moveDirection[moveDirectionIndex].x;
+            change.y += moveDirection[moveDirectionIndex].y;
+
+            // Update hitBox position
+            hitBox.x = position.x + (float)width / 3;
+            hitBox.y = position.y + (float)height * 0.6f;
+        }
+
+        // If the obstacle's edge is no longer there, rotate 90 degree to left (counterclockwise)
+        // Temporarily change the moveDirectionIndex to check collision
+        moveDirectionIndex = (moveDirectionIndex - 1 + 4) % 4;
+        if(!IsCollidingWithUncollidable())
+        {
+            rotationCounter -= 1;
+        }
+        else
+        {
+            // Return to initial direction (this effect will only take place if the obstacle's edge is no more)
+            moveDirectionIndex = (moveDirectionIndex + 1) % 4;
+        }
+
+        // If the rotationCounter reach 0, it means that NPC can resume their way to their destination
+        if(rotationCounter == 0)
+        {
+            isCollidingWithOther = false;
+        }
     }
 
     // Switch to running animation
@@ -250,6 +320,7 @@ int x = 0;
 
 void NPC::Update()
 {
+    count += 1;
     SetDestination();
 
     Movements();
@@ -257,6 +328,10 @@ void NPC::Update()
     Attack();
 
     UpdateSpriteFrame();
+    if(count >= 60)
+    {
+        count = 0;
+    }
 }
 
 void NPC::UpdateSpriteFrame()

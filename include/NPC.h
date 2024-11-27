@@ -15,7 +15,8 @@ private:
     bool hasDestination;
     bool isCollidingWithOther;
     int carriedObjectValue;
-    int angleCounter;
+    int rotationCounter;
+    int count = 0;
     Player* targetPlayer;
     Rectangle destination;
 

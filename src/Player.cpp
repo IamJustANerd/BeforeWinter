@@ -41,8 +41,8 @@ Player::Player(Vector2 _position, Grid *_grid)
     // Set the frame rec according to the current state
     frameRec = playerAnimation[(int)curState][0].sourceFrame;
 
-    // Player is uncollidable
-    isUncollidable = true;
+    // Player is collidable
+    isUncollidable = false;
 
     // Set starting direction as neutral right
     direction = Vector2({1.0f, 0.0f});

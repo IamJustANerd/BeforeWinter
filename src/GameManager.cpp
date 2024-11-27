@@ -3,6 +3,7 @@
 #include <iostream>
 #include <algorithm>
 
+// Note: Maybe we can combine color and it's inverse for light in night effect?
 Color noonLight = {0, 0, 0, 0};
 Color sunsetOrange = {255, 154, 0, 0};
 Color nightBlue = {6, 21, 88, 155};

@@ -13,7 +13,9 @@ private:
     bool isWorking;
     bool isCarrying;
     bool hasDestination;
+    bool isCollidingWithOther;
     int carriedObjectValue;
+    int angleCounter;
     Player* targetPlayer;
     Rectangle destination;
 

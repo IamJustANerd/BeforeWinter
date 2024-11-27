@@ -7,7 +7,7 @@
 #include <typeinfo>
 #include <queue>
 
-bool Dynamic::IsCollidingWithUncollidable(std::string moveDir)
+bool Dynamic::IsCollidingWithUncollidable()
 {
     // Calculate the cells needed to be check on
     int minX = std::max((int)hitBox.x / grid->CELL_SIZE - 2, 0);
@@ -22,22 +22,8 @@ bool Dynamic::IsCollidingWithUncollidable(std::string moveDir)
 
     // Rectangle to check collision based on the move direction
     Rectangle collisionCheck = this->GetHitBox();
-    if (moveDir == "Left")
-    {
-        collisionCheck.x -= 1;
-    }
-    else if (moveDir == "Right")
-    {
-        collisionCheck.x += 1;
-    }
-    else if (moveDir == "Up")
-    {
-        collisionCheck.y -= 1;
-    }
-    else if (moveDir == "Down")
-    {
-        collisionCheck.y += 1;
-    }
+    collisionCheck.x += moveDirection.x;
+    collisionCheck.y += moveDirection.y;
 
     for (int x = minX; x <= maxX; x++)
     {
@@ -113,7 +99,7 @@ Rectangle Dynamic::FindTarget(const std::type_info& targetClass, int targetType)
                 if (curCell->GetType() == targetType)
                 {
                     // Note: might want to mark the targeted entity in the future (for example, to prevent more than one pawn to cut a single tree)
-                    std::cout << curCell->GetHitBoxPosition().x << ' ' << curCell->GetHitBoxPosition().y << '\n';
+                    // std::cout << curCell->GetHitBoxPosition().x << ' ' << curCell->GetHitBoxPosition().y << '\n';
                     return curCell->GetHitBox();
                 }
             }

@@ -29,6 +29,12 @@ NPC::NPC(Vector2 _position, int _type, Player *_NPC, Grid *_grid)
 
     hasDestination = false;
 
+    isCollidingWithOther = false;
+
+    moveDirection = {0, 0};
+
+    angleCounter = 0;
+
     // The starting state is idle
     curState = State::idle;
 
@@ -66,101 +72,131 @@ void NPC::Movements()
     // To check if the NPC is moving or not (will be set as true if the NPC moves in any direction)
     isMoving = false;
 
-    // Left movement
-    if (hitBox.x >= destination.x + destination.width / 2)
+    // If there is no obstacle around, keep moving towards destination
+    if(!isCollidingWithOther)
     {
-        // std::cout << "LEFT: " << position.x << " " << destination.x << '\n';
-        int i = 0;
-
-        while ((i < speed && hitBox.x > minBorderX) &&
-               !IsCollidingWithUncollidable("Left"))
+        // Left movement
+        if (hitBox.x >= destination.x + destination.width / 2 && !isCollidingWithOther)
         {
-            i += 1;
+            moveDirection = {-1, 0};
 
-            // Update NPC position (in the grid as well)
-            position.x -= 1;
-            change.x -= 1;
+            // std::cout << "LEFT: " << position.x << " " << destination.x << '\n';
+            int i = 0;
+            isCollidingWithOther = IsCollidingWithUncollidable();
 
-            // Update hitBox position
-            hitBox.x = position.x + (float)width / 3;
+            while ((i < speed && hitBox.x > minBorderX) &&
+                   !isCollidingWithOther)
+            {
+                i += 1;
+                isCollidingWithOther = IsCollidingWithUncollidable();
+
+                // Update NPC position (in the grid as well)
+                position.x -= 1;
+                change.x -= 1;
+
+                // Update hitBox position
+                hitBox.x = position.x + (float)width / 3;
+            }
+
+            // Update NPC direction
+            direction.x = -1.0f;
+            direction.y = 0.0f;
+
+            isMoving = true;
+        }
+        // Right movement
+        else if (hitBox.x < destination.x + destination.width / 2 && !isCollidingWithOther)
+        {
+            moveDirection = {1, 0};
+
+            // std::cout << "RIGHT: " << position.x - destination.x << '\n';
+            int i = 0;
+            isCollidingWithOther = IsCollidingWithUncollidable();
+
+            while ((i < speed && (hitBox.x + hitBox.width) < maxBorderX) &&
+                   !isCollidingWithOther)
+            {
+                i += 1;
+                isCollidingWithOther = IsCollidingWithUncollidable();
+
+                // Update NPC position (in the grid as well)
+                position.x += 1;
+                change.x += 1;
+
+                // Update hitBox position
+                hitBox.x = position.x + (float)width / 3;
+            }
+
+            // Update NPC direction
+            direction.x = 1.0f;
+            direction.y = 0.0f;
+
+            isMoving = true;
         }
 
-        // Update NPC direction
-        direction.x = -1.0f;
-        direction.y = 0.0f;
+        // Up movement
+        if (hitBox.y >= destination.y + destination.height / 2 && !isCollidingWithOther)
+        {
+            moveDirection = {0, -1};
 
-        isMoving = true;
+            // std::cout << "UP: " << position.y << " " <<  destination.y << '\n';
+            int i = 0;
+            isCollidingWithOther = IsCollidingWithUncollidable();
+
+            while ((i < speed && hitBox.y > minBorderY) &&
+                   !isCollidingWithOther)
+            {
+                i += 1;
+                isCollidingWithOther = IsCollidingWithUncollidable();
+
+                // Update NPC position (in the grid as well)
+                position.y -= 1;
+                change.y -= 1;
+
+                // Update hitBox position
+                hitBox.y = position.y + (float)height * 0.6f;
+            }
+
+            // Update NPC direction
+            direction.y = -1.0f;
+
+            isMoving = true;
+        }
+        // Down movement
+        else if (hitBox.y < destination.y + destination.height / 2 && !isCollidingWithOther)
+        {
+            moveDirection = {0, 1};
+
+            // std::cout << "DOWN: " << position.y - destination.y << '\n';
+            int i = 0;
+            isCollidingWithOther = IsCollidingWithUncollidable();
+
+            while ((i < speed && (hitBox.y + hitBox.height) < maxBorderY) &&
+                   !isCollidingWithOther)
+            {
+                i += 1;
+                isCollidingWithOther = IsCollidingWithUncollidable();
+
+                // Update NPC position (in the grid as well)
+                position.y += 1;
+                change.y += 1;
+
+                // Update hitBox position
+                hitBox.y = position.y + (float)height * 0.6f;
+            }
+
+            // Update NPC direction
+            direction.y = 1.0f;
+
+            isMoving = true;
+        }
     }
-    // Right movement
-    else if (hitBox.x < destination.x + destination.width / 2)
+    // If the NPC collide with obstacle along the way, enter the Pledge's Algorithm
+    else
     {
-        // std::cout << "RIGHT: " << position.x - destination.x << '\n';
-        int i = 0;
-        while ((i < speed && (hitBox.x + hitBox.width) < maxBorderX) &&
-               !IsCollidingWithUncollidable("Right"))
-        {
-            i += 1;
+        std::cout << "Last direction: " << moveDirection.x << ' ' << moveDirection.y << '\n';
+        
 
-            // Update NPC position (in the grid as well)
-            position.x += 1;
-            change.x += 1;
-
-            // Update hitBox position
-            hitBox.x = position.x + (float)width / 3;
-        }
-
-        // Update NPC direction
-        direction.x = 1.0f;
-        direction.y = 0.0f;
-
-        isMoving = true;
-    }
-
-    // Up movement
-    if (hitBox.y >= destination.y + destination.height / 2)
-    {
-        // std::cout << "UP: " << position.y << " " <<  destination.y << '\n';
-        int i = 0;
-        while ((i < speed && hitBox.y > minBorderY) &&
-               !IsCollidingWithUncollidable("Up"))
-        {
-            i += 1;
-
-            // Update NPC position (in the grid as well)
-            position.y -= 1;
-            change.y -= 1;
-
-            // Update hitBox position
-            hitBox.y = position.y + (float)height * 0.6f;
-        }
-
-        // Update NPC direction
-        direction.y = -1.0f;
-
-        isMoving = true;
-    }
-    // Down movement
-    else if (hitBox.y < destination.y + destination.height / 2)
-    {
-        // std::cout << "DOWN: " << position.y - destination.y << '\n';
-        int i = 0;
-        while ((i < speed && (hitBox.y + hitBox.height) < maxBorderY) &&
-               !IsCollidingWithUncollidable("Down"))
-        {
-            i += 1;
-
-            // Update NPC position (in the grid as well)
-            position.y += 1;
-            change.y += 1;
-
-            // Update hitBox position
-            hitBox.y = position.y + (float)height * 0.6f;
-        }
-
-        // Update NPC direction
-        direction.y = 1.0f;
-
-        isMoving = true;
     }
 
     // Switch to running animation
@@ -183,17 +219,6 @@ void NPC::Movements()
         // Reset frame counter
         frameCounter = 0;
     }
-
-    // Switch to idle animation
-    // if (!isMoving && curState != State::idle)
-    // {
-    //     std::cout << "SAMPAI" << '\n';
-    //     curState = State::idle;
-    //     frameRec = frameRec = NPCAnimation[type][(int)curState][0].sourceFrame;
-
-    //     // Reset frame counter
-    //     frameCounter = 0;
-    // }
 
     // Update NPC's cell
     grid->Move(this, change);
@@ -279,7 +304,7 @@ void NPC::SetDestination()
         {
             // std::cout << "POHON" << '\n';
             destination = FindTarget(typeid(Nature), 0);
-            std::cout << FindTarget(typeid(Nature), 0).x << ' ' << FindTarget(typeid(Nature), 0).y << '\n';
+            // std::cout << FindTarget(typeid(Nature), 0).x << ' ' << FindTarget(typeid(Nature), 0).y << '\n';
             // std::cout << destination.x << ' ' << destination.y << '\n';
         }
     }

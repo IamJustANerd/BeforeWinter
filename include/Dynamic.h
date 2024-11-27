@@ -27,7 +27,7 @@ public:
     virtual void Attack() = 0;
 
     // Check if the dynamic entity is colliding with uncollidable
-    bool IsCollidingWithUncollidable(std::string moveDir);
+    bool IsCollidingWithUncollidable();
 
     // Find a certain target (tree, player, etc)
     Rectangle FindTarget(const std::type_info& targetClass, int targetType);

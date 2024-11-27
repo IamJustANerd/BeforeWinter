@@ -47,6 +47,8 @@ Player::Player(Vector2 _position, Grid *_grid)
     // Set starting direction as neutral right
     direction = Vector2({1.0f, 0.0f});
 
+    moveDirection = Vector2({0.0f, 0.0f});
+
     // Insert player into the grid
     grid = _grid;
     grid->Add(this);
@@ -98,10 +100,12 @@ void Player::Movements()
     // Left movement
     if (IsKeyDown(KEY_A))
     {
+        moveDirection = {-1, 0};
+
         int i = 0;
 
         while ((i < speed && hitBox.x > minBorderX) &&
-               !IsCollidingWithUncollidable("Left"))
+               !IsCollidingWithUncollidable())
         {
             i += 1;
 
@@ -122,9 +126,11 @@ void Player::Movements()
     // Right movement
     else if (IsKeyDown(KEY_D))
     {
+        moveDirection = {1, 0};
+
         int i = 0;
         while ((i < speed && (hitBox.x + hitBox.width) < maxBorderX) &&
-               !IsCollidingWithUncollidable("Right"))
+               !IsCollidingWithUncollidable())
         {
             i += 1;
 
@@ -146,9 +152,11 @@ void Player::Movements()
     // Up movement
     if (IsKeyDown(KEY_W))
     {
+        moveDirection = {0, -1};
+
         int i = 0;
         while ((i < speed && hitBox.y > minBorderY) &&
-               !IsCollidingWithUncollidable("Up"))
+               !IsCollidingWithUncollidable())
         {
             i += 1;
 
@@ -168,10 +176,12 @@ void Player::Movements()
     // Down movement
     else if (IsKeyDown(KEY_S))
     {
+        moveDirection = {0, 1};
+
         // Add player position while is still within the border
         int i = 0;
         while ((i < speed && (hitBox.y + hitBox.height) < maxBorderY) &&
-               !IsCollidingWithUncollidable("Down"))
+               !IsCollidingWithUncollidable())
         {
             i += 1;
 

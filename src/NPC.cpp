@@ -239,6 +239,7 @@ void NPC::Movements()
             if (count >= 0)
             {
                 std::cout << "MOVE to " << moveDirectionIndex << "\n";
+                std::cout << rotationCounter << '\n';
                 count = 0;
             }
             
@@ -253,6 +254,26 @@ void NPC::Movements()
             // Update hitBox position
             hitBox.x = position.x + (float)width / 3;
             hitBox.y = position.y + (float)height * 0.6f;
+        }
+
+        // Change NPC facing direction (for animation)
+        if(moveDirectionIndex == 0)
+        {
+            direction.x = -1.0f;
+            direction.y = 0.0f;
+        }
+        else if(moveDirectionIndex == 1)
+        {
+            direction.x = 1.0f;
+            direction.y = 0.0f;
+        }
+        else if(moveDirectionIndex == 2)
+        {
+            direction.y = -1.0f;
+        }
+        else if(moveDirectionIndex == 3)
+        {
+            direction.y = 1.0f;
         }
 
         // If the obstacle's edge is no longer there, rotate 90 degree to left (counterclockwise)
@@ -271,6 +292,7 @@ void NPC::Movements()
         // If the rotationCounter reach 0, it means that NPC can resume their way to their destination
         if(rotationCounter == 0)
         {
+            std::cout << "FINISH PLEDGE" << "\n";
             isCollidingWithOther = false;
         }
     }

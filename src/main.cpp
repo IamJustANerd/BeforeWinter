@@ -43,6 +43,9 @@
 // NPC
 #include "../include/NPC.h"
 
+// Building
+#include "../include/Building.h"
+
 // Shader
 #include "../include/Shader.h"
 
@@ -154,13 +157,16 @@ int main()
     // Declare player
     Player* player = new Player(Vector2{(float)1980, (float)1280}, &grid);
     Nature *tes = new Nature(Vector2{25000, 900}, 0, &grid);
-    new Nature(Vector2{1780, 1500}, 0, &grid);
+    new Nature(Vector2{2000, 1200}, 0, &grid);
+    new Building(Vector2{2000, 1000}, 0, &grid);
+    new Building(Vector2{1900, 1000}, 0, &grid);
+    new Building(Vector2{1800, 1000}, 0, &grid);
 
     new Collectible(Vector2{(float)screenWidth / 2 + 50, (float)screenHeight / 2 + 50}, 1, &grid);
     new Collectible(Vector2{(float)screenWidth / 2 + 200, (float)screenHeight / 2 + 200}, 1, &grid);
 
     // Testing NPC
-    new NPC(Vector2{(float)1780, (float)1080}, 0, player, &grid);
+    new NPC(Vector2{(float)1780, (float)780}, 0, player, &grid);
     // new NPC(Vector2{(float)1480, (float)1080}, 0, player, &grid);
     // new NPC(Vector2{(float)2080, (float)1080}, 0, player, &grid);
 

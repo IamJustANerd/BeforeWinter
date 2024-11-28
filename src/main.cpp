@@ -155,18 +155,39 @@ int main()
     Grid grid;
 
     // Declare player
-    Player* player = new Player(Vector2{(float)1980, (float)1280}, &grid);
+    Player* player = new Player(Vector2{(float)1980, (float)1200}, &grid);
     Nature *tes = new Nature(Vector2{25000, 900}, 0, &grid);
     new Nature(Vector2{2000, 1200}, 0, &grid);
+    new Building(Vector2{2200, 1000}, 0, &grid);
+    new Building(Vector2{2100, 1000}, 0, &grid);
     new Building(Vector2{2000, 1000}, 0, &grid);
     new Building(Vector2{1900, 1000}, 0, &grid);
     new Building(Vector2{1800, 1000}, 0, &grid);
+    new Building(Vector2{1800, 900}, 0, &grid);
+    new Building(Vector2{1800, 800}, 0, &grid);
+    new Building(Vector2{1800, 1100}, 0, &grid);
+    new Building(Vector2{1800, 1200}, 0, &grid);
+    new Building(Vector2{1800, 1300}, 0, &grid);
+    new Building(Vector2{1800, 1400}, 0, &grid);
+    new Building(Vector2{1900, 1400}, 0, &grid);
+    new Building(Vector2{2000, 1400}, 0, &grid);
+    new Building(Vector2{2100, 1400}, 0, &grid);
+    new Building(Vector2{2100, 1300}, 0, &grid);
+    new Building(Vector2{2100, 1200}, 0, &grid);
+    new Building(Vector2{2100, 1500}, 0, &grid);
+    new Building(Vector2{2100, 1600}, 0, &grid);
+    new Building(Vector2{1700, 1000}, 0, &grid);
+    new Building(Vector2{1600, 1000}, 0, &grid);
 
     new Collectible(Vector2{(float)screenWidth / 2 + 50, (float)screenHeight / 2 + 50}, 1, &grid);
     new Collectible(Vector2{(float)screenWidth / 2 + 200, (float)screenHeight / 2 + 200}, 1, &grid);
 
     // Testing NPC
     new NPC(Vector2{(float)1780, (float)780}, 0, player, &grid);
+
+    new NPC(Vector2{(float)1580, (float)780}, 0, player, &grid);
+
+    new NPC(Vector2{(float)1580, (float)980}, 0, player, &grid);
     // new NPC(Vector2{(float)1480, (float)1080}, 0, player, &grid);
     // new NPC(Vector2{(float)2080, (float)1080}, 0, player, &grid);
 
@@ -185,8 +206,13 @@ int main()
     camera.rotation = 0.0f;
     camera.zoom = 1.0f;
 
+    int fps = 60;
+
     // Setting game FPS
-    SetTargetFPS(60);
+    SetTargetFPS(fps);
+
+    // Set the trace log level to suppress INFO messages
+    SetTraceLogLevel(LOG_WARNING); // Only log warnings and errors
 
     // Scale the content based on the window size
     scale = std::min((float)screenWidth / gameScreenWidth, (float)screenHeight / gameScreenHeight);
@@ -207,32 +233,46 @@ int main()
         grid.UpdateGrid();
 
         // Check how many entities on screen (for debugging)
-        if(IsKeyPressed(KEY_ENTER))
+        // if(IsKeyPressed(KEY_ENTER))
+        // {
+        //     int ada = 1;
+        //     const Entity *const(&cells)[Grid::NUM_CELLS][Grid::NUM_CELLS] = grid.GetReadOnlyCells();
+        //     Vector2 cameraPos = camera.target;
+        //     int minX = std::max((int)(cameraPos.x - screenWidth / scale) / grid.CELL_SIZE, 0);
+        //     int minY = std::max((int)(cameraPos.y - screenHeight / scale) / grid.CELL_SIZE, 0);
+        //     int maxX = std::min((int)(cameraPos.x + screenWidth / scale) / grid.CELL_SIZE, grid.NUM_CELLS - 1);
+        //     int maxY = std::min((int)(cameraPos.y + screenHeight / scale) / grid.CELL_SIZE, grid.NUM_CELLS - 1);
+
+        //     for (int i = minX; i <= maxX; i++)
+        //     {
+        //         for(int j = minY; j <= maxY; j++)
+        //         {
+        //             const Entity* entity = cells[i][j];
+
+        //             while(entity != NULL)
+        //             {
+        //                 ada++;
+        //                 entity = entity->next;
+        //             }
+        //         }
+        //     }
+
+        //     std::cout << "There are " << ada << " entities" << '\n';
+        // }
+
+        // For debugging
+        if(IsKeyPressed(KEY_UP) && fps < 60)
         {
-            int ada = 1;
-            const Entity *const(&cells)[Grid::NUM_CELLS][Grid::NUM_CELLS] = grid.GetReadOnlyCells();
-            Vector2 cameraPos = camera.target;
-            int minX = std::max((int)(cameraPos.x - screenWidth / scale) / grid.CELL_SIZE, 0);
-            int minY = std::max((int)(cameraPos.y - screenHeight / scale) / grid.CELL_SIZE, 0);
-            int maxX = std::min((int)(cameraPos.x + screenWidth / scale) / grid.CELL_SIZE, grid.NUM_CELLS - 1);
-            int maxY = std::min((int)(cameraPos.y + screenHeight / scale) / grid.CELL_SIZE, grid.NUM_CELLS - 1);
-
-            for (int i = minX; i <= maxX; i++)
-            {
-                for(int j = minY; j <= maxY; j++)
-                {
-                    const Entity* entity = cells[i][j];
-
-                    while(entity != NULL)
-                    {
-                        ada++;
-                        entity = entity->next;
-                    }
-                }
-            }
-
-            std::cout << "There are " << ada << " entities" << '\n';
+            std::cout << "YES" << '\n';
+            fps++;
         }
+        else if(IsKeyPressed(KEY_DOWN) && fps > 1)
+        {
+            std::cout << "YES" << '\n';
+            fps--;
+        }
+
+        SetTargetFPS(fps);
 
         // Update Camera
         UpdateCamera(camera, player->GetPosition(), player->GetWidth(), player->GetHeight(), scale);

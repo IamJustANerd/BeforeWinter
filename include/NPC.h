@@ -14,10 +14,12 @@ private:
     bool isCarrying;
     bool hasDestination;
     bool isCollidingWithOther;
+    bool priorityMove;
     int carriedObjectValue;
     int rotationCounter;
     int count = 0;
-    int distanceTolerance = 2;
+    int distanceTolerance = 5;
+    int rotationCounterTolerance = 50;
     Player* targetPlayer;
     Rectangle destination;
 

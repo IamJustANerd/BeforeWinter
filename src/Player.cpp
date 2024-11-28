@@ -41,8 +41,8 @@ Player::Player(Vector2 _position, Grid *_grid)
     // Set the frame rec according to the current state
     frameRec = playerAnimation[(int)curState][0].sourceFrame;
 
-    // Player is collidable
-    isUncollidable = false;
+    // Player is uncollidable
+    isUncollidable = true;
 
     // Set starting direction as neutral right
     direction = Vector2({1.0f, 0.0f});
@@ -233,7 +233,7 @@ void Player::Movements()
 void Player::Draw() const
 {
     // Draw body
-    DrawRectangle(position.x, position.y, width, height, {230, 41, 55, 128});
+    // DrawRectangle(position.x, position.y, width, height, {230, 41, 55, 128});
 
     // Draw texture
     if(direction.x >= 0)
@@ -246,10 +246,10 @@ void Player::Draw() const
     }
     
     // Draw collect radius box
-    DrawRectangleRec(collectRadius, Color{0, 121, 241, 120});
+    // DrawRectangleRec(collectRadius, Color{0, 121, 241, 120});
 
     // Draw interaction radius box
-    DrawRectangleRec(interactionRadius, Color{253, 249, 0, 128});
+    // DrawRectangleRec(interactionRadius, Color{253, 249, 0, 128});
 
     // Draw hitbox
     DrawRectangleRec(hitBox, Color{0, 228, 48, 120});

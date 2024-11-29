@@ -158,6 +158,8 @@ int main()
     Player* player = new Player(Vector2{(float)1980, (float)1200}, &grid);
     Nature *tes = new Nature(Vector2{25000, 900}, 0, &grid);
     new Nature(Vector2{2000, 1200}, 0, &grid);
+
+    // For path finding algorithm debugging
     new Building(Vector2{2200, 1000}, 0, &grid);
     new Building(Vector2{2100, 1000}, 0, &grid);
     new Building(Vector2{2000, 1000}, 0, &grid);
@@ -183,13 +185,7 @@ int main()
     new Collectible(Vector2{(float)screenWidth / 2 + 200, (float)screenHeight / 2 + 200}, 1, &grid);
 
     // Testing NPC
-    new NPC(Vector2{(float)1780, (float)780}, 0, player, &grid);
-
-    new NPC(Vector2{(float)1580, (float)780}, 0, player, &grid);
-
-    new NPC(Vector2{(float)1580, (float)980}, 0, player, &grid);
-    // new NPC(Vector2{(float)1480, (float)1080}, 0, player, &grid);
-    // new NPC(Vector2{(float)2080, (float)1080}, 0, player, &grid);
+    new NPC(Vector2{(float)1780, (float)780}, 0, &grid);
 
     // Testing collectibles
     for (int i = 0; i <= 100; i += 1)

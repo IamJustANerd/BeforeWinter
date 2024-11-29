@@ -20,11 +20,11 @@ private:
     int count = 0;
     int distanceTolerance = 5;
     int rotationCounterTolerance = 50;
-    Player* targetPlayer;
     Rectangle destination;
+    Entity* target;
 
 public:
-    NPC(Vector2 _position, int type, Player *_player, Grid *_grid);
+    NPC(Vector2 _position, int type, Grid *_grid);
     // NPC movements
     void Movements() override;
 

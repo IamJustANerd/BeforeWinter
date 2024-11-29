@@ -2,20 +2,16 @@
 #include <iostream>
 #include <typeinfo>
 
-NPC::NPC(Vector2 _position, int _type, Player *_NPC, Grid *_grid)
+NPC::NPC(Vector2 _position, int _type, Grid *_grid)
 {
     position = _position;
 
     width = 128, height = 128;
 
-    id = 0;
-
     type = _type;
 
     // Assign NPC hitbox
     hitBox = Rectangle{position.x + (float)width / 3, position.y + (float)height * 0.6f, (float)width / 3, (float)height / 8};
-
-    targetPlayer = _NPC;
 
     speed = 2.0f;
 
@@ -448,23 +444,26 @@ void NPC::Attack()
 
 void NPC::SetDestination()
 {
-    // If the pawn is not working, then it should be moving
-    if (!isWorking && !hasDestination)
+    // -> Pawn
+    if(type == 0)
     {
-        hasDestination = true;
-
-        // Return harvest to home
-        if (isCarrying)
+        // If the pawn is not working, then it should be moving
+        if (!isWorking && !hasDestination)
         {
+            hasDestination = true;
 
-        }
-        // Look for the closest tree
-        else
-        {
-            // std::cout << "POHON" << '\n';
-            destination = FindTarget(typeid(Nature), 0);
-            std::cout << FindTarget(typeid(Nature), 0).x << ' ' << FindTarget(typeid(Nature), 0).y << '\n';
-            std::cout << destination.x << ' ' << destination.y << '\n';
+            // Return harvest to home
+            if (isCarrying)
+            {
+            }
+            // Look for the closest tree
+            else
+            {
+                // std::cout << "POHON" << '\n';
+                target = FindTarget(typeid(Nature), 0);
+                destination = target->GetHitBox();
+                // std::cout << destination.x << ' ' << destination.y << '\n';
+            }
         }
     }
 }

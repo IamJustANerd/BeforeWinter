@@ -30,7 +30,7 @@ public:
     bool IsCollidingWithUncollidable();
 
     // Find a certain target (tree, player, etc)
-    Rectangle FindTarget(const std::type_info& targetClass, int targetType);
+    Entity* FindTarget(const std::type_info& targetClass, int targetType);
 };
 
 #endif // PLAYER_H

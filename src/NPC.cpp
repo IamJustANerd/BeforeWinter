@@ -60,7 +60,6 @@ void NPC::Movements()
     // If there is no more target around, stop moving
     if (target == NULL)
     {
-        std::cout << "NO" << '\n';
         return;
     }
 
@@ -255,13 +254,6 @@ void NPC::Movements()
     // If the NPC collide with obstacle along the way, enter the Pledge's Algorithm
     else
     {
-        if (count >= 0)
-        {
-            // std::cout << "Avoiding obstacle..." << '\n';
-            // std::cout << "Last direction: " << moveDirectionIndex << '\n';
-            // std::cout << "Rotation: " << rotationCounter << '\n';
-        }
-
         // If it is colliding with obstacle, rotate 90 degree (clockwise)
         if(IsCollidingWithUncollidable())
         {
@@ -281,13 +273,6 @@ void NPC::Movements()
                 (hitBox.y > minBorderY && hitBox.x > minBorderX)) &&
                !IsCollidingWithUncollidable())
         {
-            // if (count >= GetFPS())
-            // {
-                // std::cout << "MOVE to " << moveDirectionIndex << "\n";
-                // std::cout << rotationCounter << '\n';
-                // count = 0;
-            // }
-            
             i += 1;
 
             // Update NPC position (in the grid as well)
@@ -299,8 +284,6 @@ void NPC::Movements()
             // Update hitBox position
             hitBox.x = position.x + (float)width / 3;
             hitBox.y = position.y + (float)height * 0.6f;
-
-            // std::cout << "NEW POSITION: " << hitBox.x << ' ' << hitBox.y << '\n';
         }
 
         // Change NPC facing direction (for animation)
@@ -328,7 +311,6 @@ void NPC::Movements()
         moveDirectionIndex = (moveDirectionIndex - 1 + 4) % 4;
         if(!IsCollidingWithUncollidable())
         {
-            // std::cout << "NO OBSTACLE IN DIRECTION " << moveDirectionIndex << '\n';
             rotationCounter -= 1;
         }
         else
@@ -340,11 +322,8 @@ void NPC::Movements()
         // If the rotationCounter reach 0, it means that NPC can resume their way to their destination
         if(rotationCounter == 0)
         {
-            // std::cout << "FINISH PLEDGE" << "\n";
-            // std::cout << "NOW MOVING TO " << moveDirectionIndex << '\n';
             isCollidingWithOther = false;
             priorityMove = true;
-            // isWorking = true;
         }
 
         // To handle a case where NPC is colliding with dynamic entities (which has a chance to cause a bug),
@@ -361,6 +340,7 @@ void NPC::Movements()
     {
         curState = State::running;
         frameRec = frameRec = NPCAnimation[type][(int)curState][0].sourceFrame;
+        curFrame = 0;
 
         // Reset frame counter
         frameCounter = 0;
@@ -371,7 +351,8 @@ void NPC::Movements()
     {
         isWorking = true;
         curState = State::idle;
-        frameRec = frameRec = NPCAnimation[type][(int)curState][0].sourceFrame;
+        frameRec = NPCAnimation[type][(int)curState][0].sourceFrame;
+        curFrame = 0;
 
         // Reset frame counter
         frameCounter = 0;
@@ -383,9 +364,6 @@ void NPC::Movements()
 
 void NPC::Draw() const
 {
-    // Draw body
-    // DrawRectangle(position.x, position.y, width, height, {230, 41, 55, 128});
-
     // Draw texture
     if (direction.x >= 0)
     {
@@ -400,11 +378,8 @@ void NPC::Draw() const
     DrawRectangleRec(hitBox, Color{0, 228, 48, 120});
 }
 
-int x = 0;
-
 void NPC::Update()
 {
-    count += 1;
     SetDestination();
 
     Movements();
@@ -412,41 +387,100 @@ void NPC::Update()
     Attack();
 
     UpdateSpriteFrame();
-    if(count >= 60)
-    {
-        count = 0;
-    }
 }
 
 void NPC::UpdateSpriteFrame()
 {
+    std::cout << "AWKDNAKWNDWKA" << '\n';
     frameCounter += 1;
     if (frameCounter >= NPCAnimation[type][(int)curState][0].frameTime / NPCAnimation[type][(int)curState][0].totalFrames)
     {
+        curFrame = (curFrame + 1) % NPCAnimation[type][(int)curState][0].totalFrames;
+
         frameCounter = 0;
 
         frameRec.x = ((int)(frameRec.x + width) % (int)(NPCAnimation[type][(int)curState][0].totalFrames * width));
 
         // Check if this is an attack animation
-        // if (curState == State::light_attacking || curState == State::heavy_attacking)
-        // {
-        //     // If it is, make sure to stop the attack animation once it reaches back to the first frame
-        //     if (frameRec.x <= 0)
-        //     {
-        //         // Return back to idle animation
-        //         isAttacking = false;
+        if (curState == State::light_attacking || curState == State::heavy_attacking)
+        {
+            // If it is, make sure to stop the attack animation once it reaches back to the first frame
+            if (frameRec.x <= 0)
+            {
+                // Return back to idle animation
+                isAttacking = false;
 
-        //         curState = State::idle;
+                curState = State::idle;
 
-        //         frameRec = NPCAnimation[type][(int)curState][0].sourceFrame;
-        //     }
-        // }
+                curFrame = 0;
+
+                frameRec = NPCAnimation[type][(int)curState][0].sourceFrame;
+            }
+
+            // Pawn only:
+            // If the pawn reached the fourth frame of heavy attack animation, make sure to:
+            // 1. Give the pawn one carry,
+            // 2. Reduce target health,
+            // 3. Trigger the hit animation (if it has no more health, go for death animation instead)
+            if(curFrame == 4)
+            {
+                carry += attackPoint;
+
+                target->ReduceHealthPoint(attackPoint);
+
+                target->HitAnimation();
+
+                std::cout << carry << ' ' << maxCarry << '\n';
+
+                // If the pawn reached the maximum amount of value it can carry, stop working
+                if(carry >= maxCarry)
+                {
+                    isWorking = false;
+
+                    isCarrying = true;
+
+                    // Reset the destination
+                    hasDestination = false;
+
+                    // Unmark this tree
+                    target->SetIsTargeted(false);
+                }
+            }
+        }
     }
 }
 
 void NPC::Attack()
 {
+    // NPC can only attack once it re;aches the destination
+    if(isWorking)
+    {
+        // For pawn, it will reduce the health of the tree and gain one carry
+        if(type == 0)
+        {
+            // Enter heavy attack animation
+            if(!isAttacking && attackCooldownCounter <= 0)
+            {
+                isAttacking = true;
 
+                // Attack on cooldown
+                attackCooldownCounter = attackCooldown;
+                
+                curState = State::heavy_attacking;
+
+                curFrame = 0;
+
+                // Set the direction of animation based on the NPC direction
+                frameRec = NPCAnimation[type][(int)curState][0].sourceFrame;
+            }
+        }
+    }
+
+    // While not attacking, it will decrease the attack cooldown counter
+    if(!isAttacking && attackCooldownCounter > 0)
+    {
+        attackCooldownCounter -= 1;
+    }
 }
 
 void NPC::SetDestination()
@@ -460,6 +494,14 @@ void NPC::SetDestination()
             // Return harvest to home
             if (isCarrying)
             {
+                target = FindTarget(typeid(Building), 0);
+
+                if (target != NULL)
+                {
+                    destination = target->GetHitBox();
+                }
+
+                std::cout << target->GetHitBoxPosition().x << ' ' << target->GetHitBoxPosition().y << '\n';
             }
             // Look for the closest tree
             else
@@ -475,4 +517,9 @@ void NPC::SetDestination()
             }
         }
     }
+}
+
+void NPC::HitAnimation()
+{
+
 }

@@ -18,6 +18,8 @@ protected:
     float rotation = 0;
     bool isMoving = false;
     bool isAttacking = false;
+    int attackCooldown = 60;
+    int attackCooldownCounter = 0;
 
 public:
     // Movements

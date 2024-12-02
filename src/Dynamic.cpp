@@ -104,7 +104,7 @@ Entity* Dynamic::FindTarget(const std::type_info& targetClass, int targetType)
 
                     // Mark this object as targeted
                     const_cast<Entity *>(curCell)->SetIsTargeted(true);
-                    std::cout << "S" << '\n';
+                    
                     return const_cast<Entity *>(curCell);
                 }
             }
@@ -154,6 +154,5 @@ Entity* Dynamic::FindTarget(const std::type_info& targetClass, int targetType)
     }    
 
     // If it doesn't exist, return NULL
-    std::cout << "GA ADA" << '\n';
     return NULL;
 }

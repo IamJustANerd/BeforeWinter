@@ -89,3 +89,8 @@ void Collectible::Attack()
 {
 
 }
+
+void Collectible::HitAnimation()
+{
+    
+}

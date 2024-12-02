@@ -60,3 +60,8 @@ void Entity::SetIsTargeted(bool newState)
 {
     isTargeted = newState;
 }
+
+void Entity::ReduceHealthPoint(int decrease)
+{
+    healthPoint -= decrease;
+}

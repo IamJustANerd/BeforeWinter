@@ -6,6 +6,7 @@
 #include "../include/Player.h"
 #include "../include/Grid.h"
 #include "../include/Nature.h"
+#include "../include/Building.h"
 
 class NPC : public Dynamic
 {
@@ -20,6 +21,8 @@ private:
     int count = 0;
     int distanceTolerance = 5;
     int rotationCounterTolerance = 50;
+    int carry = 0;
+    int maxCarry = 1;
     Rectangle destination;
     Entity* target;
 
@@ -33,6 +36,9 @@ public:
 
     // Update sprite frame
     void UpdateSpriteFrame() override;
+
+    // Hit animation
+    void HitAnimation() override;
 
     // Draw
     void Draw() const override;

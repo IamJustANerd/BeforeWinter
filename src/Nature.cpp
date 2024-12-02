@@ -14,14 +14,18 @@ Nature::Nature(Vector2 _position, int _type, Grid *_grid)
     // Nature is uncollidable
     isUncollidable = true;
 
-    // Assign hitbox (the size depends on the type)
+    // Assign some values based on the nature type
     if(type == 0) // Tree
     {
         hitBox = Rectangle{position.x + (float)width * 0.4f, position.y + (float)height * 0.8f, (float)width * 0.2f, (float)height / 8};
+        
+        healthPoint = 30;
     }
     else
     {
         hitBox = Rectangle{position.x, position.y, (float)width, (float)height};
+
+        healthPoint = 10;
     }
 
     // The starting state is idle
@@ -54,19 +58,6 @@ void Nature::Draw() const
 void Nature::Update()
 {
     UpdateSpriteFrame();
-
-    // For testing hit animation
-    if(CheckCollisionRecs(GetMouseRect(), hitBox) && IsMouseButtonDown(MOUSE_BUTTON_LEFT))
-    {
-        // Reset frame counter
-        frameCounter = 0;
-
-        // Change state into hit
-        curState = State::hit;
-
-        // Change frame
-        frameRec = natureAnimation[type][(int)curState][0].sourceFrame;
-    }
 }
 
 void Nature::UpdateSpriteFrame()
@@ -91,4 +82,16 @@ void Nature::UpdateSpriteFrame()
             }
         }
     }
+}
+
+void Nature::HitAnimation()
+{
+    // Reset frame counter
+    frameCounter = 0;
+
+    // Change state into hit
+    curState = State::hit;
+
+    // Change frame
+    frameRec = natureAnimation[type][(int)curState][0].sourceFrame;
 }

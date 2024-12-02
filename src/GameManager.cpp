@@ -14,6 +14,9 @@ unsigned char nightBlueMaxA = 155;
 // To change the alpha of the current light every second in real life time (or every minute in game time)
 bool changeA = false;
 
+// Note: Maybe we should add global variables here (for example: maxCarry for NPC) so that whenever our player do some upgrades,
+// we just need to update one variable
+
 GameTime gameTime = {0, 0, 4, 0};
 
 void UpdateTime()

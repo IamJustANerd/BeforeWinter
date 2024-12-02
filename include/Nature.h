@@ -7,7 +7,7 @@
 class Nature : public Entity
 {
 protected:
-    bool isHarvested = false;
+    bool isHarvested = false; // It will be true when it lost all of it's hp
 
 public:
     // Constructor
@@ -16,8 +16,10 @@ public:
     void Draw() const override;
     // Update
     void Update() override;
-    // Update sprite frame/
+    // Update sprite frame
     void UpdateSpriteFrame() override;
+    // Hit animation
+    void HitAnimation() override;
 };
 
 #endif

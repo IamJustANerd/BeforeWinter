@@ -161,33 +161,33 @@ int main()
 
     // For path finding algorithm debugging
     new Building(Vector2{2200, 1000}, 0, &grid);
-    new Building(Vector2{2100, 1000}, 0, &grid);
-    new Building(Vector2{2000, 1000}, 0, &grid);
-    new Building(Vector2{1900, 1000}, 0, &grid);
-    new Building(Vector2{1800, 1000}, 0, &grid);
-    new Building(Vector2{1800, 900}, 0, &grid);
-    new Building(Vector2{1800, 800}, 0, &grid);
-    new Building(Vector2{1800, 1100}, 0, &grid);
-    new Building(Vector2{1800, 1200}, 0, &grid);
-    new Building(Vector2{1800, 1300}, 0, &grid);
-    new Building(Vector2{1800, 1400}, 0, &grid);
-    new Building(Vector2{1900, 1400}, 0, &grid);
-    new Building(Vector2{2000, 1400}, 0, &grid);
-    new Building(Vector2{2100, 1400}, 0, &grid);
-    new Building(Vector2{2100, 1300}, 0, &grid);
-    new Building(Vector2{2100, 1200}, 0, &grid);
-    new Building(Vector2{2100, 1500}, 0, &grid);
-    new Building(Vector2{2100, 1600}, 0, &grid);
-    new Building(Vector2{1700, 1000}, 0, &grid);
-    new Building(Vector2{1600, 1000}, 0, &grid);
+    // new Building(Vector2{2100, 1000}, 0, &grid);
+    // new Building(Vector2{2000, 1000}, 0, &grid);
+    // new Building(Vector2{1900, 1000}, 0, &grid);
+    // new Building(Vector2{1800, 1000}, 0, &grid);
+    // new Building(Vector2{1800, 900}, 0, &grid);
+    // new Building(Vector2{1800, 800}, 0, &grid);
+    // new Building(Vector2{1800, 1100}, 0, &grid);
+    // new Building(Vector2{1800, 1200}, 0, &grid);
+    // new Building(Vector2{1800, 1300}, 0, &grid);
+    // new Building(Vector2{1800, 1400}, 0, &grid);
+    // new Building(Vector2{1900, 1400}, 0, &grid);
+    // new Building(Vector2{2000, 1400}, 0, &grid);
+    // new Building(Vector2{2100, 1400}, 0, &grid);
+    // new Building(Vector2{2100, 1300}, 0, &grid);
+    // new Building(Vector2{2100, 1200}, 0, &grid);
+    // new Building(Vector2{2100, 1500}, 0, &grid);
+    // new Building(Vector2{2100, 1600}, 0, &grid);
+    // new Building(Vector2{1700, 1000}, 0, &grid);
+    // new Building(Vector2{1600, 1000}, 0, &grid);
 
     new Collectible(Vector2{(float)screenWidth / 2 + 50, (float)screenHeight / 2 + 50}, 1, &grid);
     new Collectible(Vector2{(float)screenWidth / 2 + 200, (float)screenHeight / 2 + 200}, 1, &grid);
 
     // Testing NPC
-    new NPC(Vector2{(float)1580, (float)780}, 0, &grid);
-    new NPC(Vector2{(float)1580, (float)880}, 0, &grid);
-    new NPC(Vector2{(float)1580, (float)980}, 0, &grid);
+    new NPC(Vector2{(float)1980, (float)1100}, 0, &grid);
+    // new NPC(Vector2{(float)1580, (float)880}, 0, &grid);
+    // new NPC(Vector2{(float)1580, (float)980}, 0, &grid);
 
     // Testing collectibles
     for (int i = 0; i <= 100; i += 1)

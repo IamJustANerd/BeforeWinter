@@ -48,5 +48,10 @@ void Building::Update()
 
 void Building::UpdateSpriteFrame()
 {
-    // Building has no animation
+    
+}
+
+void Building::HitAnimation()
+{
+
 }

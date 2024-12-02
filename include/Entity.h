@@ -46,6 +46,7 @@ protected:
     int curFrame = 0;
     State curState;
     int healthPoint = 0;
+    int attackPoint = 1;
     bool isTargeted = false;
 
     // Pointer to the grid
@@ -56,6 +57,7 @@ public:
     virtual void Update() = 0;
     // Update sprite frame (which will depends on the animation and state)
     virtual void UpdateSpriteFrame() = 0;
+    virtual void HitAnimation() = 0;
     Vector2 GetPosition() const;
     Vector2 GetDirection() const;
     Vector2 GetHitBoxPosition() const;
@@ -68,6 +70,7 @@ public:
     Rectangle FlipTexture(Rectangle frameRec) const;
     bool GetIsTargeted() const;
     void SetIsTargeted(bool newState);
+    void ReduceHealthPoint(int decrease);
 
     // Linked list for faster insertion and deletion
     Entity *prev;

@@ -36,6 +36,9 @@ public:
     // Draw
     void Draw() const override;
 
+    // Hit animation
+    void HitAnimation() override;
+
     // Player inventory current status
     bool IsInventoryCalled();
 

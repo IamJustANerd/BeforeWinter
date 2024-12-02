@@ -7,6 +7,7 @@
 class Nature : public Entity
 {
 protected:
+    bool isHarvested = false;
 
 public:
     // Constructor

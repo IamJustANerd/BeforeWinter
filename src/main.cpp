@@ -185,7 +185,9 @@ int main()
     new Collectible(Vector2{(float)screenWidth / 2 + 200, (float)screenHeight / 2 + 200}, 1, &grid);
 
     // Testing NPC
-    new NPC(Vector2{(float)1780, (float)780}, 0, &grid);
+    new NPC(Vector2{(float)1580, (float)780}, 0, &grid);
+    new NPC(Vector2{(float)1580, (float)880}, 0, &grid);
+    new NPC(Vector2{(float)1580, (float)980}, 0, &grid);
 
     // Testing collectibles
     for (int i = 0; i <= 100; i += 1)

@@ -50,3 +50,13 @@ bool Entity::GetIsUncollidable() const
 {
     return isUncollidable;
 }
+
+bool Entity::GetIsTargeted() const
+{
+    return isTargeted;
+}
+
+void Entity::SetIsTargeted(bool newState) 
+{
+    isTargeted = newState;
+}

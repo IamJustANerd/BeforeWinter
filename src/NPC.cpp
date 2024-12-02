@@ -57,6 +57,13 @@ void NPC::Movements()
         return;
     }
 
+    // If there is no more target around, stop moving
+    if (target == NULL)
+    {
+        std::cout << "NO" << '\n';
+        return;
+    }
+
     // Variables for calculating cell changes
     Vector2 change = {0, 0};
 
@@ -450,8 +457,6 @@ void NPC::SetDestination()
         // If the pawn is not working, then it should be moving
         if (!isWorking && !hasDestination)
         {
-            hasDestination = true;
-
             // Return harvest to home
             if (isCarrying)
             {
@@ -459,10 +464,14 @@ void NPC::SetDestination()
             // Look for the closest tree
             else
             {
-                // std::cout << "POHON" << '\n';
                 target = FindTarget(typeid(Nature), 0);
-                destination = target->GetHitBox();
-                // std::cout << destination.x << ' ' << destination.y << '\n';
+                
+                if(target != NULL)
+                {
+                    destination = target->GetHitBox();
+                }
+
+                hasDestination = true;
             }
         }
     }

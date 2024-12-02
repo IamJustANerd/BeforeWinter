@@ -97,11 +97,14 @@ Entity* Dynamic::FindTarget(const std::type_info& targetClass, int targetType)
             // Check if this entity fit the target criteria
             if (typeid(*curCell) == targetClass)
             {
-                if (curCell->GetType() == targetType)
+                if (curCell->GetType() == targetType && !curCell->GetIsTargeted())
                 {
                     // Note: might want to mark the targeted entity in the future (for example, to prevent more than one pawn to cut a single tree)
                     // std::cout << curCell->GetHitBoxPosition().x << ' ' << curCell->GetHitBoxPosition().y << '\n';
 
+                    // Mark this object as targeted
+                    const_cast<Entity *>(curCell)->SetIsTargeted(true);
+                    std::cout << "S" << '\n';
                     return const_cast<Entity *>(curCell);
                 }
             }
@@ -150,6 +153,7 @@ Entity* Dynamic::FindTarget(const std::type_info& targetClass, int targetType)
         }
     }    
 
-    // If it doesn't exist, return {-1, -1}
+    // If it doesn't exist, return NULL
+    std::cout << "GA ADA" << '\n';
     return NULL;
 }

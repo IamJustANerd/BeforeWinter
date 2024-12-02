@@ -33,7 +33,7 @@ protected:
     Vector2 moveDirection[4] = {
         {-1.0f, 0.0f}, {0.0f, -1.0f}, {1.0f, 0.0f}, {0.0f, 1.0f}
     };
-    int moveDirectionIndex; // For movement
+    int moveDirectionIndex; // For movement (not to be confused with Vector2 direction)
     int width, height;
     int type;
     int id;
@@ -45,6 +45,8 @@ protected:
     int frameCounter = 0;
     int curFrame = 0;
     State curState;
+    int healthPoint = 0;
+    bool isTargeted = false;
 
     // Pointer to the grid
     Grid* grid;
@@ -64,6 +66,8 @@ public:
     Rectangle GetHitBox() const;
     bool GetIsUncollidable() const;
     Rectangle FlipTexture(Rectangle frameRec) const;
+    bool GetIsTargeted() const;
+    void SetIsTargeted(bool newState);
 
     // Linked list for faster insertion and deletion
     Entity *prev;

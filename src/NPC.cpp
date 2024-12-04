@@ -1,4 +1,5 @@
 #include "../include/NPC.h"
+#include "../include/GameManager.h"
 #include <iostream>
 #include <typeinfo>
 
@@ -107,7 +108,7 @@ void NPC::Movements()
                 if (count >= GetFPS())
                 {
                     // std::cout << "MOVE to " << moveDirectionIndex << "\n";
-                    std::cout << rotationCounter << '\n';
+                    // std::cout << rotationCounter << '\n';
                     count = 0;
                 }
 
@@ -339,7 +340,16 @@ void NPC::Movements()
     if (isMoving && curState != State::running)
     {
         curState = State::running;
-        frameRec = frameRec = NPCAnimation[type][(int)curState][0].sourceFrame;
+        
+        // Carrying and not carrying any resource has different animation
+        if(isCarrying)
+        {
+            frameRec = frameRec = NPCAnimation[type][(int)curState][1].sourceFrame;
+        }
+        else
+        {
+            frameRec = frameRec = NPCAnimation[type][(int)curState][0].sourceFrame;
+        }
         curFrame = 0;
 
         // Reset frame counter
@@ -351,7 +361,15 @@ void NPC::Movements()
     {
         isWorking = true;
         curState = State::idle;
-        frameRec = NPCAnimation[type][(int)curState][0].sourceFrame;
+
+        if(isCarrying)
+        {
+            frameRec = NPCAnimation[type][(int)curState][1].sourceFrame;
+        }
+        else
+        {
+            frameRec = NPCAnimation[type][(int)curState][0].sourceFrame;
+        }
         curFrame = 0;
 
         // Reset frame counter
@@ -374,6 +392,14 @@ void NPC::Draw() const
         DrawTextureRec(NPCTex[0], FlipTexture(frameRec), {position.x, position.y}, WHITE);
     }
 
+    // Draw resource (if carrying any)
+    if(isCarrying)
+    {
+        DrawTexture(resourceTex[0], position.x + resourceTex[0].width / 5, position.y - resourceTex[0].height / 5, WHITE);
+        DrawTexture(resourceTex[0], position.x + resourceTex[0].width / 5 + 8, position.y - resourceTex[0].height / 5, WHITE);
+        DrawTexture(resourceTex[0], position.x + resourceTex[0].width / 5 + 4, position.y - resourceTex[0].height / 5 - 8, WHITE);
+    }
+
     // Draw hitbox
     DrawRectangleRec(hitBox, Color{0, 228, 48, 120});
 }
@@ -386,12 +412,13 @@ void NPC::Update()
 
     Attack();
 
+    Submit();
+
     UpdateSpriteFrame();
 }
 
 void NPC::UpdateSpriteFrame()
 {
-    std::cout << "AWKDNAKWNDWKA" << '\n';
     frameCounter += 1;
     if (frameCounter >= NPCAnimation[type][(int)curState][0].frameTime / NPCAnimation[type][(int)curState][0].totalFrames)
     {
@@ -430,7 +457,7 @@ void NPC::UpdateSpriteFrame()
 
                 target->HitAnimation();
 
-                std::cout << carry << ' ' << maxCarry << '\n';
+                // std::cout << carry << ' ' << maxCarry << '\n';
 
                 // If the pawn reached the maximum amount of value it can carry, stop working
                 if(carry >= maxCarry)
@@ -438,6 +465,8 @@ void NPC::UpdateSpriteFrame()
                     isWorking = false;
 
                     isCarrying = true;
+
+                    isAttacking = false;
 
                     // Reset the destination
                     hasDestination = false;
@@ -450,10 +479,28 @@ void NPC::UpdateSpriteFrame()
     }
 }
 
+void NPC::Submit()
+{
+    // If NPC Reaches house, return the harvested resource
+    if(isWorking && isCarrying)
+    {
+        isCarrying = false;
+        isWorking = false;
+
+        Resources harvest = {0, maxCarry};
+
+        UpdateResources(harvest);
+
+        target->SetIsTargeted(false);
+
+        hasDestination = false;
+    }
+}
+
 void NPC::Attack()
 {
-    // NPC can only attack once it re;aches the destination
-    if(isWorking)
+    // NPC can only attack once it reaches the destination
+    if(isWorking && !isCarrying)
     {
         // For pawn, it will reduce the health of the tree and gain one carry
         if(type == 0)
@@ -501,7 +548,7 @@ void NPC::SetDestination()
                     destination = target->GetHitBox();
                 }
 
-                std::cout << target->GetHitBoxPosition().x << ' ' << target->GetHitBoxPosition().y << '\n';
+                hasDestination = true;
             }
             // Look for the closest tree
             else

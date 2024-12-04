@@ -46,6 +46,9 @@ public:
     // Attack
     void Attack() override;
 
+    // To submit harvest
+    void Submit();
+
     // Set destination
     void SetDestination();
 };

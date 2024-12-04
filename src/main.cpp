@@ -181,9 +181,6 @@ int main()
     // new Building(Vector2{1700, 1000}, 0, &grid);
     // new Building(Vector2{1600, 1000}, 0, &grid);
 
-    new Collectible(Vector2{(float)screenWidth / 2 + 50, (float)screenHeight / 2 + 50}, 1, &grid);
-    new Collectible(Vector2{(float)screenWidth / 2 + 200, (float)screenHeight / 2 + 200}, 1, &grid);
-
     // Testing NPC
     new NPC(Vector2{(float)1980, (float)1100}, 0, &grid);
     // new NPC(Vector2{(float)1580, (float)880}, 0, &grid);
@@ -261,12 +258,10 @@ int main()
         // For debugging
         if(IsKeyPressed(KEY_UP) && fps < 60)
         {
-            std::cout << "YES" << '\n';
             fps++;
         }
         else if(IsKeyPressed(KEY_DOWN) && fps > 1)
         {
-            std::cout << "YES" << '\n';
             fps--;
         }
 
@@ -329,6 +324,9 @@ int main()
 
         // Print game time
         PrintTime();
+
+        // Print in game resources
+        PrintResources();
 
         // Debugging Information
         if(showInformation)

@@ -9,11 +9,13 @@ Image playerImg[5];
 Image natureImg[10];
 Image NPCImg[5];
 Image buildingImg[5];
+Image resourceImg[5];
 
 Texture2D playerTex[5];
 Texture2D natureTex[10];
 Texture2D NPCTex[5];
 Texture2D buildingTex[5];
+Texture2D resourceTex[5];
 
 // Load all images
 void LoadAllImage()
@@ -39,6 +41,10 @@ void LoadAllImage()
     // Building
     // -> House
     buildingImg[0] = LoadImage("../graphics/building/houseBlue.png");
+
+    // Resource
+    // -> Wood
+    resourceImg[0] = LoadImage("../graphics/resources/wood.png");
 }
 
 // Resize all images
@@ -69,6 +75,10 @@ void ResizeAllImage()
     // Building
     // -> House
     ImageResizeNN(&buildingImg[0], buildingImg->width, buildingImg->height);
+
+    // Resource
+    // -> Wood
+    ImageResizeNN(&resourceImg[0], resourceImg[0].width * 2 / 3, resourceImg[0].width * 2 / 3);
 }
 
 // Load all textures from images
@@ -92,6 +102,10 @@ void LoadAllTexture()
     // Building
     // -> House
     buildingTex[0] = LoadTextureFromImage(buildingImg[0]);
+
+    // Resource
+    // -> Wood
+    resourceTex[0] = LoadTextureFromImage(resourceImg[0]);
 }
 
 // Unload all images
@@ -115,6 +129,10 @@ void UnloadAllImage()
     // Building
     // -> House
     UnloadImage(buildingImg[0]);
+
+    // Resource
+    // -> Wood
+    UnloadImage(resourceImg[0]);
 }
 
 // Unload all textures
@@ -138,6 +156,10 @@ void UnloadAllTexture()
     // Building
     // -> House
     UnloadTexture(buildingTex[0]);
+
+    // Resource
+    // -> Wood
+    UnloadTexture(resourceTex[0]);
 }
 
 // Load animation for all entities

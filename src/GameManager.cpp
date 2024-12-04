@@ -18,6 +18,7 @@ bool changeA = false;
 // we just need to update one variable
 
 GameTime gameTime = {0, 0, 4, 0};
+Resources currentResources = {0, 0};
 
 void UpdateTime()
 {
@@ -48,6 +49,18 @@ void PrintTime()
 {
     DrawText(TextFormat("Hari ke-%d", gameTime.days), gameScreenWidth - 90, 5, 15, GREEN);
     DrawText(TextFormat("%02d:%02d", gameTime.hours, gameTime.minutes), gameScreenWidth - 90, 35, 15, GREEN);
+}
+
+void PrintResources()
+{
+    DrawText(TextFormat("Gold: %d", currentResources.gold), gameScreenWidth - 90, 65, 15, GREEN);
+    DrawText(TextFormat("Wood: %d", currentResources.wood), gameScreenWidth - 90, 95, 15, GREEN);
+}
+
+void UpdateResources(Resources _resources)
+{
+    currentResources.gold += _resources.gold;
+    currentResources.wood += _resources.wood;
 }
 
 void DrawTimePhase(int cellSize, int cellNumber, Camera2D camera, const int gridSize)

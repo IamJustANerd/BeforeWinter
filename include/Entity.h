@@ -57,7 +57,7 @@ public:
     virtual void Update() = 0;
     // Update sprite frame (which will depends on the animation and state)
     virtual void UpdateSpriteFrame() = 0;
-    virtual void HitAnimation() = 0;
+    virtual void ChangeAnimation(State newState);
     Vector2 GetPosition() const;
     Vector2 GetDirection() const;
     Vector2 GetHitBoxPosition() const;

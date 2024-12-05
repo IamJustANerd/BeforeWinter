@@ -18,8 +18,8 @@ public:
     void Update() override;
     // Update sprite frame
     void UpdateSpriteFrame() override;
-    // Hit animation
-    void HitAnimation() override;
+    // Change animation
+    void ChangeAnimation(State newState) override;
 };
 
 #endif

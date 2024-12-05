@@ -22,7 +22,7 @@ private:
     int distanceTolerance = 5;
     int rotationCounterTolerance = 50;
     int carry = 0;
-    int maxCarry = 1;
+    int maxCarry = 10;
     Rectangle destination;
     Entity* target;
 
@@ -37,8 +37,8 @@ public:
     // Update sprite frame
     void UpdateSpriteFrame() override;
 
-    // Hit animation
-    void HitAnimation() override;
+    // Change animation
+    void ChangeAnimation(State newState) override;
 
     // Draw
     void Draw() const override;
@@ -51,6 +51,8 @@ public:
 
     // Set destination
     void SetDestination();
+
+    bool ReachDestination();
 };
 
 #endif

@@ -51,7 +51,7 @@ void Building::UpdateSpriteFrame()
     
 }
 
-void Building::HitAnimation()
+void Building::ChangeAnimation(State newState)
 {
-
+    
 }

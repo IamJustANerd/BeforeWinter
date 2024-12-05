@@ -84,13 +84,13 @@ void Nature::UpdateSpriteFrame()
     }
 }
 
-void Nature::HitAnimation()
+void Nature::ChangeAnimation(State newState)
 {
     // Reset frame counter
     frameCounter = 0;
 
     // Change state into hit
-    curState = State::hit;
+    curState = newState;
 
     // Change frame
     frameRec = natureAnimation[type][(int)curState][0].sourceFrame;

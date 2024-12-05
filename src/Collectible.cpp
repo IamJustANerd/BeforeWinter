@@ -90,7 +90,7 @@ void Collectible::Attack()
 
 }
 
-void Collectible::HitAnimation()
+void Collectible::ChangeAnimation(State newState)
 {
     
 }

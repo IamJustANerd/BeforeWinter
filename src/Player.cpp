@@ -36,10 +36,7 @@ Player::Player(Vector2 _position, Grid *_grid)
     isAttacking = false;
 
     // The starting state is idle
-    curState = State::idle;
-
-    // Set the frame rec according to the current state
-    frameRec = playerAnimation[(int)curState][0].sourceFrame;
+    ChangeAnimation(State::idle);
 
     // Player is uncollidable
     isUncollidable = true;
@@ -201,21 +198,13 @@ void Player::Movements()
     // Switch to running animation
     if(isMoving && curState != State::running)
     {
-        curState = State::running;
-        frameRec = playerAnimation[(int)curState][0].sourceFrame;
-        
-        // Reset frame counter
-        frameCounter = 0;
+        ChangeAnimation(State::running);
     }
     
     // Switch to idle animation
     if(!isMoving && curState != State::idle)
     {
-        curState = State::idle;
-        frameRec = playerAnimation[(int)curState][0].sourceFrame;
-
-        // Reset frame counter
-        frameCounter = 0;
+        ChangeAnimation(State::idle);
     }
 
     // Update collect radius position
@@ -339,9 +328,7 @@ void Player::UpdateSpriteFrame()
                 // Return back to idle animation
                 isAttacking = false;
 
-                curState = State::idle;
-            
-                frameRec = playerAnimation[(int)curState][0].sourceFrame;
+                ChangeAnimation(State::idle);
             }
         }
     }
@@ -361,59 +348,49 @@ void Player::Attack()
         {
             // Set player state as attacking to prevent player from doing other action (for example: running)
             isAttacking = true;
-            curState = State::light_attacking;
-
-            // The animation depends on the direction the player is facing (will prioritize x axis direction first)
-            // Note: check Assets.cpp for player animation's reference
             
-            // Note: Need to change the attack direction based on the mouse position instead
-            if(direction.y == 1)
-            {
-                frameRec = playerAnimation[(int)curState][1].sourceFrame;
-            }
-            else if(direction.y == -1)
-            {
-                frameRec = playerAnimation[(int)curState][2].sourceFrame;
-            }
-            else if (direction.x == 1 || direction.x == -1)
-            {
-                frameRec = playerAnimation[(int)curState][0].sourceFrame;
-            }
-
-            // Reset frame counter
-            frameCounter = 0;
+            ChangeAnimation(State::light_attacking);
         }
         // Heavy attack
         else if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT))
         {
             // Set player state as attacking to prevent player from doing other action (for example: running)
             isAttacking = true;
-            curState = State::heavy_attacking;
-
-            // The animation depends on the direction the player is facing (will prioritize x axis direction first)
-            // Note: check Assets.cpp for player animation's reference
-            if (direction.y == 1)
-            {
-                frameRec = playerAnimation[(int)curState][1].sourceFrame;
-            }
-            else if (direction.y == -1)
-            {
-                frameRec = playerAnimation[(int)curState][2].sourceFrame;
-            }
-            else if (direction.x == 1 || direction.x == -1)
-            {
-                frameRec = playerAnimation[(int)curState][0].sourceFrame;
-            }
-
-            // Reset frame counter
-            frameCounter = 0;
+            
+            ChangeAnimation(State::heavy_attacking);
         }
-
-        
     }
 }
 
-void Player::HitAnimation()
+void Player::ChangeAnimation(State newState)
 {
-    
+    // Reset frame counter
+    frameCounter = 0;
+
+    curState = newState;
+
+    curFrame = 0;
+
+    // Handle animation direction for attack animations
+    if(curState == State::light_attacking || curState == State::heavy_attacking)
+    {
+        // The animation depends on the direction the player is facing (will prioritize x axis direction first)
+        // Note: check Assets.cpp for player animation's reference
+        if (direction.y == 1)
+        {
+            frameRec = playerAnimation[(int)curState][1].sourceFrame;
+        }
+        else if (direction.y == -1)
+        {
+            frameRec = playerAnimation[(int)curState][2].sourceFrame;
+        }
+        else if (direction.x == 1 || direction.x == -1)
+        {
+            frameRec = playerAnimation[(int)curState][0].sourceFrame;
+        }
+    }
+    else
+    {
+        frameRec = playerAnimation[(int)curState][0].sourceFrame;
+    }
 }

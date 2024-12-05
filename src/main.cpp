@@ -156,7 +156,7 @@ int main()
 
     // Declare player
     Player* player = new Player(Vector2{(float)1980, (float)1200}, &grid);
-    Nature *tes = new Nature(Vector2{25000, 900}, 0, &grid);
+    // Nature *tes = new Nature(Vector2{25000, 900}, 0, &grid);
     new Nature(Vector2{2000, 1200}, 0, &grid);
 
     // For path finding algorithm debugging

@@ -33,10 +33,7 @@ NPC::NPC(Vector2 _position, int _type, Grid *_grid)
     rotationCounter = 0;
 
     // The starting state is idle
-    curState = State::idle;
-
-    // Set the frame rec according to the current state
-    frameRec = NPCAnimation[type][(int)curState][0].sourceFrame;
+    ChangeAnimation(State::idle);
 
     // NPC is uncollidable
     isUncollidable = true;
@@ -48,6 +45,11 @@ NPC::NPC(Vector2 _position, int _type, Grid *_grid)
     // Insert NPC into the grid
     grid = _grid;
     grid->Add(this);
+}
+
+bool NPC::ReachDestination()
+{
+    return CheckCollisionRecs({hitBox.x - distanceTolerance, hitBox.y - distanceTolerance, hitBox.width + distanceTolerance * 2, hitBox.height + distanceTolerance * 2}, destination);
 }
 
 void NPC::Movements()
@@ -339,41 +341,15 @@ void NPC::Movements()
     // Switch to running animation
     if (isMoving && curState != State::running)
     {
-        curState = State::running;
-        
-        // Carrying and not carrying any resource has different animation
-        if(isCarrying)
-        {
-            frameRec = frameRec = NPCAnimation[type][(int)curState][1].sourceFrame;
-        }
-        else
-        {
-            frameRec = frameRec = NPCAnimation[type][(int)curState][0].sourceFrame;
-        }
-        curFrame = 0;
-
-        // Reset frame counter
-        frameCounter = 0;
+        ChangeAnimation(State::running);
     }
 
     // If the NPC already reach the destination, stop moving
-    if (CheckCollisionRecs({hitBox.x - distanceTolerance, hitBox.y - distanceTolerance, hitBox.width + distanceTolerance * 2, hitBox.height + distanceTolerance * 2}, destination))
+    if (ReachDestination())
     {
         isWorking = true;
-        curState = State::idle;
-
-        if(isCarrying)
-        {
-            frameRec = NPCAnimation[type][(int)curState][1].sourceFrame;
-        }
-        else
-        {
-            frameRec = NPCAnimation[type][(int)curState][0].sourceFrame;
-        }
-        curFrame = 0;
-
-        // Reset frame counter
-        frameCounter = 0;
+        
+        ChangeAnimation(State::idle);
     }
 
     // Update NPC's cell
@@ -420,6 +396,7 @@ void NPC::Update()
 void NPC::UpdateSpriteFrame()
 {
     frameCounter += 1;
+    // Change frame
     if (frameCounter >= NPCAnimation[type][(int)curState][0].frameTime / NPCAnimation[type][(int)curState][0].totalFrames)
     {
         curFrame = (curFrame + 1) % NPCAnimation[type][(int)curState][0].totalFrames;
@@ -437,11 +414,7 @@ void NPC::UpdateSpriteFrame()
                 // Return back to idle animation
                 isAttacking = false;
 
-                curState = State::idle;
-
-                curFrame = 0;
-
-                frameRec = NPCAnimation[type][(int)curState][0].sourceFrame;
+                ChangeAnimation(State::idle);
             }
 
             // Pawn only:
@@ -455,7 +428,7 @@ void NPC::UpdateSpriteFrame()
 
                 target->ReduceHealthPoint(attackPoint);
 
-                target->HitAnimation();
+                target->ChangeAnimation(State::hit);
 
                 // std::cout << carry << ' ' << maxCarry << '\n';
 
@@ -481,13 +454,17 @@ void NPC::UpdateSpriteFrame()
 
 void NPC::Submit()
 {
+    // Pawn only:
     // If NPC Reaches house, return the harvested resource
-    if(isWorking && isCarrying)
+    if(isWorking && isCarrying && type == 0)
     {
+        // Reset the pawn state
         isCarrying = false;
         isWorking = false;
 
         Resources harvest = {0, maxCarry};
+
+        carry = 0;
 
         UpdateResources(harvest);
 
@@ -505,7 +482,7 @@ void NPC::Attack()
         // For pawn, it will reduce the health of the tree and gain one carry
         if(type == 0)
         {
-            // Enter heavy attack animation
+            // Enter heavy attack animation if not doing one
             if(!isAttacking && attackCooldownCounter <= 0)
             {
                 isAttacking = true;
@@ -513,12 +490,7 @@ void NPC::Attack()
                 // Attack on cooldown
                 attackCooldownCounter = attackCooldown;
                 
-                curState = State::heavy_attacking;
-
-                curFrame = 0;
-
-                // Set the direction of animation based on the NPC direction
-                frameRec = NPCAnimation[type][(int)curState][0].sourceFrame;
+                ChangeAnimation(State::heavy_attacking);
             }
         }
     }
@@ -566,7 +538,17 @@ void NPC::SetDestination()
     }
 }
 
-void NPC::HitAnimation()
+void NPC::ChangeAnimation(State newState)
 {
+    // Change the state
+    curState = newState;
 
+    // Reset the frame
+    curFrame = 0;
+
+    // Reset frame counter
+    frameCounter = 0;
+
+    // Set the direction of animation based on the NPC direction
+    frameRec = NPCAnimation[type][(int)curState][(int)isCarrying].sourceFrame;
 }

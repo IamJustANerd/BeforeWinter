@@ -40,8 +40,8 @@
 // Nature
 #include "../include/Nature.h"
 
-// NPC
-#include "../include/NPC.h"
+// Pawn
+#include "../include/Pawn.h"
 
 // Building
 #include "../include/Building.h"
@@ -182,7 +182,7 @@ int main()
     // new Building(Vector2{1600, 1000}, 0, &grid);
 
     // Testing NPC
-    new NPC(Vector2{(float)1980, (float)1100}, 0, &grid);
+    new Pawn(Vector2{(float)1980, (float)1100}, 0, &grid);
     // new NPC(Vector2{(float)1580, (float)880}, 0, &grid);
     // new NPC(Vector2{(float)1580, (float)980}, 0, &grid);
 

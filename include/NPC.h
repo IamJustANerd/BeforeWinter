@@ -10,47 +10,19 @@
 
 class NPC : public Dynamic
 {
-private:
-    bool isWorking;
-    bool isCarrying;
+protected:
     bool hasDestination;
     bool isCollidingWithOther;
     bool priorityMove;
-    int carriedObjectValue;
     int rotationCounter;
-    int count = 0;
     int distanceTolerance = 5;
     int rotationCounterTolerance = 50;
-    int carry = 0;
-    int maxCarry = 10;
     Rectangle destination;
     Entity* target;
 
 public:
-    NPC(Vector2 _position, int type, Grid *_grid);
-    // NPC movements
-    void Movements() override;
-
-    // Update NPC
-    void Update() override;
-
-    // Update sprite frame
-    void UpdateSpriteFrame() override;
-
-    // Change animation
-    void ChangeAnimation(State newState) override;
-
-    // Draw
-    void Draw() const override;
-
-    // Attack
-    void Attack() override;
-
-    // To submit harvest
-    void Submit();
-
     // Set destination
-    void SetDestination();
+    virtual void SetDestination() = 0;
 
     bool ReachDestination();
 };

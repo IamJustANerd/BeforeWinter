@@ -20,6 +20,7 @@ protected:
     bool isAttacking = false;
     int attackCooldown = 60;
     int attackCooldownCounter = 0;
+    Rectangle attackBox[4];
 
 public:
     // Movements

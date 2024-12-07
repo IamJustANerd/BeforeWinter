@@ -209,6 +209,26 @@ void Enemy::ChangeAnimation(State newState)
     // Reset frame counter
     frameCounter = 0;
 
-    // Set the direction of animation based on the Enemy direction
-    frameRec = NPCAnimation[type][(int)curState][0].sourceFrame;
+    // Handle animation direction for attack animations
+    if (curState == State::light_attacking || curState == State::heavy_attacking)
+    {
+        // The animation depends on the direction the enemy is facing (will prioritize x axis direction first)
+        // Note: check Assets.cpp for player animation's reference
+        if (direction.y == 1)
+        {
+            frameRec = NPCAnimation[type][(int)curState][1].sourceFrame;
+        }
+        else if (direction.y == -1)
+        {
+            frameRec = NPCAnimation[type][(int)curState][2].sourceFrame;
+        }
+        else if (direction.x == 1 || direction.x == -1)
+        {
+            frameRec = NPCAnimation[type][(int)curState][0].sourceFrame;
+        }
+    }
+    else
+    {
+        frameRec = NPCAnimation[type][(int)curState][0].sourceFrame;
+    }
 }

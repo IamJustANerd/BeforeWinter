@@ -142,7 +142,7 @@ void Pawn::UpdateSpriteFrame()
             // 1. Give the pawn one carry,
             // 2. Reduce target health,
             // 3. Trigger the hit animation (if it has no more health, go for death animation instead)
-            if(curFrame == 4)
+            if(curFrame == 3)
             {
                 carry += attackPoint;
 

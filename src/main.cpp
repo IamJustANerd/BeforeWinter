@@ -186,7 +186,9 @@ int main()
 
     // Testing NPC
     new Pawn(Vector2{(float)1980, (float)1100}, 0, &grid);
-    new Enemy(Vector2{(float)1780, (float)1100}, 1, &grid);
+    // new Enemy(Vector2{(float)1780, (float)1100}, 1, &grid);
+    // new Enemy(Vector2{(float)1580, (float)1100}, 1, &grid);
+    // new Enemy(Vector2{(float)1780, (float)1300}, 1, &grid);
     // new NPC(Vector2{(float)1580, (float)880}, 0, &grid);
     // new NPC(Vector2{(float)1580, (float)980}, 0, &grid);
 

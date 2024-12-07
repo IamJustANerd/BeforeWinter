@@ -31,6 +31,16 @@ Player::Player(Vector2 _position, Grid *_grid)
                                   (float)width + 2 * interactionRadiusLength,
                                   (float)height + 2 * interactionRadiusLength};
     
+    // Assign player attack range
+    // Left
+    attackBox[0] = Rectangle{position.x, position.y + height / 6, (float)width / 2, (float)height * 2 / 3};
+    // Up
+    attackBox[1] = Rectangle{position.x + width / 6, position.y, (float)width * 2 / 3, (float)height / 2};
+    // Right
+    attackBox[2] = Rectangle{position.x + width / 2, position.y + height / 6, (float)width / 2, (float)height * 2 / 3};
+    // Down
+    attackBox[3] = Rectangle{position.x + width / 6, position.y + height / 2, (float)width * 2 / 3, (float)height / 2};
+
     rotation = 0;
 
     isAttacking = false;
@@ -215,6 +225,20 @@ void Player::Movements()
     interactionRadius.x = position.x - interactionRadiusLength;
     interactionRadius.y = position.y - interactionRadiusLength;
 
+    // Update attack range position
+    // -> Left
+    attackBox[0].x = position.x;
+    attackBox[0].y = position.y + height / 6;
+    // -> Up
+    attackBox[1].x = position.x + width / 6;
+    attackBox[1].y = position.y;
+    // -> Right
+    attackBox[2].x = position.x + width / 2;
+    attackBox[2].y = position.y + height / 6;
+    // -> Down
+    attackBox[3].x = position.x + width / 6;
+    attackBox[3].y = position.y + height / 2;
+    
     // Update player's cell
     grid->Move(this, change);
 }
@@ -233,7 +257,13 @@ void Player::Draw() const
     {
         DrawTextureRec(playerTex[0], FlipTexture(frameRec), {position.x, position.y}, WHITE);
     }
-    
+
+    // Draw attack range
+    DrawRectangleRec(attackBox[0], {230, 41, 55, 128});
+    DrawRectangleRec(attackBox[1], {255, 161, 0, 128});
+    DrawRectangleRec(attackBox[2], {253, 249, 0, 128});
+    DrawRectangleRec(attackBox[3], {0, 228, 48, 128});
+
     // Draw collect radius box
     // DrawRectangleRec(collectRadius, Color{0, 121, 241, 120});
 
@@ -315,6 +345,8 @@ void Player::UpdateSpriteFrame()
     frameCounter += 1;
     if (frameCounter >= playerAnimation[(int)curState][0].frameTime / playerAnimation[(int)curState][0].totalFrames)
     {
+        curFrame = (curFrame + 1) % playerAnimation[(int)curState][0].totalFrames;
+
         frameCounter = 0;
 
         frameRec.x = ((int)(frameRec.x + width) % (int)(playerAnimation[(int)curState][0].totalFrames * width));
@@ -329,6 +361,32 @@ void Player::UpdateSpriteFrame()
                 isAttacking = false;
 
                 ChangeAnimation(State::idle);
+            }
+
+            // For player
+            // If this is the 4th frame, activate the attack box in that direction
+            if(curFrame == 3)
+            {
+                // Down
+                if (direction.y == 1)
+                {
+                    std::cout << "BAWAH" << "\n";
+                }
+                // Up
+                else if (direction.y == -1)
+                {
+                    std::cout << "ATAS" << "\n";
+                }
+                // Right
+                else if (direction.x == 1)
+                {
+                    std::cout << "KANAN" << "\n";
+                }
+                // Left
+                else if(direction.x == -1)
+                {
+                    std::cout << "KIRI" << "\n";
+                }
             }
         }
     }

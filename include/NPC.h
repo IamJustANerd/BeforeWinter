@@ -21,8 +21,11 @@ protected:
     Entity* target;
 
 public:
-    // Set destination
     virtual void SetDestination() = 0;
+
+    void Movements() override;
+
+    void ChangeAnimation(State newState) override;
 
     bool ReachDestination();
 };

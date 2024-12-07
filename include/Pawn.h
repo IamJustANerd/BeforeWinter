@@ -15,10 +15,10 @@ private:
 public:
     Pawn(Vector2 _position, int type, Grid *_grid);
 
-    // NPC Movements
-    void Movements() override;
+    // Pawn Movements
+    void HandleMovements();
 
-    // Update NPC
+    // Update Pawn
     void Update() override;
 
     // Update sprite frame

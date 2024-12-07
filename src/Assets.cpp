@@ -36,7 +36,9 @@ void LoadAllImage()
 
     // NPC
     // -> Pawn
-    NPCImg[0] = LoadImage("../graphics/npc/pawn/pawnBlue.png");
+    NPCImg[0] = LoadImage("../graphics/npc/knights/pawnBlue.png");
+    // -> Enemy (Torch)
+    NPCImg[1] = LoadImage("../graphics/npc/goblins/torchRed.png");
 
     // Building
     // -> House
@@ -52,11 +54,11 @@ void ResizeAllImage()
 {
     // Player
     // -> Knight
-    ImageResizeNN(&playerImg[0], playerImg->width * 2 / 3, playerImg->height * 2 / 3);
+    ImageResizeNN(&playerImg[0], playerImg[0].width * 2 / 3, playerImg[0].height * 2 / 3);
 
     // Nature
     // -> Trees
-    ImageResizeNN(&natureImg[0], natureImg->width * 2 / 3, natureImg->height * 2 / 3);
+    ImageResizeNN(&natureImg[0], natureImg[0].width * 2 / 3, natureImg[0].height * 2 / 3);
     for (int i = 1; i < 3; i++)
     {
         ImageResizeNN(&natureImg[i], 144, 144);
@@ -70,11 +72,13 @@ void ResizeAllImage()
 
     // NPC
     // -> Pawn
-    ImageResizeNN(&NPCImg[0], NPCImg->width * 2 / 3, NPCImg->height * 2 / 3);
+    ImageResizeNN(&NPCImg[0], NPCImg[0].width * 2 / 3, NPCImg[0].height * 2 / 3);
+    // -> Enemy (Torch)
+    ImageResizeNN(&NPCImg[1], NPCImg[1].width * 2 / 3, NPCImg[1].height * 2 / 3);
 
     // Building
     // -> House
-    ImageResizeNN(&buildingImg[0], buildingImg->width, buildingImg->height);
+    ImageResizeNN(&buildingImg[0], buildingImg[0].width, buildingImg[0].height);
 
     // Resource
     // -> Wood
@@ -98,6 +102,8 @@ void LoadAllTexture()
     // NPC
     // -> Pawn
     NPCTex[0] = LoadTextureFromImage(NPCImg[0]);
+    // -> Enemy (Torch)
+    NPCTex[1] = LoadTextureFromImage(NPCImg[1]);
 
     // Building
     // -> House
@@ -125,6 +131,8 @@ void UnloadAllImage()
     // NPC
     // -> Pawn
     UnloadImage(NPCImg[0]);
+    // -> Enemy (Torch)
+    UnloadImage(NPCImg[1]);
 
     // Building
     // -> House
@@ -152,6 +160,8 @@ void UnloadAllTexture()
     // NPC
     // -> Pawn
     UnloadTexture(NPCTex[0]);
+    // -> Enemy (Torch)
+    UnloadTexture(NPCTex[1]);
 
     // Building
     // -> House
@@ -255,6 +265,32 @@ void LoadAnimation()
     NPCAnimation[0][1][1].frameTime = 60;
     NPCAnimation[0][1][1].totalFrames = 6;
     NPCAnimation[0][1][1].sourceFrame = {0, 641, 128, 128};
+
+    // -> Enemy (Torch)
+    // --> Idle
+    NPCAnimation[1][0][0].frameTime = 60;
+    NPCAnimation[1][0][0].totalFrames = 7;
+    NPCAnimation[1][0][0].sourceFrame = {0, 0, 128, 128};
+
+    // --> Running
+    NPCAnimation[1][1][0].frameTime = 60;
+    NPCAnimation[1][1][0].totalFrames = 6;
+    NPCAnimation[1][1][0].sourceFrame = {0, 129, 128, 128};
+
+    // --> Light attack (right)
+    NPCAnimation[1][2][0].frameTime = 42;
+    NPCAnimation[1][2][0].totalFrames = 6;
+    NPCAnimation[1][2][0].sourceFrame = {0, 257, 128, 128};
+
+    // --> Light attack (down)
+    NPCAnimation[1][2][0].frameTime = 42;
+    NPCAnimation[1][2][0].totalFrames = 6;
+    NPCAnimation[1][2][0].sourceFrame = {0, 385, 128, 128};
+
+    // --> Light attack (up)
+    NPCAnimation[1][2][0].frameTime = 42;
+    NPCAnimation[1][2][0].totalFrames = 6;
+    NPCAnimation[1][2][0].sourceFrame = {0, 513, 128, 128};
 }
 
 // Setup assets (images, textures, etc)

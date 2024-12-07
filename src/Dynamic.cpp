@@ -53,7 +53,7 @@ bool Dynamic::IsCollidingWithUncollidable()
     return isColliding;
 }
 
-Entity* Dynamic::FindTarget(const std::type_info& targetClass, int targetType)
+Entity* Dynamic::FindTarget(const std::type_info& targetClass, int targetType, bool shareTarget)
 {
     // Count initial cell position
     int cellX = (int)(position.x / grid->CELL_SIZE);
@@ -97,9 +97,9 @@ Entity* Dynamic::FindTarget(const std::type_info& targetClass, int targetType)
             // Check if this entity fit the target criteria
             if (typeid(*curCell) == targetClass)
             {
-                if (curCell->GetType() == targetType && !curCell->GetIsTargeted())
+                // Can't lock on target that is not shareable (for example, pawn can't share the same tree)
+                if ((curCell->GetType() == targetType && !curCell->GetIsTargeted()) || shareTarget)
                 {
-                    // Note: might want to mark the targeted entity in the future (for example, to prevent more than one pawn to cut a single tree)
                     // std::cout << curCell->GetHitBoxPosition().x << ' ' << curCell->GetHitBoxPosition().y << '\n';
 
                     // Mark this object as targeted

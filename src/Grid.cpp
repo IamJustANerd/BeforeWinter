@@ -3,7 +3,10 @@
 #include "../include/Player.h"
 #include "../include/Collectible.h"
 #include "../include/Nature.h"
+#include "../include/Building.h"
 #include "../include/Mouse.h"
+#include "../include/Pawn.h"
+#include "../include/Enemy.h"
 #include "../include/raylib_includes.h"
 #include <cstddef>
 #include <algorithm>
@@ -82,7 +85,28 @@ void Grid::HandleCell(Entity* entity)
     // Handle collisions on a cell
     // Check collisions of each entity with the others inside the cell
     while (entity != NULL)
-    {   
+    {
+    //     if (typeid(*entity) == typeid(Enemy))
+    //     {
+    //         std::cout << "Enemy" << '\n';
+    //     }
+    //     else if (typeid(*entity) == typeid(Pawn))
+    //     {
+    //         std::cout << "Pawn" << '\n';
+    //     } 
+    //     else if (typeid(*entity) == typeid(Player))
+    //     {
+    //         std::cout << "Player" << '\n';
+    //     }
+    //     else if (typeid(*entity) == typeid(Nature))
+    //     {
+    //         std::cout << "Tree" << '\n';
+    //     }
+    //     else if (typeid(*entity) == typeid(Building))
+    //     {
+    //         std::cout << "Building" << '\n';
+    //     }
+
         // Update the entity
         entity->Update();
 
@@ -93,12 +117,6 @@ void Grid::HandleCell(Entity* entity)
         if (typeid(*entity) == typeid(Player))
         {
             HandlePlayer(entity);
-        }
-
-        // Handling collectible collision
-        if (typeid(*entity) == typeid(Collectible))
-        {
-            // HandleCollectible(entity);
         }
 
         // Static entites (like nature for example) doesn't need to do collision check,

@@ -49,6 +49,9 @@ Pawn::Pawn(Vector2 _position, int _type, Grid *_grid)
 
 void Pawn::HandleMovements()
 {
+    // Note: For now, Pawn doesn't need to constantly update the newest location of the target since
+    // the target itself can't move
+
     // Pawn can't move if it is working
     if (isWorking)
     {
@@ -98,15 +101,17 @@ void Pawn::Draw() const
 
 void Pawn::Update()
 {
+    // std::cout << "A" << '\n';
     SetDestination();
-
+    // std::cout << "B" << '\n';
     HandleMovements();
-
+    // std::cout << "C" << '\n';
     Attack();
-
+    // std::cout << "D" << '\n';
     Submit();
-
+    // std::cout << "E" << '\n';
     UpdateSpriteFrame();
+    // std::cout << "F" << '\n';
 }
 
 void Pawn::UpdateSpriteFrame()
@@ -216,10 +221,12 @@ void Pawn::SetDestination()
     // If the pawn is not working, then it should be moving
     if (!isWorking && !hasDestination)
     {
+        // std::cout << "Finding destination..." << '\n';
         // Return harvest to home
         if (isCarrying)
         {
-            target = FindTarget(typeid(Building), 0);
+            // std::cout << "Home" << '\n';
+            target = FindTarget(typeid(Building), 0, true);
 
             if (target != NULL)
             {
@@ -231,7 +238,8 @@ void Pawn::SetDestination()
         // Look for the closest tree
         else
         {
-            target = FindTarget(typeid(Nature), 0);
+            // std::cout << "Tree" << '\n';
+            target = FindTarget(typeid(Nature), 0, false);
 
             if (target != NULL)
             {
@@ -240,6 +248,8 @@ void Pawn::SetDestination()
 
             hasDestination = true;
         }
+
+        // std::cout << "New destination: " << destination.x << ' ' << destination.y << '\n';
     }
 }
 

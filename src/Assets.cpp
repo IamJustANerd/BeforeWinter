@@ -283,14 +283,14 @@ void LoadAnimation()
     NPCAnimation[1][2][0].sourceFrame = {0, 257, 128, 128};
 
     // --> Light attack (down)
-    NPCAnimation[1][2][0].frameTime = 42;
-    NPCAnimation[1][2][0].totalFrames = 6;
-    NPCAnimation[1][2][0].sourceFrame = {0, 385, 128, 128};
+    NPCAnimation[1][2][1].frameTime = 42;
+    NPCAnimation[1][2][1].totalFrames = 6;
+    NPCAnimation[1][2][1].sourceFrame = {0, 385, 128, 128};
 
     // --> Light attack (up)
-    NPCAnimation[1][2][0].frameTime = 42;
-    NPCAnimation[1][2][0].totalFrames = 6;
-    NPCAnimation[1][2][0].sourceFrame = {0, 513, 128, 128};
+    NPCAnimation[1][2][2].frameTime = 42;
+    NPCAnimation[1][2][2].totalFrames = 6;
+    NPCAnimation[1][2][2].sourceFrame = {0, 513, 128, 128};
 }
 
 // Setup assets (images, textures, etc)

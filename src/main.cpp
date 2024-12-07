@@ -43,6 +43,9 @@
 // Pawn
 #include "../include/Pawn.h"
 
+// Enemy
+#include "../include/Enemy.h"
+
 // Building
 #include "../include/Building.h"
 
@@ -182,7 +185,8 @@ int main()
     // new Building(Vector2{1600, 1000}, 0, &grid);
 
     // Testing NPC
-    new Pawn(Vector2{(float)1980, (float)1100}, 1, &grid);
+    new Pawn(Vector2{(float)1980, (float)1100}, 0, &grid);
+    new Enemy(Vector2{(float)1780, (float)1100}, 1, &grid);
     // new NPC(Vector2{(float)1580, (float)880}, 0, &grid);
     // new NPC(Vector2{(float)1580, (float)980}, 0, &grid);
 
@@ -192,7 +196,7 @@ int main()
         for (int j = 0; j <= 100; j += 1)
         {
             // new Nature(Vector2{(float)GetRandomValue(0, 10000), (float)GetRandomValue(0, 10000)}, GetRandomValue(0, 4), NatureTex, &grid);
-            new Collectible(Vector2{(float)GetRandomValue(0, 10000), (float)GetRandomValue(0, 10000)}, GetRandomValue(1, 9999), &grid);
+            // new Collectible(Vector2{(float)GetRandomValue(0, 10000), (float)GetRandomValue(0, 10000)}, GetRandomValue(1, 9999), &grid);
         }
     }
 
@@ -223,37 +227,9 @@ int main()
     {
         // Set mouse collision as false
         mouseCollision = false;
-        
+
         // Update all objects in the grid
         grid.UpdateGrid();
-
-        // Check how many entities on screen (for debugging)
-        // if(IsKeyPressed(KEY_ENTER))
-        // {
-        //     int ada = 1;
-        //     const Entity *const(&cells)[Grid::NUM_CELLS][Grid::NUM_CELLS] = grid.GetReadOnlyCells();
-        //     Vector2 cameraPos = camera.target;
-        //     int minX = std::max((int)(cameraPos.x - screenWidth / scale) / grid.CELL_SIZE, 0);
-        //     int minY = std::max((int)(cameraPos.y - screenHeight / scale) / grid.CELL_SIZE, 0);
-        //     int maxX = std::min((int)(cameraPos.x + screenWidth / scale) / grid.CELL_SIZE, grid.NUM_CELLS - 1);
-        //     int maxY = std::min((int)(cameraPos.y + screenHeight / scale) / grid.CELL_SIZE, grid.NUM_CELLS - 1);
-
-        //     for (int i = minX; i <= maxX; i++)
-        //     {
-        //         for(int j = minY; j <= maxY; j++)
-        //         {
-        //             const Entity* entity = cells[i][j];
-
-        //             while(entity != NULL)
-        //             {
-        //                 ada++;
-        //                 entity = entity->next;
-        //             }
-        //         }
-        //     }
-
-        //     std::cout << "There are " << ada << " entities" << '\n';
-        // }
 
         // For debugging
         if(IsKeyPressed(KEY_UP) && fps < 60)

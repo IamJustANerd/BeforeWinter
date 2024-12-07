@@ -5,17 +5,15 @@
 class Enemy : public NPC
 {
 private:
-    bool isWorking;
-    bool isCarrying;
-    int carriedObjectValue;
-    int carry = 0;
-    int maxCarry = 10;
+    bool withinAttackRange;
+    int stunCounter = 0;
+    int stunDuration = 60; // After doing an attack animation, enemy type will stand still for a certain period amount of time
 
 public:
     Enemy(Vector2 _position, int type, Grid *_grid);
 
     // Enemy Movements
-    void Movements() override;
+    void HandleMovements();
 
     // Update Enemy
     void Update() override;
@@ -31,9 +29,6 @@ public:
 
     // Attack
     void Attack() override;
-
-    // To submit harvest
-    void Submit();
 
     // Set destination
     void SetDestination() override;

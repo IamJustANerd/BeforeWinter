@@ -18,6 +18,7 @@ enum class State
     heavy_attacking,
     hit,
     dying,
+    decaying
 };
 
 class Entity
@@ -41,6 +42,8 @@ protected:
     Rectangle frameRec;
     bool isUncollidable;
     bool isCollidingWithMouse = false;
+    bool isAlive = true;
+    bool isDecay = false;
     float rotation;
     int frameCounter = 0;
     int curFrame = 0;
@@ -69,8 +72,11 @@ public:
     bool GetIsUncollidable() const;
     Rectangle FlipTexture(Rectangle frameRec) const;
     bool GetIsTargeted() const;
+    bool GetIsAlive() const;
     void SetIsTargeted(bool newState);
     void ReduceHealthPoint(int decrease);
+    void DeathAnimation(int deathType);
+    void DecayAnimation(int decayType);
 
     // Linked list for faster insertion and deletion
     Entity *prev;

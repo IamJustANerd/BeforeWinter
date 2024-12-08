@@ -160,7 +160,7 @@ int main()
     // Declare player
     Player* player = new Player(Vector2{(float)1980, (float)1200}, &grid);
     // Nature *tes = new Nature(Vector2{25000, 900}, 0, &grid);
-    new Nature(Vector2{2000, 1200}, 0, &grid);
+    // new Nature(Vector2{2000, 1200}, 0, &grid);
 
     // For path finding algorithm debugging
     new Building(Vector2{2200, 1000}, 0, &grid);
@@ -186,7 +186,7 @@ int main()
 
     // Testing NPC
     new Pawn(Vector2{(float)1980, (float)1100}, 0, &grid);
-    // new Enemy(Vector2{(float)1780, (float)1100}, 1, &grid);
+    new Enemy(Vector2{(float)1780, (float)1100}, 1, &grid);
     // new Enemy(Vector2{(float)1580, (float)1100}, 1, &grid);
     // new Enemy(Vector2{(float)1780, (float)1300}, 1, &grid);
     // new NPC(Vector2{(float)1580, (float)880}, 0, &grid);

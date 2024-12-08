@@ -67,7 +67,7 @@ void Pawn::HandleMovements()
     }
 
     // If the Pawn already reach the destination, stop moving
-    if (ReachDestination())
+    if (ReachDestination() && hasDestination)
     {
         isWorking = true;
 
@@ -88,7 +88,7 @@ void Pawn::Draw() const
     }
 
     // Draw resource (if carrying any)
-    if(isCarrying)
+    if (isCarrying)
     {
         DrawTexture(resourceTex[0], position.x + resourceTex[0].width / 5, position.y - resourceTex[0].height / 5, WHITE);
         DrawTexture(resourceTex[0], position.x + resourceTex[0].width / 5 + 8, position.y - resourceTex[0].height / 5, WHITE);
@@ -142,7 +142,7 @@ void Pawn::UpdateSpriteFrame()
             // 1. Give the pawn one carry,
             // 2. Reduce target health,
             // 3. Trigger the hit animation (if it has no more health, go for death animation instead)
-            if(curFrame == 3)
+            if (curFrame == 3)
             {
                 carry += attackPoint;
 
@@ -151,7 +151,7 @@ void Pawn::UpdateSpriteFrame()
                 target->ChangeAnimation(State::hit);
 
                 // If the pawn reached the maximum amount of value it can carry, stop working
-                if(carry >= maxCarry)
+                if (carry >= maxCarry)
                 {
                     isWorking = false;
 
@@ -173,7 +173,7 @@ void Pawn::UpdateSpriteFrame()
 void Pawn::Submit()
 {
     // If Pawn Reaches house, return the harvested resource
-    if(isWorking && isCarrying)
+    if (isWorking && isCarrying)
     {
         // Reset the pawn state
         isCarrying = false;
@@ -194,12 +194,13 @@ void Pawn::Submit()
 void Pawn::Attack()
 {
     // Pawn can only attack once it reaches the destination
-    if(isWorking && !isCarrying)
+    if (isWorking && !isCarrying)
     {
         // For pawn, it will reduce the health of the tree and gain one carry
         // Enter heavy attack animation if not doing one
         if (!isAttacking && attackCooldownCounter <= 0)
         {
+            std::cout << "Attack" << '\n';
             isAttacking = true;
 
             // Attack on cooldown
@@ -210,7 +211,7 @@ void Pawn::Attack()
     }
 
     // While not attacking, it will decrease the attack cooldown counter
-    if(!isAttacking && attackCooldownCounter > 0)
+    if (!isAttacking && attackCooldownCounter > 0)
     {
         attackCooldownCounter -= 1;
     }
@@ -231,9 +232,9 @@ void Pawn::SetDestination()
             if (target != NULL)
             {
                 destination = target->GetHitBox();
-            }
 
-            hasDestination = true;
+                hasDestination = true;
+            }
         }
         // Look for the closest tree
         else
@@ -244,9 +245,10 @@ void Pawn::SetDestination()
             if (target != NULL)
             {
                 destination = target->GetHitBox();
+
+                hasDestination = true;
             }
 
-            hasDestination = true;
         }
 
         // std::cout << "New destination: " << destination.x << ' ' << destination.y << '\n';

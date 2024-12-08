@@ -1,4 +1,5 @@
 #include "../include/Entity.h"
+#include "Grid.h"
 #include <iostream>
 
 Rectangle Entity::FlipTexture(Rectangle frameRec) const
@@ -64,4 +65,54 @@ void Entity::SetIsTargeted(bool newState)
 void Entity::ReduceHealthPoint(int decrease)
 {
     healthPoint -= decrease;
+}
+
+void Entity::DeathAnimation(int deathType)
+{
+    frameCounter += 1;
+    if (frameCounter >= deathAnimation[deathType][0].frameTime / deathAnimation[deathType][0].totalFrames)
+    {
+        curFrame = (curFrame + 1) % deathAnimation[deathType][0].totalFrames;
+
+        frameCounter = 0;
+
+        frameRec.x = ((int)(frameRec.x + width) % (int)(deathAnimation[deathType][0].totalFrames * width));
+
+        // Enter decay animation once the death animation is done
+        if(curFrame == 0)
+        {
+            isDecay = true;
+            curState = State::decaying;
+            frameRec = deathAnimation[deathType][1].sourceFrame;
+        }
+
+    }
+}
+
+void Entity::DecayAnimation(int decayType)
+{
+    frameCounter += 1;
+    if (frameCounter >= deathAnimation[decayType][1].frameTime / deathAnimation[decayType][1].totalFrames)
+    {
+        curFrame = (curFrame + 1) % deathAnimation[decayType][1].totalFrames;
+
+        frameCounter = 0;
+
+        frameRec.x = ((int)(frameRec.x + width) % (int)(deathAnimation[decayType][1].totalFrames * width));
+
+        // After the decay animation is done, delete this entity
+        if (curFrame == 0)
+        {
+            // Remove it from the grid
+            grid->Remove(this);
+        
+            // Delete it completely to free space
+            delete(this);
+        }
+    }
+}
+
+bool Entity::GetIsAlive() const
+{
+    return isAlive;
 }

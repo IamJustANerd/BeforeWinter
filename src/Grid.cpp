@@ -165,6 +165,34 @@ void Grid::Move(Entity *entity, Vector2 addPos)
     Add(entity);
 }
 
+void Grid::Remove(Entity* entity)
+{
+    // See which cell it is in
+    int cellX = (int)((entity->GetPosition().x) / CELL_SIZE);
+    int cellY = (int)((entity->GetPosition().y) / CELL_SIZE);
+
+    // If it does change, unlink it from the list of its old cell
+    if (entity->prev != NULL)
+    {
+        entity->prev->next = entity->next;
+    }
+
+    if (entity->next != NULL)
+    {
+        entity->next->prev = entity->prev;
+    }
+
+    // If it's the head of a list, remove it
+    if (cells[cellX][cellY] == entity)
+    {
+        cells[cellX][cellY] = entity->next;
+    }
+
+    // Reset entity pointers
+    entity->prev = NULL;
+    entity->next = NULL;
+}
+
 void Grid::HandlePlayer(Entity* entity)
 {
     // To do Player class specific things

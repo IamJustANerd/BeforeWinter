@@ -12,6 +12,8 @@ Player::Player(Vector2 _position, Grid *_grid)
     
     id = 0;
 
+    isAlive = true;
+
     type = 0;
     
     // Assign player hitbox
@@ -47,6 +49,9 @@ Player::Player(Vector2 _position, Grid *_grid)
 
     // The starting state is idle
     ChangeAnimation(State::idle);
+
+    // Testing death animation
+    ChangeAnimation(State::dying);
 
     // Player is uncollidable
     isUncollidable = true;
@@ -249,14 +254,29 @@ void Player::Draw() const
     // DrawRectangle(position.x, position.y, width, height, {230, 41, 55, 128});
 
     // Draw texture
-    if(direction.x >= 0)
+    if(isAlive)
     {
-        DrawTextureRec(playerTex[0], frameRec, position, WHITE); 
+        if (direction.x >= 0)
+        {
+            DrawTextureRec(playerTex[0], frameRec, position, WHITE);
+        }
+        else if (direction.x <= -1)
+        {
+            DrawTextureRec(playerTex[0], FlipTexture(frameRec), {position.x, position.y}, WHITE);
+        }
     }
-    else if(direction.x <= -1)
+    else if(curState == State::dying || curState == State::decaying)
     {
-        DrawTextureRec(playerTex[0], FlipTexture(frameRec), {position.x, position.y}, WHITE);
+        if (direction.x >= 0)
+        {
+            DrawTextureRec(deathTex[0], frameRec, position, WHITE);
+        }
+        else if (direction.x <= -1)
+        {
+            DrawTextureRec(deathTex[0], FlipTexture(frameRec), {position.x, position.y}, WHITE);
+        }
     }
+    
 
     // Draw attack range
     DrawRectangleRec(attackBox[0], {230, 41, 55, 128});
@@ -276,13 +296,27 @@ void Player::Draw() const
 
 void Player::Update()
 {
-    Movements();
+    if(isAlive)
+    {
+        Movements();
 
-    Attack();
+        Attack();
 
-    UpdateSpriteFrame();
+        UpdateSpriteFrame();
 
-    inventory.Update();
+        inventory.Update();
+    }
+    else
+    {
+        if(isDecay)
+        {
+            DecayAnimation(0);
+        }
+        else
+        {
+            DeathAnimation(0);
+        }
+    }
 }
 
 bool Player::IsInventoryCalled()
@@ -446,6 +480,15 @@ void Player::ChangeAnimation(State newState)
         {
             frameRec = playerAnimation[(int)curState][0].sourceFrame;
         }
+    }
+    // Handle animations for dyinh and decaying animation
+    else if(curState == State::dying)
+    {
+        frameRec = deathAnimation[0][0].sourceFrame;
+    }
+    else if(curState == State::decaying)
+    {
+        frameRec = deathAnimation[0][1].sourceFrame;
     }
     else
     {

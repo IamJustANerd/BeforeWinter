@@ -17,6 +17,9 @@ public:
     // Add object to the grid
     void Add(Entity* entity);
 
+    // Remove object from the grid
+    void Remove(Entity* entity);
+
     // Handle each cell in a grid
     void UpdateGrid();
 

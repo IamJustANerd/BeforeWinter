@@ -11,7 +11,7 @@ private:
     bool isCarrying;
     int carriedObjectValue;
     int carry = 0;
-    int maxCarry = 10;
+    int maxCarry = 1;
 public:
     Pawn(Vector2 _position, int type, Grid *_grid);
 

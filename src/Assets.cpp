@@ -4,18 +4,21 @@
 Animation playerAnimation[5][10]; 
 Animation natureAnimation[10][5][10];
 Animation NPCAnimation[10][5][10];
+Animation deathAnimation[5][5]; 
 
 Image playerImg[5];
 Image natureImg[10];
 Image NPCImg[5];
 Image buildingImg[5];
 Image resourceImg[5];
+Image deathImg[5];
 
 Texture2D playerTex[5];
 Texture2D natureTex[10];
 Texture2D NPCTex[5];
 Texture2D buildingTex[5];
 Texture2D resourceTex[5];
+Texture2D deathTex[5];
 
 // Load all images
 void LoadAllImage()
@@ -47,6 +50,9 @@ void LoadAllImage()
     // Resource
     // -> Wood
     resourceImg[0] = LoadImage("../graphics/resources/wood.png");
+
+    // Death
+    deathImg[0] = LoadImage("../graphics/death/death.png");
 }
 
 // Resize all images
@@ -82,7 +88,10 @@ void ResizeAllImage()
 
     // Resource
     // -> Wood
-    ImageResizeNN(&resourceImg[0], resourceImg[0].width * 2 / 3, resourceImg[0].width * 2 / 3);
+    ImageResizeNN(&resourceImg[0], resourceImg[0].width * 2 / 3, resourceImg[0].height * 2 / 3);
+
+    // Death
+    ImageResizeNN(&deathImg[0], deathImg[0].width * 2 / 3, deathImg[0].height * 2 / 3);
 }
 
 // Load all textures from images
@@ -112,6 +121,9 @@ void LoadAllTexture()
     // Resource
     // -> Wood
     resourceTex[0] = LoadTextureFromImage(resourceImg[0]);
+
+    // Death
+    deathTex[0] = LoadTextureFromImage(deathImg[0]);
 }
 
 // Unload all images
@@ -141,6 +153,9 @@ void UnloadAllImage()
     // Resource
     // -> Wood
     UnloadImage(resourceImg[0]);
+
+    // Death
+    UnloadImage(deathImg[0]);
 }
 
 // Unload all textures
@@ -170,6 +185,9 @@ void UnloadAllTexture()
     // Resource
     // -> Wood
     UnloadTexture(resourceTex[0]);
+
+    // Death
+    UnloadTexture(deathTex[0]);
 }
 
 // Load animation for all entities
@@ -291,6 +309,17 @@ void LoadAnimation()
     NPCAnimation[1][2][2].frameTime = 42;
     NPCAnimation[1][2][2].totalFrames = 6;
     NPCAnimation[1][2][2].sourceFrame = {0, 513, 128, 128};
+
+    // Death
+    // -> First phase: Death
+    deathAnimation[0][0].frameTime = 60;
+    deathAnimation[0][0].totalFrames = 6;
+    deathAnimation[0][0].sourceFrame = {0, 0, 128, 128};
+
+    // -> Second phase: Decay
+    deathAnimation[0][1].frameTime = 60;
+    deathAnimation[0][1].totalFrames = 6;
+    deathAnimation[0][1].sourceFrame = {0, 129, 128, 128};
 }
 
 // Setup assets (images, textures, etc)

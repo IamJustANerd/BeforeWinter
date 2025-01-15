@@ -183,14 +183,14 @@ void Enemy::SetDestination()
         target = FindTarget(typeid(Building), 0, true);
         Entity* temp = FindTarget(typeid(Player), 0, true);
 
-        if (target == NULL)
-        {
-            destination = target->GetHitBox();
-        }
-        else
+        if (temp != NULL)
         {
             destination = temp->GetHitBox();
             target = temp;
+        }
+        else
+        {
+            destination = target->GetHitBox();
         }
         std::cout << destination.x << ' ' << destination.y << '\n';
 
@@ -212,17 +212,26 @@ void Enemy::ChangeAnimation(State newState)
     // Handle animation direction for attack animations
     if (curState == State::light_attacking || curState == State::heavy_attacking)
     {
-        // The animation depends on the direction the enemy is facing (will prioritize x axis direction first)
+        // The animation depends on the direction the enemy is facing (will prioritize x axis direction first) --- THIS IS WRONG, IT WON'T WORK PROPERLY
+        // The animation will depends on the difference of the x and y position
         // Note: check Assets.cpp for player animation's reference
-        if (direction.y == 1)
+        Vector2 thisPos = GetHitBoxPosition();
+        Vector2 targetPos = target->GetHitBoxPosition();
+
+        std::cout << "DELTA Y: " << abs(thisPos.y - targetPos.y) << ' ' << "DELTA X: " << abs(thisPos.x - targetPos.x) << "\n";
+
+        if(abs(thisPos.y - targetPos.y) > abs(thisPos.x - targetPos.x))
         {
-            frameRec = NPCAnimation[type][(int)curState][1].sourceFrame;
+            if (thisPos.y < targetPos.y)
+            {
+                frameRec = NPCAnimation[type][(int)curState][1].sourceFrame;
+            }
+            else
+            {
+                frameRec = NPCAnimation[type][(int)curState][2].sourceFrame;
+            }
         }
-        else if (direction.y == -1)
-        {
-            frameRec = NPCAnimation[type][(int)curState][2].sourceFrame;
-        }
-        else if (direction.x == 1 || direction.x == -1)
+        else
         {
             frameRec = NPCAnimation[type][(int)curState][0].sourceFrame;
         }

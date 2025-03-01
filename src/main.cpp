@@ -158,7 +158,7 @@ int main()
     Grid grid;
 
     // Declare player
-    Player* player = new Player(Vector2{(float)1980, (float)1200}, &grid);
+    Player* player = new Player(Vector2{(float)2380, (float)1200}, &grid);
     // Nature *tes = new Nature(Vector2{25000, 900}, 0, &grid);
     // new Nature(Vector2{2000, 1200}, 0, &grid);
 
@@ -189,10 +189,12 @@ int main()
     new Enemy(Vector2{(float)1780, (float)1100}, 1, &grid);
     new Enemy(Vector2{(float)1580, (float)1100}, 1, &grid);
     new Enemy(Vector2{(float)1780, (float)1300}, 1, &grid);
-    new Enemy(Vector2{(float)1580, (float)1300}, 1, &grid);
-    new Enemy(Vector2{(float)1980, (float)1300}, 1, &grid);
-    new Enemy(Vector2{(float)1380, (float)1100}, 1, &grid);
-    new Enemy(Vector2{(float)1380, (float)1300}, 1, &grid);
+
+    // new Enemy(Vector2{(float)1780, (float)1300}, 1, &grid);
+    // new Enemy(Vector2{(float)1580, (float)1300}, 1, &grid);
+    // new Enemy(Vector2{(float)1980, (float)1300}, 1, &grid);
+    // new Enemy(Vector2{(float)1380, (float)1100}, 1, &grid);
+    // new Enemy(Vector2{(float)1380, (float)1300}, 1, &grid);
 
     // Testing collectibles
     for (int i = 0; i <= 100; i += 1)

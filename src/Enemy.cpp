@@ -59,19 +59,21 @@ void Enemy::HandleMovements()
     // If not being stunned, move to the target
     if(stunCounter <= 0)
     {
-        Movements();
-
-        // Switch to running animation
-        if (isMoving && curState != State::running)
-        {
-            ChangeAnimation(State::running);
-        }
-
         // If the Enemy already reach the destination, stop moving
         if (ReachDestination())
         {
             ChangeAnimation(State::idle);
             withinAttackRange = true;
+        }
+        else
+        {
+            Movements();
+        }
+
+        // Switch to running animation
+        if (isMoving && curState != State::running)
+        {
+            ChangeAnimation(State::running);
         }
     }
 }
@@ -152,7 +154,7 @@ void Enemy::Attack()
             // Enter stun state
             stunCounter = stunDuration;
 
-            // Assume that the player is no longer on the attack range
+            // Assume that the target is no longer on the attack range
             withinAttackRange = false;
 
             ChangeAnimation(State::light_attacking);
@@ -183,15 +185,39 @@ void Enemy::SetDestination()
         target = FindTarget(typeid(Building), 0, true);
         Entity* temp = FindTarget(typeid(Player), 0, true);
 
-        if (temp != NULL)
+        if(temp != NULL && target != NULL)
         {
-            destination = temp->GetHitBox();
-            target = temp;
+            std::cout << "HELLO" << '\n';
+            Vector2 thisPos = GetHitBoxPosition();
+            float playerDist = sqrt(pow(thisPos.x - temp->GetHitBox().x, 2) + pow(thisPos.y - temp->GetHitBox().y, 2));
+            float houseDist = sqrt(pow(thisPos.x - target->GetHitBox().x, 2) + pow(thisPos.y - target->GetHitBox().y, 2));
+
+            std::cout << playerDist << ' ' << houseDist << '\n';
+
+            if(playerDist <= houseDist)
+            {
+                destination = temp->GetHitBox();
+                target = temp;
+            }
+            else
+            {
+                destination = target->GetHitBox();
+            }
         }
         else
         {
-            destination = target->GetHitBox();
+            if (temp != NULL)
+            {
+                destination = temp->GetHitBox();
+                target = temp;
+            }
+            else
+            {
+                destination = target->GetHitBox();
+            }
         }
+        
+        
         std::cout << destination.x << ' ' << destination.y << '\n';
 
         hasDestination = true;

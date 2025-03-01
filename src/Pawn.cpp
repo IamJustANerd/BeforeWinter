@@ -58,20 +58,20 @@ void Pawn::HandleMovements()
         return;
     }
 
-    Movements();
-
-    // Switch to running animation
-    if (isMoving && curState != State::running)
-    {
-        ChangeAnimation(State::running);
-    }
-
     // If the Pawn already reach the destination, stop moving
     if (ReachDestination() && hasDestination)
     {
         isWorking = true;
 
         ChangeAnimation(State::idle);
+    }
+
+    Movements();
+
+    // Switch to running animation
+    if (isMoving && curState != State::running)
+    {
+        ChangeAnimation(State::running);
     }
 }
 

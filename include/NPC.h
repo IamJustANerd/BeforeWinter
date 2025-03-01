@@ -16,7 +16,7 @@ protected:
     bool priorityMove;
     int rotationCounter;
     int distanceTolerance = 5;
-    int rotationCounterTolerance = 50;
+    int rotationCounterTolerance = 10;
     Rectangle destination;
     Entity* target;
 

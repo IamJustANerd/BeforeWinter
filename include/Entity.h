@@ -81,6 +81,7 @@ public:
     // Linked list for faster insertion and deletion
     Entity *prev;
     Entity *next;
+    Entity *target;
 };
 
 #endif

@@ -64,6 +64,16 @@ void Enemy::HandleMovements()
         {
             ChangeAnimation(State::idle);
             withinAttackRange = true;
+
+            // Make sure the direction to the target is correct (for the case where the entity (for example player) approach from behind)
+            if(target->GetHitBoxPosition().x >= GetHitBox().x)
+            {
+                direction.x = 1;
+            }
+            else
+            {
+                direction.x = -1;
+            }
         }
         else
         {
@@ -187,7 +197,6 @@ void Enemy::SetDestination()
 
         if(temp != NULL && target != NULL)
         {
-            std::cout << "HELLO" << '\n';
             Vector2 thisPos = GetHitBoxPosition();
             float playerDist = sqrt(pow(thisPos.x - temp->GetHitBox().x, 2) + pow(thisPos.y - temp->GetHitBox().y, 2));
             float houseDist = sqrt(pow(thisPos.x - target->GetHitBox().x, 2) + pow(thisPos.y - target->GetHitBox().y, 2));
@@ -243,8 +252,6 @@ void Enemy::ChangeAnimation(State newState)
         // Note: check Assets.cpp for player animation's reference
         Vector2 thisPos = GetHitBoxPosition();
         Vector2 targetPos = target->GetHitBoxPosition();
-
-        std::cout << "DELTA Y: " << abs(thisPos.y - targetPos.y) << ' ' << "DELTA X: " << abs(thisPos.x - targetPos.x) << "\n";
 
         if(abs(thisPos.y - targetPos.y) > abs(thisPos.x - targetPos.x))
         {

@@ -158,7 +158,7 @@ int main()
     Grid grid;
 
     // Declare player
-    Player* player = new Player(Vector2{(float)2380, (float)1200}, &grid);
+    Player* player = new Player(Vector2{(float)1580, (float)1200}, &grid);
     // Nature *tes = new Nature(Vector2{25000, 900}, 0, &grid);
     // new Nature(Vector2{2000, 1200}, 0, &grid);
 

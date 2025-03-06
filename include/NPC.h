@@ -18,7 +18,6 @@ protected:
     int distanceTolerance = 5;
     int rotationCounterTolerance = 10;
     Rectangle destination;
-    Entity* target;
 
 public:
     virtual void SetDestination() = 0;

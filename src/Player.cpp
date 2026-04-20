@@ -2,6 +2,7 @@
 #include "../include/Inventory.h"
 #include "../include/Grid.h"
 #include "../include/Collectible.h"
+#include "../include/Enemy.h"
 #include <iostream>
 
 Player::Player(Vector2 _position, Grid *_grid)
@@ -15,6 +16,10 @@ Player::Player(Vector2 _position, Grid *_grid)
     isAlive = true;
 
     type = 0;
+
+    // base health and attack, can be modified later on
+    healthPoint = 100;
+    attackPoint = 50;
     
     // Assign player hitbox
     hitBox = Rectangle{position.x + (float)width / 3, position.y + (float)height * 0.6f, (float)width / 3, (float)height / 8};
@@ -253,16 +258,22 @@ void Player::Draw() const
     // Draw body
     // DrawRectangle(position.x, position.y, width, height, {230, 41, 55, 128});
 
+    Color tint = WHITE; // base color
+    if (hitTimer > 0)
+    {
+        tint = Color{255, 0, 0, 128}; // red tint when hit
+    }
+
     // Draw texture
     if(isAlive)
     {
         if (direction.x >= 0)
         {
-            DrawTextureRec(playerTex[0], frameRec, position, WHITE);
+            DrawTextureRec(playerTex[0], frameRec, position, tint);
         }
         else if (direction.x <= -1)
         {
-            DrawTextureRec(playerTex[0], FlipTexture(frameRec), {position.x, position.y}, WHITE);
+            DrawTextureRec(playerTex[0], FlipTexture(frameRec), {position.x, position.y}, tint);
         }
     }
     else if(curState == State::dying || curState == State::decaying)
@@ -279,10 +290,10 @@ void Player::Draw() const
     
 
     // Draw attack range
-    DrawRectangleRec(attackBox[0], {230, 41, 55, 128});
-    DrawRectangleRec(attackBox[1], {255, 161, 0, 128});
-    DrawRectangleRec(attackBox[2], {253, 249, 0, 128});
-    DrawRectangleRec(attackBox[3], {0, 228, 48, 128});
+    DrawRectangleRec(attackBox[0], {230, 41, 55, 32});
+    DrawRectangleRec(attackBox[1], {255, 161, 0, 32});
+    DrawRectangleRec(attackBox[2], {253, 249, 0, 32});
+    DrawRectangleRec(attackBox[3], {0, 228, 48, 32});
 
     // Draw collect radius box
     // DrawRectangleRec(collectRadius, Color{0, 121, 241, 120});
@@ -296,6 +307,8 @@ void Player::Draw() const
 
 void Player::Update()
 {
+    if (hitTimer > 0) hitTimer--;
+
     if(isAlive)
     {
         Movements();
@@ -332,6 +345,7 @@ void Player::DrawInventory() const
 void Player::DrawToolbar() const
 {
     inventory.DrawToolbar();
+    DrawText(TextFormat("HP: %d", healthPoint), 0, 395, 15, RED);
 }
 
 void Player::UpdateToolbar()
@@ -401,26 +415,30 @@ void Player::UpdateSpriteFrame()
             // If this is the 4th frame, activate the attack box in that direction
             if(curFrame == 3)
             {
-                // Down
+                // Determine the active attack box based on facing direction
+                Rectangle activeAttackBox;
                 if (direction.y == 1)
                 {
-                    std::cout << "BAWAH" << "\n";
+                    activeAttackBox = attackBox[3]; // Down
                 }
-                // Up
                 else if (direction.y == -1)
                 {
-                    std::cout << "ATAS" << "\n";
+                    activeAttackBox = attackBox[1]; // Up
                 }
-                // Right
-                else if (direction.x == 1)
+                else if (direction.x >= 1)
                 {
-                    std::cout << "KANAN" << "\n";
+                    activeAttackBox = attackBox[2]; // Right
                 }
-                // Left
-                else if(direction.x == -1)
+                else
                 {
-                    std::cout << "KIRI" << "\n";
+                    activeAttackBox = attackBox[0]; // Left
                 }
+
+                // Define which entity types the player can damage
+                std::vector<const std::type_info*> playerTargets = {&typeid(Enemy)};
+
+                // Attack all entities in range using grid-based spatial query
+                AttackEntitiesInRange(activeAttackBox, attackPoint, playerTargets);
             }
         }
     }

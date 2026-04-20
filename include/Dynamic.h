@@ -34,6 +34,9 @@ public:
 
     // Find a certain target (tree, player, etc)
     Entity* FindTarget(const std::type_info& targetClass, int targetType, bool shareTarget);
+
+    // Attack all entities within the attack rectangle by checking intersected grid cells
+    void AttackEntitiesInRange(Rectangle attackRect, int damage, const std::vector<const std::type_info*>& targetTypes);
 };
 
 #endif // PLAYER_H

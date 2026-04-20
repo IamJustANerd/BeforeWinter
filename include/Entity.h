@@ -4,6 +4,7 @@
 
 #include "../include/raylib_includes.h"
 #include "../include/Assets.h"
+#include "vector"
 
 // Entity position in the grid for spatial partitioning
 
@@ -50,7 +51,13 @@ protected:
     State curState;
     int healthPoint = 0;
     int attackPoint = 1;
+
+    // Testing animation when the entity got hit
+    int hitTimer = 0;
+    int hitDuration = 15;
+    
     bool isTargeted = false;
+    bool hasDestination;
 
     // Pointer to the grid
     Grid* grid;
@@ -60,7 +67,7 @@ public:
     virtual void Update() = 0;
     // Update sprite frame (which will depends on the animation and state)
     virtual void UpdateSpriteFrame() = 0;
-    virtual void ChangeAnimation(State newState);
+    virtual void ChangeAnimation(State newState) = 0;
     Vector2 GetPosition() const;
     Vector2 GetDirection() const;
     Vector2 GetHitBoxPosition() const;
@@ -77,11 +84,21 @@ public:
     void ReduceHealthPoint(int decrease);
     void DeathAnimation(int deathType);
     void DecayAnimation(int decayType);
+    std::vector <Entity*> &GetFollowers();
+    void AddFollower(Entity* follower);
+    void ToogleHasDestination();
 
     // Linked list for faster insertion and deletion
     Entity *prev;
     Entity *next;
+
+    // Entity that is being targeted by this entity
     Entity *target;
+
+    // List of entites that is targeting this entity
+    std::vector <Entity*> followers;
+
+    virtual ~Entity() = default;
 };
 
 #endif

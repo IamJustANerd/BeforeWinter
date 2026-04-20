@@ -21,6 +21,12 @@ public:
     // Update sprite frame
     void UpdateSpriteFrame() override;
 
+    // Update attack box
+    void UpdateAttackBox();
+
+    // Get active attack box based on target pos
+    Rectangle GetActiveAttackBox() const;
+
     // Change animation
     void ChangeAnimation(State newState) override;
 

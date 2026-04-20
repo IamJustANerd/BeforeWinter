@@ -33,7 +33,7 @@ bool Dynamic::IsCollidingWithUncollidable()
             const Entity *entity = cells[x][y];
             while (entity != NULL)
             {
-                if (this == entity || !entity->GetIsUncollidable())
+                if (this == entity || !entity->GetIsUncollidable() || !entity->GetIsAlive())
                 {
                     entity = entity->next;
                     continue;
@@ -155,4 +155,66 @@ Entity* Dynamic::FindTarget(const std::type_info& targetClass, int targetType, b
 
     // If it doesn't exist, return NULL
     return NULL;
+}
+
+void Dynamic::AttackEntitiesInRange(Rectangle attackRect, int damage, const std::vector<const std::type_info*>& targetTypes)
+{
+    // Calculate the cells that the attackRect intersects, with +1 padding
+    // to catch entities whose hitbox extends beyond their registered cell
+    int minX = std::max((int)attackRect.x / grid->CELL_SIZE - 1, 0);
+    int minY = std::max((int)attackRect.y / grid->CELL_SIZE - 1, 0);
+    int maxX = std::min((int)(attackRect.x + attackRect.width) / grid->CELL_SIZE + 1, grid->NUM_CELLS - 1);
+    int maxY = std::min((int)(attackRect.y + attackRect.height) / grid->CELL_SIZE + 1, grid->NUM_CELLS - 1);
+
+    // Getting the read only cells
+    const Entity *const(&cells)[Grid::NUM_CELLS][Grid::NUM_CELLS] = grid->GetReadOnlyCells();
+
+    for (int x = minX; x <= maxX; x++)
+    {
+        for (int y = minY; y <= maxY; y++)
+        {
+            const Entity *entity = cells[x][y];
+            while (entity != NULL)
+            {
+                // Skip self
+                if (entity == this)
+                {
+                    entity = entity->next;
+                    continue;
+                }
+
+                // Skip dead entities
+                if (!entity->GetIsAlive())
+                {
+                    entity = entity->next;
+                    continue;
+                }
+
+                // Check if this entity's type is in the target whitelist
+                bool isValidTarget = false;
+                for (const std::type_info* targetType : targetTypes)
+                {
+                    if (typeid(*entity) == *targetType)
+                    {
+                        isValidTarget = true;
+                        break;
+                    }
+                }
+
+                if (!isValidTarget)
+                {
+                    entity = entity->next;
+                    continue;
+                }
+
+                // Check if the entity's hitbox collides with the attack rectangle
+                if (CheckCollisionRecs(attackRect, entity->GetHitBox()))
+                {
+                    const_cast<Entity*>(entity)->ReduceHealthPoint(damage);
+                }
+
+                entity = entity->next;
+            }
+        }
+    }
 }

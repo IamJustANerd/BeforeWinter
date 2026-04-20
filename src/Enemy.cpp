@@ -1,5 +1,6 @@
 #include "../include/Enemy.h"
 #include "../include/GameManager.h"
+#include "../include/Pawn.h"
 #include <iostream>
 #include <typeinfo>
 
@@ -11,8 +12,18 @@ Enemy::Enemy(Vector2 _position, int _type, Grid *_grid)
 
     type = _type;
 
+    // base value, can change depending on the enemy's type
+    healthPoint = 50;
+    attackPoint = 10;
+
     // Assign Enemy hitbox
     hitBox = Rectangle{position.x + (float)width / 3, position.y + (float)height * 0.6f, (float)width / 3, (float)height / 8};
+
+    // Assign Enemy attack boxes (similar to Player footprint)
+    attackBox[0] = Rectangle{position.x, position.y + height / 6, (float)width / 2, (float)height * 2 / 3};
+    attackBox[1] = Rectangle{position.x + width / 6, position.y, (float)width * 2 / 3, (float)height / 2};
+    attackBox[2] = Rectangle{position.x + width / 2, position.y + height / 6, (float)width / 2, (float)height * 2 / 3};
+    attackBox[3] = Rectangle{position.x + width / 6, position.y + height / 2, (float)width * 2 / 3, (float)height / 2};
 
     speed = 2.0f;
 
@@ -90,26 +101,71 @@ void Enemy::HandleMovements()
 
 void Enemy::Draw() const
 {
-    // Draw texture
-    if (direction.x >= 0)
+    Color tint = WHITE; // base color
+    if (hitTimer > 0)
     {
-        DrawTextureRec(NPCTex[type], frameRec, position, WHITE);
+        tint = Color{255, 0, 0, 128}; // red tint when hit
     }
-    else if (direction.x <= -1)
+
+    // Draws texture based on either the enemy is alive or not
+    if (isAlive)
     {
-        DrawTextureRec(NPCTex[type], FlipTexture(frameRec), {position.x, position.y}, WHITE);
+        // Draw texture
+        if (direction.x >= 0)
+        {
+            DrawTextureRec(NPCTex[type], frameRec, position, tint);
+        }
+        else if (direction.x <= -1)
+        {
+            DrawTextureRec(NPCTex[type], FlipTexture(frameRec), {position.x, position.y}, tint);
+        }
+    }
+    else if (curState == State::dying || curState == State::decaying)
+    {
+        if (direction.x >= 0)
+        {
+            DrawTextureRec(deathTex[0], frameRec, position, WHITE);
+        }
+        else if (direction.x <= -1)
+        {
+            DrawTextureRec(deathTex[0], FlipTexture(frameRec), {position.x, position.y}, WHITE);
+        }
     }
 
     // Draw hitbox
     DrawRectangleRec(hitBox, Color{0, 228, 48, 120});
+
+    // Draw attack range boxes
+    DrawRectangleRec(attackBox[0], {230, 41, 55, 32});
+    DrawRectangleRec(attackBox[1], {255, 161, 0, 32});
+    DrawRectangleRec(attackBox[2], {253, 249, 0, 32});
+    DrawRectangleRec(attackBox[3], {0, 228, 48, 32});
 }
 
 void Enemy::Update()
 {
-    SetDestination();
-    HandleMovements();
-    Attack();
-    UpdateSpriteFrame();
+    // Decrease the animation timer for the hitTimer
+    if (hitTimer > 0) hitTimer--;
+
+    if (isAlive)
+    {
+        SetDestination();
+        HandleMovements();
+        UpdateAttackBox();
+        Attack();
+        UpdateSpriteFrame();
+    }
+    else
+    {
+        if (isDecay)
+        {
+            DecayAnimation(0);
+        }
+        else
+        {
+            DeathAnimation(0);
+        }
+    }
 }
 
 void Enemy::UpdateSpriteFrame()
@@ -138,11 +194,17 @@ void Enemy::UpdateSpriteFrame()
 
             // If the Enemy reached the fourth frame of attack animation, make sure to:
             // 1. Activate attack rectangle
-            // 2. Reduce target health if hit,
+            // 2. Reduce health of ALL entities hit within the attack box,
             // 3. Trigger the hit animation when hit (if it has no more health, go for death animation instead)
             if (curFrame == 4)
             {
-                
+                // Define which entity types the enemy can damage
+                std::vector<const std::type_info*> enemyTargets = {&typeid(Player), &typeid(Pawn), &typeid(Building)};
+
+                // Attack all entities in range using grid-based spatial query
+                AttackEntitiesInRange(GetActiveAttackBox(), attackPoint, enemyTargets);
+
+                std::cout << "ENEMY: " << GetHitBox().x << ' ' << GetHitBox().y << '\n';
             }
         }
     }
@@ -191,6 +253,7 @@ void Enemy::SetDestination()
     // If the Enemy is not working, then it should be moving
     if (!hasDestination)
     {
+        std::cout << "CARI TARGET" << '\n';
         // Look for the closest between player and house
         target = FindTarget(typeid(Building), 0, true);
         Entity* temp = FindTarget(typeid(Player), 0, true);
@@ -205,11 +268,13 @@ void Enemy::SetDestination()
 
             if(playerDist <= houseDist)
             {
+                std::cout << "PLAYER" << '\n';
                 destination = temp->GetHitBox();
                 target = temp;
             }
             else
             {
+                std::cout << "HOUSE" << '\n';
                 destination = target->GetHitBox();
             }
         }
@@ -220,14 +285,18 @@ void Enemy::SetDestination()
                 destination = temp->GetHitBox();
                 target = temp;
             }
-            else
+            else if(target != NULL)
             {
                 destination = target->GetHitBox();
             }
+            else
+            {
+                // Handle case when there are no targets at all (kinda lazy ngl)
+            }
         }
-        
-        
-        std::cout << destination.x << ' ' << destination.y << '\n';
+
+        // Add this entity to followers list
+        target->AddFollower(this);
 
         hasDestination = true;
     }
@@ -272,5 +341,36 @@ void Enemy::ChangeAnimation(State newState)
     else
     {
         frameRec = NPCAnimation[type][(int)curState][0].sourceFrame;
+    }
+}
+
+void Enemy::UpdateAttackBox()
+{
+    attackBox[0].x = position.x;
+    attackBox[0].y = position.y + height / 6;
+    attackBox[1].x = position.x + width / 6;
+    attackBox[1].y = position.y;
+    attackBox[2].x = position.x + width / 2;
+    attackBox[2].y = position.y + height / 6;
+    attackBox[3].x = position.x + width / 6;
+    attackBox[3].y = position.y + height / 2;
+}
+
+Rectangle Enemy::GetActiveAttackBox() const
+{
+    if (target == NULL) return attackBox[2]; // Default Right
+
+    Vector2 thisPos = GetHitBoxPosition();
+    Vector2 targetPos = target->GetHitBoxPosition();
+
+    if(abs(thisPos.y - targetPos.y) > abs(thisPos.x - targetPos.x))
+    {
+        if (thisPos.y < targetPos.y) return attackBox[3]; // Target is Below -> Down attack box
+        else return attackBox[1]; // Target is Above -> Up attack box
+    }
+    else
+    {
+        if (thisPos.x < targetPos.x) return attackBox[2]; // Target is Right -> Right attack box
+        else return attackBox[0]; // Target is Left -> Left attack box
     }
 }

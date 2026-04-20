@@ -81,6 +81,12 @@ void NPC::Movements()
                 i += 1;
                 isCollidingWithOther = IsCollidingWithUncollidable();
 
+                // NEW: So apparently, I was not bright enough to put this safe case here, 
+                // which caused the NPC to move one step too far and stuck in the obstacle.
+                // This result with the NPC stuck in a loop running running in place like a
+                // lost child. Putting this will most likely (definitely 99.9999%) solve the problem!
+                if (isCollidingWithOther) break;
+
                 // Update NPC position (in the grid as well)
                 position.x -= 1;
                 change.x -= 1;
@@ -108,6 +114,8 @@ void NPC::Movements()
             {
                 i += 1;
                 isCollidingWithOther = IsCollidingWithUncollidable();
+
+                if (isCollidingWithOther) break;
 
                 // Update NPC position (in the grid as well)
                 position.x += 1;
@@ -138,6 +146,8 @@ void NPC::Movements()
                 i += 1;
                 isCollidingWithOther = IsCollidingWithUncollidable();
 
+                if (isCollidingWithOther) break;
+
                 // Update NPC position (in the grid as well)
                 position.y -= 1;
                 change.y -= 1;
@@ -164,6 +174,8 @@ void NPC::Movements()
             {
                 i += 1;
                 isCollidingWithOther = IsCollidingWithUncollidable();
+
+                if (isCollidingWithOther) break;
 
                 // Update NPC position (in the grid as well)
                 position.y += 1;
@@ -277,3 +289,4 @@ void NPC::ChangeAnimation(State newState)
 {
     // Will be implemented by the child
 }
+

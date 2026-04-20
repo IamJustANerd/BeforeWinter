@@ -65,6 +65,18 @@ void Entity::SetIsTargeted(bool newState)
 void Entity::ReduceHealthPoint(int decrease)
 {
     healthPoint -= decrease;
+
+    // If the healthPoint got reduced below or equal to 0, dieeee
+    if (healthPoint <= 0)
+    {
+        healthPoint = 0;
+        isAlive = false;
+        ChangeAnimation(State::dying);
+    }
+    else
+    {
+        hitTimer = hitDuration;
+    }
 }
 
 void Entity::DeathAnimation(int deathType)
@@ -107,7 +119,7 @@ void Entity::DecayAnimation(int decayType)
             grid->Remove(this);
         
             // Delete it completely to free space
-            delete(this);
+            // delete(this);
         }
     }
 }
@@ -115,4 +127,19 @@ void Entity::DecayAnimation(int decayType)
 bool Entity::GetIsAlive() const
 {
     return isAlive;
+}
+
+std::vector <Entity*>& Entity::GetFollowers()
+{
+    return followers;
+}
+
+void Entity::AddFollower(Entity* follower)
+{
+    followers.push_back(follower);
+}
+
+void Entity::ToogleHasDestination()
+{
+    hasDestination = !hasDestination;
 }

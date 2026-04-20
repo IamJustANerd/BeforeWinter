@@ -242,10 +242,34 @@ void LoadAnimation()
     natureAnimation[0][0][0].totalFrames = 4;
     natureAnimation[0][0][0].sourceFrame = {0, 0, 128, 128};
 
-    // --> Hit
+    // ---> Hit
     natureAnimation[0][4][0].frameTime = 16;
     natureAnimation[0][4][0].totalFrames = 2;
     natureAnimation[0][4][0].sourceFrame = {0, 129, 128, 128};
+
+    // -> Tree green 2 (type 1)
+    // ---> Idle (single static frame)
+    natureAnimation[1][0][0].frameTime = 60;
+    natureAnimation[1][0][0].totalFrames = 1;
+    natureAnimation[1][0][0].sourceFrame = {0, 0, 144, 144};
+
+    // -> Tree green 3 (type 2)
+    // ---> Idle (single static frame)
+    natureAnimation[2][0][0].frameTime = 60;
+    natureAnimation[2][0][0].totalFrames = 1;
+    natureAnimation[2][0][0].sourceFrame = {0, 0, 144, 144};
+
+    // -> Bush green 1 (type 3)
+    // ---> Idle (single static frame)
+    natureAnimation[3][0][0].frameTime = 60;
+    natureAnimation[3][0][0].totalFrames = 1;
+    natureAnimation[3][0][0].sourceFrame = {0, 0, 64, 64};
+
+    // -> Bush green 2 (type 4)
+    // ---> Idle (single static frame)
+    natureAnimation[4][0][0].frameTime = 60;
+    natureAnimation[4][0][0].totalFrames = 1;
+    natureAnimation[4][0][0].sourceFrame = {0, 0, 64, 64};
 
     // --> Chopped (Keknya ga perlu?)
     // natureAnimation[0][5][0].frameTime = 30;

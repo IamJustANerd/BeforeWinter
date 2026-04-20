@@ -10,6 +10,7 @@ Pawn::Pawn(Vector2 _position, int _type, Grid *_grid)
     width = 128, height = 128;
 
     type = _type;
+    healthPoint = 50;
 
     // Assign Pawn hitbox
     hitBox = Rectangle{position.x + (float)width / 3, position.y + (float)height * 0.6f, (float)width / 3, (float)height / 8};
@@ -77,14 +78,34 @@ void Pawn::HandleMovements()
 
 void Pawn::Draw() const
 {
-    // Draw texture
-    if (direction.x >= 0)
+    Color tint = WHITE; // base color
+    if (hitTimer > 0)
     {
-        DrawTextureRec(NPCTex[type], frameRec, position, WHITE);
+        tint = Color{255, 0, 0, 128}; // red tint when hit
     }
-    else if (direction.x <= -1)
+
+    if (isAlive)
     {
-        DrawTextureRec(NPCTex[type], FlipTexture(frameRec), {position.x, position.y}, WHITE);
+        // Draw texture
+        if (direction.x >= 0)
+        {
+            DrawTextureRec(NPCTex[type], frameRec, position, tint);
+        }
+        else if (direction.x <= -1)
+        {
+            DrawTextureRec(NPCTex[type], FlipTexture(frameRec), {position.x, position.y}, tint);
+        }
+    }
+    else if (curState == State::dying || curState == State::decaying)
+    {
+        if (direction.x >= 0)
+        {
+            DrawTextureRec(deathTex[0], frameRec, position, WHITE);
+        }
+        else if (direction.x <= -1)
+        {
+            DrawTextureRec(deathTex[0], FlipTexture(frameRec), {position.x, position.y}, WHITE);
+        }
     }
 
     // Draw resource (if carrying any)
@@ -101,17 +122,27 @@ void Pawn::Draw() const
 
 void Pawn::Update()
 {
-    // std::cout << "A" << '\n';
-    SetDestination();
-    // std::cout << "B" << '\n';
-    HandleMovements();
-    // std::cout << "C" << '\n';
-    Attack();
-    // std::cout << "D" << '\n';
-    Submit();
-    // std::cout << "E" << '\n';
-    UpdateSpriteFrame();
-    // std::cout << "F" << '\n';
+    if (hitTimer > 0) hitTimer--;
+
+    if (isAlive)
+    {
+        SetDestination();
+        HandleMovements();
+        Attack();
+        Submit();
+        UpdateSpriteFrame();
+    }
+    else
+    {
+        if (isDecay)
+        {
+            DecayAnimation(0);
+        }
+        else
+        {
+            DeathAnimation(0);
+        }
+    }
 }
 
 void Pawn::UpdateSpriteFrame()
@@ -222,11 +253,9 @@ void Pawn::SetDestination()
     // If the pawn is not working, then it should be moving
     if (!isWorking && !hasDestination)
     {
-        // std::cout << "Finding destination..." << '\n';
         // Return harvest to home
         if (isCarrying)
         {
-            // std::cout << "Home" << '\n';
             target = FindTarget(typeid(Building), 0, true);
 
             if (target != NULL)
@@ -239,7 +268,6 @@ void Pawn::SetDestination()
         // Look for the closest tree
         else
         {
-            // std::cout << "Tree" << '\n';
             target = FindTarget(typeid(Nature), 0, false);
 
             if (target != NULL)
@@ -250,8 +278,6 @@ void Pawn::SetDestination()
             }
 
         }
-
-        // std::cout << "New destination: " << destination.x << ' ' << destination.y << '\n';
     }
 }
 

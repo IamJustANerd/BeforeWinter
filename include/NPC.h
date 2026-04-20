@@ -11,7 +11,6 @@
 class NPC : public Dynamic
 {
 protected:
-    bool hasDestination;
     bool isCollidingWithOther;
     bool priorityMove;
     int rotationCounter;

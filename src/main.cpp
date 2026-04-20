@@ -160,7 +160,7 @@ int main()
     // Declare player
     Player* player = new Player(Vector2{(float)1580, (float)1200}, &grid);
     // Nature *tes = new Nature(Vector2{25000, 900}, 0, &grid);
-    // new Nature(Vector2{2000, 1200}, 0, &grid);
+    new Nature(Vector2{2000, 1200}, 0, &grid);
 
     // For path finding algorithm debugging
     new Building(Vector2{2200, 1000}, 0, &grid);
@@ -186,9 +186,9 @@ int main()
 
     // Testing NPC
     new Pawn(Vector2{(float)1980, (float)1100}, 0, &grid);
-    new Enemy(Vector2{(float)1780, (float)1100}, 1, &grid);
-    new Enemy(Vector2{(float)1580, (float)1100}, 1, &grid);
-    new Enemy(Vector2{(float)1780, (float)1300}, 1, &grid);
+    // new Enemy(Vector2{(float)1780, (float)1100}, 1, &grid);
+    // new Enemy(Vector2{(float)1580, (float)1100}, 1, &grid);
+    // new Enemy(Vector2{(float)1780, (float)1300}, 1, &grid);
 
     // new Enemy(Vector2{(float)1780, (float)1300}, 1, &grid);
     // new Enemy(Vector2{(float)1580, (float)1300}, 1, &grid);
@@ -201,7 +201,7 @@ int main()
     {
         for (int j = 0; j <= 100; j += 1)
         {
-            // new Nature(Vector2{(float)GetRandomValue(0, 10000), (float)GetRandomValue(0, 10000)}, GetRandomValue(0, 4), NatureTex, &grid);
+            // new Nature(Vector2{(float)GetRandomValue(0, 10000), (float)GetRandomValue(0, 10000)}, GetRandomValue(0, 4), &grid);
             // new Collectible(Vector2{(float)GetRandomValue(0, 10000), (float)GetRandomValue(0, 10000)}, GetRandomValue(1, 9999), &grid);
         }
     }
@@ -246,6 +246,21 @@ int main()
         {
             fps--;
         }
+        if (IsKeyPressed(KEY_ENTER))
+        {
+            std::vector<Entity *> &followers = player->GetFollowers(); // Store reference properly
+
+            for (auto it = followers.begin(); it != followers.end(); ++it)
+            {
+                (*it)->target = NULL;
+                (*it)->ToogleHasDestination();
+            }
+
+            followers.clear(); // This now modifies the original vector
+
+            std::cout << "Jumlah followers: " << player->GetFollowers().size() << '\n';
+            std::cout << "DONE" << '\n';
+        }
 
         SetTargetFPS(fps);
 
@@ -280,7 +295,7 @@ int main()
         // Draw outlined entities
         BeginShaderMode(shdrOutline);
 
-        // DrawTexture(NatureTex[1], tes->GetPosition().x, tes->GetPosition().y, WHITE);
+        // DrawTexture(natureTex[1], tes->GetPosition().x, tes->GetPosition().y, WHITE);
         grid.DrawOutlinedObjects(camera.target);
 
         EndShaderMode();
@@ -326,6 +341,7 @@ int main()
             DrawText(TextFormat("Number of Visible Objects: [%i]", visibleObjects.size()), 0, 305, 15, GREEN);
             DrawText(TextFormat("This is grid: [%i, %i]", (int)GetMouseRect().x / grid.CELL_SIZE, (int)GetMouseRect().y / grid.CELL_SIZE), 0, 335, 15, GREEN);
             DrawText(TextFormat("Player is facing: [%f, %f]", (float)player->GetDirection().x, (float)player->GetDirection().y), 0, 365, 15, GREEN);
+            // DrawText(TextFormat("Player's Health: ", (int)player->GetHealthPoint()), 0, 395, 15, GREEN);
         }
 
         // Draw the mouse according to screen position

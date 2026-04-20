@@ -19,7 +19,7 @@ private:
 
 public:
     // Constructor
-    Player(Vector2 _position, Grid *_grid, Texture2D *_textures);
+    Player(Vector2 _position, Grid *_grid);
 
     // Player movements
     void Movements() override;
@@ -35,6 +35,9 @@ public:
 
     // Draw
     void Draw() const override;
+
+    // Change animation
+    void ChangeAnimation(State newState) override;
 
     // Player inventory current status
     bool IsInventoryCalled();

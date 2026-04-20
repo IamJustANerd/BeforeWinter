@@ -7,16 +7,19 @@
 class Nature : public Entity
 {
 protected:
+    bool isHarvested = false; // It will be true when it lost all of it's hp
 
 public:
     // Constructor
-    Nature(Vector2 _position, int _type, Texture2D *_textures, Grid* _grid);
+    Nature(Vector2 _position, int _type, Grid* _grid);
     // Draw
     void Draw() const override;
     // Update
     void Update() override;
-    // Update sprite frame/
+    // Update sprite frame
     void UpdateSpriteFrame() override;
+    // Change animation
+    void ChangeAnimation(State newState) override;
 };
 
 #endif

@@ -24,14 +24,17 @@ class Collectible : public Dynamic
     // Movement
     void Movements() override;
 
-    // Attack (we are not using it though)
+    // Attack (we probably won't using it though)
     void Attack() override;
-    
+
     // Draw
     void Draw() const override;
 
     // Update sprite frame
     void UpdateSpriteFrame() override;
+
+    // Change animation (we probably won't using it though)
+    void ChangeAnimation(State newState) override;
 
     // Update player pos
     void UpdatePlayerPosition(Vector2 _playerPos);

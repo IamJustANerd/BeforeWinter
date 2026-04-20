@@ -3,11 +3,10 @@
 #include "../include/Mouse.h"
 #include <iostream>
 
-Nature::Nature(Vector2 _position, int _type, Texture2D *_textures, Grid *_grid)
+Nature::Nature(Vector2 _position, int _type, Grid *_grid)
 {
     position = _position;
     type = _type;
-    textures = _textures;
 
     width = 128;
     height = 128;
@@ -15,16 +14,25 @@ Nature::Nature(Vector2 _position, int _type, Texture2D *_textures, Grid *_grid)
     // Nature is uncollidable
     isUncollidable = true;
 
-    hitBox = Rectangle{position.x, position.y, (float)width, (float)height};
+    // Assign some values based on the nature type
+    if(type == 0) // Tree
+    {
+        hitBox = Rectangle{position.x + (float)width * 0.4f, position.y + (float)height * 0.8f, (float)width * 0.2f, (float)height / 8};
+        
+        healthPoint = 30;
+    }
+    else
+    {
+        hitBox = Rectangle{position.x, position.y, (float)width, (float)height};
+
+        healthPoint = 10;
+    }
 
     // The starting state is idle
     curState = State::idle;
 
     // Set the frame rec according to the current state
     frameRec = natureAnimation[type][(int)curState][0].sourceFrame;
-
-    // Player is uncollidable
-    isUncollidable = true;
 
     // Insert nature into the grid
     grid = _grid;
@@ -34,7 +42,7 @@ Nature::Nature(Vector2 _position, int _type, Texture2D *_textures, Grid *_grid)
 void Nature::Draw() const
 {
     // Draw body
-    DrawTextureRec(textures[0], frameRec, position, WHITE);
+    DrawTextureRec(natureTex[type], frameRec, position, WHITE);
 
     // Draw hitbox
     if(!isCollidingWithMouse)
@@ -50,19 +58,6 @@ void Nature::Draw() const
 void Nature::Update()
 {
     UpdateSpriteFrame();
-
-    // For testing hit animation
-    if(CheckCollisionRecs(GetMouseRect(), hitBox) && IsMouseButtonDown(MOUSE_BUTTON_LEFT))
-    {
-        // Reset frame counter
-        frameCounter = 0;
-
-        // Change state into hit
-        curState = State::hit;
-
-        // Change frame
-        frameRec = natureAnimation[type][(int)curState][0].sourceFrame;
-    }
 }
 
 void Nature::UpdateSpriteFrame()
@@ -87,4 +82,16 @@ void Nature::UpdateSpriteFrame()
             }
         }
     }
+}
+
+void Nature::ChangeAnimation(State newState)
+{
+    // Reset frame counter
+    frameCounter = 0;
+
+    // Change state into hit
+    curState = newState;
+
+    // Change frame
+    frameRec = natureAnimation[type][(int)curState][0].sourceFrame;
 }

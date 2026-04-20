@@ -3,7 +3,10 @@
 #include "../include/Player.h"
 #include "../include/Collectible.h"
 #include "../include/Nature.h"
+#include "../include/Building.h"
 #include "../include/Mouse.h"
+#include "../include/Pawn.h"
+#include "../include/Enemy.h"
 #include "../include/raylib_includes.h"
 #include <cstddef>
 #include <algorithm>
@@ -16,15 +19,15 @@ struct CompareObjectPosition
 {
     bool operator()(const Entity *a, const Entity *b) const
     {
-        if (a->GetPosition().y + a->GetHeight() != b->GetPosition().y + b->GetHeight())
-            return a->GetPosition().y + a->GetHeight() < b->GetPosition().y + b->GetHeight(); // Compare by y first
-        return a->GetPosition().x < b->GetPosition().x;                                       // If y is the same, compare by x
+        if (a->GetHitBox().y + a->GetHitBox().height != b->GetHitBox().y + b->GetHitBox().height)
+            return a->GetHitBox().y + a->GetHitBox().height < b->GetHitBox().y + b->GetHitBox().height; // Compare by y first
+        return a->GetHitBox().x < b->GetHitBox().x;                                                     // If y is the same, compare by x
     }
 };
 
 Grid::Grid()
 {
-    // Clear the grid.
+    // Clear the grid
     for (int x = 0; x < NUM_CELLS; x++)
     {
         for (int y = 0; y < NUM_CELLS; y++)
@@ -82,7 +85,28 @@ void Grid::HandleCell(Entity* entity)
     // Handle collisions on a cell
     // Check collisions of each entity with the others inside the cell
     while (entity != NULL)
-    {   
+    {
+    //     if (typeid(*entity) == typeid(Enemy))
+    //     {
+    //         std::cout << "Enemy" << '\n';
+    //     }
+    //     else if (typeid(*entity) == typeid(Pawn))
+    //     {
+    //         std::cout << "Pawn" << '\n';
+    //     } 
+    //     else if (typeid(*entity) == typeid(Player))
+    //     {
+    //         std::cout << "Player" << '\n';
+    //     }
+    //     else if (typeid(*entity) == typeid(Nature))
+    //     {
+    //         std::cout << "Tree" << '\n';
+    //     }
+    //     else if (typeid(*entity) == typeid(Building))
+    //     {
+    //         std::cout << "Building" << '\n';
+    //     }
+
         // Update the entity
         entity->Update();
 
@@ -93,12 +117,6 @@ void Grid::HandleCell(Entity* entity)
         if (typeid(*entity) == typeid(Player))
         {
             HandlePlayer(entity);
-        }
-
-        // Handling collectible collision
-        if (typeid(*entity) == typeid(Collectible))
-        {
-            // HandleCollectible(entity);
         }
 
         // Static entites (like nature for example) doesn't need to do collision check,
@@ -145,6 +163,34 @@ void Grid::Move(Entity *entity, Vector2 addPos)
 
     // Add it back to the grid at its new cell
     Add(entity);
+}
+
+void Grid::Remove(Entity* entity)
+{
+    // See which cell it is in
+    int cellX = (int)((entity->GetPosition().x) / CELL_SIZE);
+    int cellY = (int)((entity->GetPosition().y) / CELL_SIZE);
+
+    // If it does change, unlink it from the list of its old cell
+    if (entity->prev != NULL)
+    {
+        entity->prev->next = entity->next;
+    }
+
+    if (entity->next != NULL)
+    {
+        entity->next->prev = entity->prev;
+    }
+
+    // If it's the head of a list, remove it
+    if (cells[cellX][cellY] == entity)
+    {
+        cells[cellX][cellY] = entity->next;
+    }
+
+    // Reset entity pointers
+    entity->prev = NULL;
+    entity->next = NULL;
 }
 
 void Grid::HandlePlayer(Entity* entity)

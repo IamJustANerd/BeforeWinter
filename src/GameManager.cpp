@@ -3,6 +3,7 @@
 #include <iostream>
 #include <algorithm>
 
+// Note: Maybe we can combine color and it's inverse for light in night effect?
 Color noonLight = {0, 0, 0, 0};
 Color sunsetOrange = {255, 154, 0, 0};
 Color nightBlue = {6, 21, 88, 155};
@@ -13,7 +14,11 @@ unsigned char nightBlueMaxA = 155;
 // To change the alpha of the current light every second in real life time (or every minute in game time)
 bool changeA = false;
 
+// Note: Maybe we should add global variables here (for example: maxCarry for NPC) so that whenever our player do some upgrades,
+// we just need to update one variable
+
 GameTime gameTime = {0, 0, 4, 0};
+Resources currentResources = {0, 0};
 
 void UpdateTime()
 {
@@ -44,6 +49,18 @@ void PrintTime()
 {
     DrawText(TextFormat("Hari ke-%d", gameTime.days), gameScreenWidth - 90, 5, 15, GREEN);
     DrawText(TextFormat("%02d:%02d", gameTime.hours, gameTime.minutes), gameScreenWidth - 90, 35, 15, GREEN);
+}
+
+void PrintResources()
+{
+    DrawText(TextFormat("Gold: %d", currentResources.gold), gameScreenWidth - 90, 65, 15, GREEN);
+    DrawText(TextFormat("Wood: %d", currentResources.wood), gameScreenWidth - 90, 95, 15, GREEN);
+}
+
+void UpdateResources(Resources _resources)
+{
+    currentResources.gold += _resources.gold;
+    currentResources.wood += _resources.wood;
 }
 
 void DrawTimePhase(int cellSize, int cellNumber, Camera2D camera, const int gridSize)

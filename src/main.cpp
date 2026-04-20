@@ -40,6 +40,15 @@
 // Nature
 #include "../include/Nature.h"
 
+// Pawn
+#include "../include/Pawn.h"
+
+// Enemy
+#include "../include/Enemy.h"
+
+// Building
+#include "../include/Building.h"
+
 // Shader
 #include "../include/Shader.h"
 
@@ -149,20 +158,51 @@ int main()
     Grid grid;
 
     // Declare player
-    Player* player = new Player(Vector2{(float)1980, (float)1280}, &grid, playerTex);
-    Nature *tes = new Nature(Vector2{800, 400}, 0, natureTex, &grid);
-    new Nature(Vector2{540, 384}, 0, natureTex, &grid);
+    Player* player = new Player(Vector2{(float)1580, (float)1200}, &grid);
+    // Nature *tes = new Nature(Vector2{25000, 900}, 0, &grid);
+    new Nature(Vector2{2000, 1200}, 0, &grid);
 
-    new Collectible(Vector2{(float)screenWidth / 2 + 50, (float)screenHeight / 2 + 50}, 1, &grid);
-    new Collectible(Vector2{(float)screenWidth / 2 + 200, (float)screenHeight / 2 + 200}, 1, &grid);
+    // For path finding algorithm debugging
+    new Building(Vector2{2200, 1000}, 0, &grid);
+    // new Building(Vector2{2100, 1000}, 0, &grid);
+    // new Building(Vector2{2000, 1000}, 0, &grid);
+    // new Building(Vector2{1900, 1000}, 0, &grid);
+    // new Building(Vector2{1800, 1000}, 0, &grid);
+    // new Building(Vector2{1800, 900}, 0, &grid);
+    // new Building(Vector2{1800, 800}, 0, &grid);
+    // new Building(Vector2{1800, 1100}, 0, &grid);
+    // new Building(Vector2{1800, 1200}, 0, &grid);
+    // new Building(Vector2{1800, 1300}, 0, &grid);
+    // new Building(Vector2{1800, 1400}, 0, &grid);
+    // new Building(Vector2{1900, 1400}, 0, &grid);
+    // new Building(Vector2{2000, 1400}, 0, &grid);
+    // new Building(Vector2{2100, 1400}, 0, &grid);
+    // new Building(Vector2{2100, 1300}, 0, &grid);
+    // new Building(Vector2{2100, 1200}, 0, &grid);
+    // new Building(Vector2{2100, 1500}, 0, &grid);
+    // new Building(Vector2{2100, 1600}, 0, &grid);
+    // new Building(Vector2{1700, 1000}, 0, &grid);
+    // new Building(Vector2{1600, 1000}, 0, &grid);
+
+    // Testing NPC
+    new Pawn(Vector2{(float)1980, (float)1100}, 0, &grid);
+    // new Enemy(Vector2{(float)1780, (float)1100}, 1, &grid);
+    // new Enemy(Vector2{(float)1580, (float)1100}, 1, &grid);
+    // new Enemy(Vector2{(float)1780, (float)1300}, 1, &grid);
+
+    // new Enemy(Vector2{(float)1780, (float)1300}, 1, &grid);
+    // new Enemy(Vector2{(float)1580, (float)1300}, 1, &grid);
+    // new Enemy(Vector2{(float)1980, (float)1300}, 1, &grid);
+    // new Enemy(Vector2{(float)1380, (float)1100}, 1, &grid);
+    // new Enemy(Vector2{(float)1380, (float)1300}, 1, &grid);
 
     // Testing collectibles
     for (int i = 0; i <= 100; i += 1)
     {
         for (int j = 0; j <= 100; j += 1)
         {
-            // new Nature(Vector2{(float)GetRandomValue(0, 10000), (float)GetRandomValue(0, 10000)}, GetRandomValue(0, 4), NatureTex, &grid);
-            new Collectible(Vector2{(float)GetRandomValue(0, 10000), (float)GetRandomValue(0, 10000)}, GetRandomValue(1, 9999), &grid);
+            // new Nature(Vector2{(float)GetRandomValue(0, 10000), (float)GetRandomValue(0, 10000)}, GetRandomValue(0, 4), &grid);
+            // new Collectible(Vector2{(float)GetRandomValue(0, 10000), (float)GetRandomValue(0, 10000)}, GetRandomValue(1, 9999), &grid);
         }
     }
 
@@ -171,8 +211,13 @@ int main()
     camera.rotation = 0.0f;
     camera.zoom = 1.0f;
 
+    int fps = 60;
+
     // Setting game FPS
-    SetTargetFPS(60);
+    SetTargetFPS(fps);
+
+    // Set the trace log level to suppress INFO messages
+    SetTraceLogLevel(LOG_WARNING); // Only log warnings and errors
 
     // Scale the content based on the window size
     scale = std::min((float)screenWidth / gameScreenWidth, (float)screenHeight / gameScreenHeight);
@@ -188,37 +233,36 @@ int main()
     {
         // Set mouse collision as false
         mouseCollision = false;
-        
+
         // Update all objects in the grid
         grid.UpdateGrid();
 
-        // Check how many entities on screen (for debugging)
-        if(IsKeyPressed(KEY_ENTER))
+        // For debugging
+        if(IsKeyPressed(KEY_UP) && fps < 60)
         {
-            int ada = 1;
-            const Entity *const(&cells)[Grid::NUM_CELLS][Grid::NUM_CELLS] = grid.GetReadOnlyCells();
-            Vector2 cameraPos = camera.target;
-            int minX = std::max((int)(cameraPos.x - screenWidth / scale) / grid.CELL_SIZE, 0);
-            int minY = std::max((int)(cameraPos.y - screenHeight / scale) / grid.CELL_SIZE, 0);
-            int maxX = std::min((int)(cameraPos.x + screenWidth / scale) / grid.CELL_SIZE, grid.NUM_CELLS - 1);
-            int maxY = std::min((int)(cameraPos.y + screenHeight / scale) / grid.CELL_SIZE, grid.NUM_CELLS - 1);
+            fps++;
+        }
+        else if(IsKeyPressed(KEY_DOWN) && fps > 1)
+        {
+            fps--;
+        }
+        if (IsKeyPressed(KEY_ENTER))
+        {
+            std::vector<Entity *> &followers = player->GetFollowers(); // Store reference properly
 
-            for (int i = minX; i <= maxX; i++)
+            for (auto it = followers.begin(); it != followers.end(); ++it)
             {
-                for(int j = minY; j <= maxY; j++)
-                {
-                    const Entity* entity = cells[i][j];
-
-                    while(entity != NULL)
-                    {
-                        ada++;
-                        entity = entity->next;
-                    }
-                }
+                (*it)->target = NULL;
+                (*it)->ToogleHasDestination();
             }
 
-            std::cout << "There are " << ada << " entities" << '\n';
+            followers.clear(); // This now modifies the original vector
+
+            std::cout << "Jumlah followers: " << player->GetFollowers().size() << '\n';
+            std::cout << "DONE" << '\n';
         }
+
+        SetTargetFPS(fps);
 
         // Update Camera
         UpdateCamera(camera, player->GetPosition(), player->GetWidth(), player->GetHeight(), scale);
@@ -251,7 +295,7 @@ int main()
         // Draw outlined entities
         BeginShaderMode(shdrOutline);
 
-        // DrawTexture(NatureTex[1], tes->GetPosition().x, tes->GetPosition().y, WHITE);
+        // DrawTexture(natureTex[1], tes->GetPosition().x, tes->GetPosition().y, WHITE);
         grid.DrawOutlinedObjects(camera.target);
 
         EndShaderMode();
@@ -278,6 +322,9 @@ int main()
         // Print game time
         PrintTime();
 
+        // Print in game resources
+        PrintResources();
+
         // Debugging Information
         if(showInformation)
         {
@@ -294,6 +341,7 @@ int main()
             DrawText(TextFormat("Number of Visible Objects: [%i]", visibleObjects.size()), 0, 305, 15, GREEN);
             DrawText(TextFormat("This is grid: [%i, %i]", (int)GetMouseRect().x / grid.CELL_SIZE, (int)GetMouseRect().y / grid.CELL_SIZE), 0, 335, 15, GREEN);
             DrawText(TextFormat("Player is facing: [%f, %f]", (float)player->GetDirection().x, (float)player->GetDirection().y), 0, 365, 15, GREEN);
+            // DrawText(TextFormat("Player's Health: ", (int)player->GetHealthPoint()), 0, 395, 15, GREEN);
         }
 
         // Draw the mouse according to screen position

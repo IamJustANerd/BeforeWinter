@@ -2,10 +2,10 @@
 #include "../include/Inventory.h"
 #include "../include/Grid.h"
 #include "../include/Collectible.h"
+#include "../include/Enemy.h"
 #include <iostream>
 
-// Idea: Try to use texture as global variable instead
-Player::Player(Vector2 _position, Grid *_grid, Texture2D *_textures)
+Player::Player(Vector2 _position, Grid *_grid)
 {
     position = _position;
     
@@ -13,7 +13,13 @@ Player::Player(Vector2 _position, Grid *_grid, Texture2D *_textures)
     
     id = 0;
 
+    isAlive = true;
+
     type = 0;
+
+    // base health and attack, can be modified later on
+    healthPoint = 100;
+    attackPoint = 50;
     
     // Assign player hitbox
     hitBox = Rectangle{position.x + (float)width / 3, position.y + (float)height * 0.6f, (float)width / 3, (float)height / 8};
@@ -31,24 +37,33 @@ Player::Player(Vector2 _position, Grid *_grid, Texture2D *_textures)
                                   position.y - interactionRadiusLength,
                                   (float)width + 2 * interactionRadiusLength,
                                   (float)height + 2 * interactionRadiusLength};
-
-    textures = _textures;
     
+    // Assign player attack range
+    // Left
+    attackBox[0] = Rectangle{position.x, position.y + height / 6, (float)width / 2, (float)height * 2 / 3};
+    // Up
+    attackBox[1] = Rectangle{position.x + width / 6, position.y, (float)width * 2 / 3, (float)height / 2};
+    // Right
+    attackBox[2] = Rectangle{position.x + width / 2, position.y + height / 6, (float)width / 2, (float)height * 2 / 3};
+    // Down
+    attackBox[3] = Rectangle{position.x + width / 6, position.y + height / 2, (float)width * 2 / 3, (float)height / 2};
+
     rotation = 0;
 
     isAttacking = false;
 
     // The starting state is idle
-    curState = State::idle;
+    ChangeAnimation(State::idle);
 
-    // Set the frame rec according to the current state
-    frameRec = playerAnimation[(int)curState][0].sourceFrame;
+    // Testing death animation
+    ChangeAnimation(State::dying);
 
     // Player is uncollidable
     isUncollidable = true;
 
     // Set starting direction as neutral right
     direction = Vector2({1.0f, 0.0f});
+    moveDirectionIndex = 2;
 
     // Insert player into the grid
     grid = _grid;
@@ -101,10 +116,12 @@ void Player::Movements()
     // Left movement
     if (IsKeyDown(KEY_A))
     {
+        moveDirectionIndex = 0;
+
         int i = 0;
 
         while ((i < speed && hitBox.x > minBorderX) &&
-               !IsCollidingWithUncollidable("Left"))
+               !IsCollidingWithUncollidable())
         {
             i += 1;
 
@@ -125,9 +142,11 @@ void Player::Movements()
     // Right movement
     else if (IsKeyDown(KEY_D))
     {
+        moveDirectionIndex = 2;
+
         int i = 0;
         while ((i < speed && (hitBox.x + hitBox.width) < maxBorderX) &&
-               !IsCollidingWithUncollidable("Right"))
+               !IsCollidingWithUncollidable())
         {
             i += 1;
 
@@ -149,9 +168,11 @@ void Player::Movements()
     // Up movement
     if (IsKeyDown(KEY_W))
     {
+        moveDirectionIndex = 1;
+
         int i = 0;
         while ((i < speed && hitBox.y > minBorderY) &&
-               !IsCollidingWithUncollidable("Up"))
+               !IsCollidingWithUncollidable())
         {
             i += 1;
 
@@ -171,10 +192,12 @@ void Player::Movements()
     // Down movement
     else if (IsKeyDown(KEY_S))
     {
+        moveDirectionIndex = 3;
+
         // Add player position while is still within the border
         int i = 0;
         while ((i < speed && (hitBox.y + hitBox.height) < maxBorderY) &&
-               !IsCollidingWithUncollidable("Down"))
+               !IsCollidingWithUncollidable())
         {
             i += 1;
 
@@ -195,21 +218,13 @@ void Player::Movements()
     // Switch to running animation
     if(isMoving && curState != State::running)
     {
-        curState = State::running;
-        frameRec = playerAnimation[(int)curState][0].sourceFrame;
-        
-        // Reset frame counter
-        frameCounter = 0;
+        ChangeAnimation(State::running);
     }
     
     // Switch to idle animation
     if(!isMoving && curState != State::idle)
     {
-        curState = State::idle;
-        frameRec = playerAnimation[(int)curState][0].sourceFrame;
-
-        // Reset frame counter
-        frameCounter = 0;
+        ChangeAnimation(State::idle);
     }
 
     // Update collect radius position
@@ -220,6 +235,20 @@ void Player::Movements()
     interactionRadius.x = position.x - interactionRadiusLength;
     interactionRadius.y = position.y - interactionRadiusLength;
 
+    // Update attack range position
+    // -> Left
+    attackBox[0].x = position.x;
+    attackBox[0].y = position.y + height / 6;
+    // -> Up
+    attackBox[1].x = position.x + width / 6;
+    attackBox[1].y = position.y;
+    // -> Right
+    attackBox[2].x = position.x + width / 2;
+    attackBox[2].y = position.y + height / 6;
+    // -> Down
+    attackBox[3].x = position.x + width / 6;
+    attackBox[3].y = position.y + height / 2;
+    
     // Update player's cell
     grid->Move(this, change);
 }
@@ -227,23 +256,50 @@ void Player::Movements()
 void Player::Draw() const
 {
     // Draw body
-    DrawRectangle(position.x, position.y, width, height, {230, 41, 55, 128});
+    // DrawRectangle(position.x, position.y, width, height, {230, 41, 55, 128});
+
+    Color tint = WHITE; // base color
+    if (hitTimer > 0)
+    {
+        tint = Color{255, 0, 0, 128}; // red tint when hit
+    }
 
     // Draw texture
-    if(direction.x >= 0)
+    if(isAlive)
     {
-        DrawTextureRec(textures[0], frameRec, position, WHITE); 
+        if (direction.x >= 0)
+        {
+            DrawTextureRec(playerTex[0], frameRec, position, tint);
+        }
+        else if (direction.x <= -1)
+        {
+            DrawTextureRec(playerTex[0], FlipTexture(frameRec), {position.x, position.y}, tint);
+        }
     }
-    else if(direction.x <= -1)
+    else if(curState == State::dying || curState == State::decaying)
     {
-        DrawTextureRec(textures[0], FlipTexture(frameRec), {position.x, position.y}, WHITE);
+        if (direction.x >= 0)
+        {
+            DrawTextureRec(deathTex[0], frameRec, position, WHITE);
+        }
+        else if (direction.x <= -1)
+        {
+            DrawTextureRec(deathTex[0], FlipTexture(frameRec), {position.x, position.y}, WHITE);
+        }
     }
     
+
+    // Draw attack range
+    DrawRectangleRec(attackBox[0], {230, 41, 55, 32});
+    DrawRectangleRec(attackBox[1], {255, 161, 0, 32});
+    DrawRectangleRec(attackBox[2], {253, 249, 0, 32});
+    DrawRectangleRec(attackBox[3], {0, 228, 48, 32});
+
     // Draw collect radius box
-    DrawRectangleRec(collectRadius, Color{0, 121, 241, 120});
+    // DrawRectangleRec(collectRadius, Color{0, 121, 241, 120});
 
     // Draw interaction radius box
-    DrawRectangleRec(interactionRadius, Color{253, 249, 0, 128});
+    // DrawRectangleRec(interactionRadius, Color{253, 249, 0, 128});
 
     // Draw hitbox
     DrawRectangleRec(hitBox, Color{0, 228, 48, 120});
@@ -251,13 +307,29 @@ void Player::Draw() const
 
 void Player::Update()
 {
-    Movements();
+    if (hitTimer > 0) hitTimer--;
 
-    Attack();
+    if(isAlive)
+    {
+        Movements();
 
-    UpdateSpriteFrame();
+        Attack();
 
-    inventory.Update();
+        UpdateSpriteFrame();
+
+        inventory.Update();
+    }
+    else
+    {
+        if(isDecay)
+        {
+            DecayAnimation(0);
+        }
+        else
+        {
+            DeathAnimation(0);
+        }
+    }
 }
 
 bool Player::IsInventoryCalled()
@@ -273,6 +345,7 @@ void Player::DrawInventory() const
 void Player::DrawToolbar() const
 {
     inventory.DrawToolbar();
+    DrawText(TextFormat("HP: %d", healthPoint), 0, 395, 15, RED);
 }
 
 void Player::UpdateToolbar()
@@ -320,6 +393,8 @@ void Player::UpdateSpriteFrame()
     frameCounter += 1;
     if (frameCounter >= playerAnimation[(int)curState][0].frameTime / playerAnimation[(int)curState][0].totalFrames)
     {
+        curFrame = (curFrame + 1) % playerAnimation[(int)curState][0].totalFrames;
+
         frameCounter = 0;
 
         frameRec.x = ((int)(frameRec.x + width) % (int)(playerAnimation[(int)curState][0].totalFrames * width));
@@ -333,9 +408,37 @@ void Player::UpdateSpriteFrame()
                 // Return back to idle animation
                 isAttacking = false;
 
-                curState = State::idle;
-            
-                frameRec = playerAnimation[(int)curState][0].sourceFrame;
+                ChangeAnimation(State::idle);
+            }
+
+            // For player
+            // If this is the 4th frame, activate the attack box in that direction
+            if(curFrame == 3)
+            {
+                // Determine the active attack box based on facing direction
+                Rectangle activeAttackBox;
+                if (direction.y == 1)
+                {
+                    activeAttackBox = attackBox[3]; // Down
+                }
+                else if (direction.y == -1)
+                {
+                    activeAttackBox = attackBox[1]; // Up
+                }
+                else if (direction.x >= 1)
+                {
+                    activeAttackBox = attackBox[2]; // Right
+                }
+                else
+                {
+                    activeAttackBox = attackBox[0]; // Left
+                }
+
+                // Define which entity types the player can damage
+                std::vector<const std::type_info*> playerTargets = {&typeid(Enemy)};
+
+                // Attack all entities in range using grid-based spatial query
+                AttackEntitiesInRange(activeAttackBox, attackPoint, playerTargets);
             }
         }
     }
@@ -355,54 +458,58 @@ void Player::Attack()
         {
             // Set player state as attacking to prevent player from doing other action (for example: running)
             isAttacking = true;
-            curState = State::light_attacking;
-
-            // The animation depends on the direction the player is facing (will prioritize x axis direction first)
-            // Note: check Assets.cpp for player animation's reference
             
-            // Note: Need to change the attack direction based on the mouse position instead
-            if(direction.y == 1)
-            {
-                frameRec = playerAnimation[(int)curState][1].sourceFrame;
-            }
-            else if(direction.y == -1)
-            {
-                frameRec = playerAnimation[(int)curState][2].sourceFrame;
-            }
-            else if (direction.x == 1 || direction.x == -1)
-            {
-                frameRec = playerAnimation[(int)curState][0].sourceFrame;
-            }
-
-            // Reset frame counter
-            frameCounter = 0;
+            ChangeAnimation(State::light_attacking);
         }
         // Heavy attack
         else if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT))
         {
             // Set player state as attacking to prevent player from doing other action (for example: running)
             isAttacking = true;
-            curState = State::heavy_attacking;
-
-            // The animation depends on the direction the player is facing (will prioritize x axis direction first)
-            // Note: check Assets.cpp for player animation's reference
-            if (direction.y == 1)
-            {
-                frameRec = playerAnimation[(int)curState][1].sourceFrame;
-            }
-            else if (direction.y == -1)
-            {
-                frameRec = playerAnimation[(int)curState][2].sourceFrame;
-            }
-            else if (direction.x == 1 || direction.x == -1)
-            {
-                frameRec = playerAnimation[(int)curState][0].sourceFrame;
-            }
-
-            // Reset frame counter
-            frameCounter = 0;
+            
+            ChangeAnimation(State::heavy_attacking);
         }
+    }
+}
 
-        
+void Player::ChangeAnimation(State newState)
+{
+    // Reset frame counter
+    frameCounter = 0;
+
+    curState = newState;
+
+    curFrame = 0;
+
+    // Handle animation direction for attack animations
+    if(curState == State::light_attacking || curState == State::heavy_attacking)
+    {
+        // The animation depends on the direction the player is facing (will prioritize x axis direction first)
+        // Note: check Assets.cpp for player animation's reference
+        if (direction.y == 1)
+        {
+            frameRec = playerAnimation[(int)curState][1].sourceFrame;
+        }
+        else if (direction.y == -1)
+        {
+            frameRec = playerAnimation[(int)curState][2].sourceFrame;
+        }
+        else if (direction.x == 1 || direction.x == -1)
+        {
+            frameRec = playerAnimation[(int)curState][0].sourceFrame;
+        }
+    }
+    // Handle animations for dyinh and decaying animation
+    else if(curState == State::dying)
+    {
+        frameRec = deathAnimation[0][0].sourceFrame;
+    }
+    else if(curState == State::decaying)
+    {
+        frameRec = deathAnimation[0][1].sourceFrame;
+    }
+    else
+    {
+        frameRec = playerAnimation[(int)curState][0].sourceFrame;
     }
 }
